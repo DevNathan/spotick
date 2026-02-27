@@ -1,4 +1,4 @@
-package com.app.spotick.config;
+package com.app.spotick.global.config;
 import com.p6spy.engine.common.ConnectionInformation;
 import com.p6spy.engine.event.JdbcEventListener;
 import com.p6spy.engine.spy.P6SpyOptions;
@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 import java.sql.SQLException;
 
 @Component
-public class P6SpyFormatter extends JdbcEventListener implements MessageFormattingStrategy {
+public class P6SpyConfig extends JdbcEventListener implements MessageFormattingStrategy {
 
     @Override
     public void onAfterGetConnection(ConnectionInformation connectionInformation, SQLException e) {
@@ -43,14 +43,11 @@ public class P6SpyFormatter extends JdbcEventListener implements MessageFormatti
             String jpqlFormat = FormatStyle.BASIC.getFormatter().format(jpqlPart);
             String sqlFormat = FormatStyle.BASIC.getFormatter().format(sqlPart);
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<JPQL")
-                    .append(jpqlFormat)
-                    .append("\n------------------------------------")
-                    .append(sqlFormat)
-                    .append("\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<SQL\n");
-
-            return sb.toString();
+            return "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<JPQL" +
+                    jpqlFormat +
+                    "\n------------------------------------" +
+                    sqlFormat +
+                    "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<SQL\n";
         }
         return FormatStyle.BASIC.getFormatter().format(sql);
 

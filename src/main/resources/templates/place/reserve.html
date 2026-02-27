@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<header th:replace="~{global-templates/header-footer :: header}"></header>
+<header th:replace="~{fragments/header-footer :: header}"></header>
 
 <script th:if="${invalidReservation}">
     alert('해당시간에는 이미 예약이 되어있습니다.')
@@ -161,7 +161,7 @@
 
 </div>
 
-<footer th:replace="~{global-templates/header-footer :: footer}"></footer>
+<footer th:replace="~{fragments/header-footer :: footer}"></footer>
 
 <script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.js"></script>

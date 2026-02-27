@@ -18,11 +18,11 @@
     <link rel="icon" th:href="@{/imgs/logo/favicon.png}" >
 </head>
 <body>
-<header th:replace="~{global-templates/header-footer :: header}"></header>
+<header th:replace="~{fragments/header-footer :: header}"></header>
 <div class="admin-main">
     <div class="admin-app">
         <!-- 관리자 사이드메뉴 flagment -->
-        <div class="admin-container" th:replace="~{global-templates/adminSideBar :: adminSideBar}"></div>
+        <div class="admin-container" th:replace="~{fragments/adminSideBar :: adminSideBar}"></div>
         <!-- 관리자 사이드메뉴 flagment -->
 
         <!-- 관리자 카테고리 및 회원 정보 검색 및 테이블 -->
@@ -87,7 +87,7 @@
         <!-- 관리자 카테고리 및 회원 정보 검색 및 테이블 -->
     </div>
 </div>
-<footer th:replace="~{global-templates/header-footer :: footer}"></footer>
+<footer th:replace="~{fragments/header-footer :: footer}"></footer>
 </body>
 <script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.3.js"></script>

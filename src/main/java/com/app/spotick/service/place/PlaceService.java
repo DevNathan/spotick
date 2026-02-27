@@ -3,8 +3,8 @@ package com.app.spotick.service.place;
 import com.app.spotick.domain.dto.place.*;
 import com.app.spotick.domain.dto.place.PlaceEditDto;
 import com.app.spotick.domain.dto.place.reservation.PlaceReserveBasicInfoDto;
-import com.app.spotick.util.search.DistrictFilter;
-import com.app.spotick.util.type.PlaceSortType;
+import com.app.spotick.global.util.search.DistrictFilter;
+import com.app.spotick.global.util.type.PlaceSortType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 

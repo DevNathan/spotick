@@ -4,8 +4,8 @@ import com.app.spotick.domain.dto.ticket.*;
 import com.app.spotick.domain.dto.ticket.grade.TicketGradeSaleInfoDto;
 import com.app.spotick.domain.type.ticket.TicketCategory;
 import com.app.spotick.domain.type.ticket.TicketRatingType;
-import com.app.spotick.util.search.DistrictFilter;
-import com.app.spotick.util.type.TicketSortType;
+import com.app.spotick.global.util.search.DistrictFilter;
+import com.app.spotick.global.util.type.TicketSortType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 

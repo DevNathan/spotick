@@ -1,4 +1,4 @@
-package com.app.spotick.util.search;
+package com.app.spotick.global.util.search;
 
 import lombok.Data;
 

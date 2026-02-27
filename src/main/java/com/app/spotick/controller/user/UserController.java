@@ -2,7 +2,7 @@ package com.app.spotick.controller.user;
 
 import com.app.spotick.domain.dto.user.UserJoinDto;
 import com.app.spotick.domain.dto.user.UserModifyPwDto;
-import com.app.spotick.security.type.LoginErrorType;
+import com.app.spotick.global.security.type.LoginErrorType;
 import com.app.spotick.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

@@ -1,19 +1,16 @@
 package com.app.spotick.repository.place.reservation;
 
-import com.app.spotick.domain.dto.place.file.PlaceFileDto;
 import com.app.spotick.domain.dto.place.PlaceReservationListDto;
+import com.app.spotick.domain.dto.place.file.PlaceFileDto;
 import com.app.spotick.domain.dto.place.reservation.ReservationRequestListDto;
 import com.app.spotick.domain.type.place.PlaceReservationStatus;
 import com.app.spotick.domain.type.post.PostStatus;
-import com.app.spotick.util.type.PlaceReservationSortType;
-import com.app.spotick.util.type.PlaceSortType;
+import com.app.spotick.global.util.type.PlaceReservationSortType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLSubQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +20,16 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.support.PageableExecutionUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.app.spotick.domain.entity.place.QPlace.*;
+import static com.app.spotick.domain.entity.place.QPlace.place;
 import static com.app.spotick.domain.entity.place.QPlaceBookmark.placeBookmark;
-import static com.app.spotick.domain.entity.place.QPlaceFile.*;
+import static com.app.spotick.domain.entity.place.QPlaceFile.placeFile;
 import static com.app.spotick.domain.entity.place.QPlaceInquiry.placeInquiry;
-import static com.app.spotick.domain.entity.place.QPlaceReservation.*;
+import static com.app.spotick.domain.entity.place.QPlaceReservation.placeReservation;
 import static com.app.spotick.domain.entity.place.QPlaceReview.placeReview;
-import static com.app.spotick.domain.entity.user.QUser.*;
-import static com.app.spotick.domain.entity.user.QUserProfileFile.*;
+import static com.app.spotick.domain.entity.user.QUser.user;
+import static com.app.spotick.domain.entity.user.QUserProfileFile.userProfileFile;
 
 @RequiredArgsConstructor
 public class PlaceReservationQDSLRepositoryImpl implements PlaceReservationQDSLRepository {
@@ -137,26 +133,26 @@ public class PlaceReservationQDSLRepositoryImpl implements PlaceReservationQDSLR
         return new SliceImpl<>(contents, pageable, hasNext);
     }
 
-    private JPQLQuery<Double> createReviewAvgSub() {
+    private JPQLSubQuery<Double> createReviewAvgSub() {
         return JPAExpressions.select(placeReview.score.avg())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
     }
 
-    private JPQLQuery<Long> createReviewCountSub() {
+    private JPQLSubQuery<Long> createReviewCountSub() {
         return JPAExpressions.select(placeReview.count())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
     }
 
-    private JPQLQuery<Long> createBookmarkCountSub() {
+    private JPQLSubQuery<Long> createBookmarkCountSub() {
 
         return JPAExpressions.select(placeBookmark.count())
                 .from(placeBookmark)
                 .where(placeBookmark.place.eq(place));
     }
 
-    private JPQLQuery<Long> createInquiryCountSub() {
+    private JPQLSubQuery<Long> createInquiryCountSub() {
         return JPAExpressions.select(placeInquiry.id.count())
                 .from(placeInquiry)
                 .where(placeInquiry.place.eq(place));

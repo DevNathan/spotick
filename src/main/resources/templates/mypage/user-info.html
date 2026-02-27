@@ -15,11 +15,11 @@
 
 <body>
 <div>
-    <div th:replace="~{global-templates/chat :: chat}"></div>
+    <div th:replace="~{fragments/chat :: chat}"></div>
 
     <div class="modal-bg" id="modal">
-        <div th:replace="~{global-templates/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{global-templates/new-global-dialogue-modal :: global-selection}"></div>
+        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
+        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
         <div class="mypage-modal" id="profileModal">
             <div class="modal-row">
                 <p style="font-weight: bold; font-size: 14px; line-height: 14px; color: rgb(158, 164, 170);">Spotick에서
@@ -28,31 +28,31 @@
             </div>
             <div class="modal-row" style="margin-top: 20px">
                 <img class="default-profile-con def-pro" img="1.jpg"
-                     src="/imgs/defaultProfileImgs/1.jpg">
+                     src="/imgs/default/1.jpg">
                 <img class="default-profile-con def-pro" img="2.jpg"
-                     src="/imgs/defaultProfileImgs/2.jpg">
+                     src="/imgs/default/2.jpg">
                 <img class="default-profile-con def-pro" img="3.jpg"
-                     src="/imgs/defaultProfileImgs/3.jpg">
+                     src="/imgs/default/3.jpg">
                 <img class="default-profile-con def-pro" img="4.jpg"
-                     src="/imgs/defaultProfileImgs/4.jpg">
+                     src="/imgs/default/4.jpg">
             </div>
             <div class="modal-row" style="margin-top: 24px">
                 <img class="default-profile-con def-pro" img="5.jpg"
-                     src="/imgs/defaultProfileImgs/5.jpg">
+                     src="/imgs/default/5.jpg">
                 <img class="default-profile-con def-pro" img="6.jpg"
-                     src="/imgs/defaultProfileImgs/6.jpg">
+                     src="/imgs/default/6.jpg">
                 <img class="default-profile-con def-pro" img="7.jpg"
-                     src="/imgs/defaultProfileImgs/7.jpg">
+                     src="/imgs/default/7.jpg">
                 <img class="default-profile-con def-pro" img="8.jpg"
-                     src="/imgs/defaultProfileImgs/8.jpg">
+                     src="/imgs/default/8.jpg">
             </div>
             <div class="modal-row" style="margin-top: 24px">
                 <img class="default-profile-con def-pro" img="9.jpg"
-                     src="/imgs/defaultProfileImgs/9.jpg">
+                     src="/imgs/default/9.jpg">
                 <img class="default-profile-con def-pro" img="10.jpg"
-                     src="/imgs/defaultProfileImgs/10.jpg">
+                     src="/imgs/default/10.jpg">
                 <img class="default-profile-con def-pro" img="11.jpg"
-                     src="/imgs/defaultProfileImgs/11.jpg">
+                     src="/imgs/default/11.jpg">
                 <label for="imageUploadInput">
                     <div class="default-profile-con">
                         <svg height="54" viewBox="0 0 256 256" width="54" xmlns="http://www.w3.org/2000/svg">
@@ -122,10 +122,10 @@
         </div>
     </div>
 
-    <header th:replace="~{global-templates/header-footer :: header}"></header>
+    <header th:replace="~{fragments/header-footer :: header}"></header>
 
     <main class="my-page-main" id="page-body">
-        <div th:replace="~{global-templates/mypage :: mypage-menu}"></div>
+        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
         <div class="mp-content">
             <article th:object="${userProfile}">
                 <div class="mpc-title">
@@ -204,7 +204,7 @@
         </div>
     </main>
 
-    <footer th:replace="~{global-templates/header-footer :: footer}"></footer>
+    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
 
 </div>
 </body>

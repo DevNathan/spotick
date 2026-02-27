@@ -1,4 +1,4 @@
-package com.app.spotick.util.type;
+package com.app.spotick.global.util.type;
 
 import lombok.Getter;
 

@@ -3,7 +3,7 @@ package com.app.spotick.repository.promotion;
 import com.app.spotick.domain.dto.promotion.*;
 import com.app.spotick.domain.type.post.PostStatus;
 import com.app.spotick.domain.type.promotion.PromotionCategory;
-import com.app.spotick.util.type.PromotionSortType;
+import com.app.spotick.global.util.type.PromotionSortType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -202,7 +202,7 @@ public class PromotionQDSLRepositoryImpl implements PromotionQDSLRepository {
 
     //// private
     private JPQLQuery<Long> likeCount() {
-        return JPAExpressions
+        return (JPQLQuery<Long>) JPAExpressions
                 .select(promotionLike.count())
                 .from(promotionLike)
                 .where(promotionLike.promotionBoard.eq(promotionBoard));

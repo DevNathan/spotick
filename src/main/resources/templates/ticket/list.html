@@ -14,14 +14,14 @@
 </head>
 <body>
 <div>
-    <div th:replace="~{global-templates/topScroll :: topScrollBtn}"></div>
-    <div th:replace="~{global-templates/chat :: chat}"></div>
+    <div th:replace="~{fragments/topScroll :: topScrollBtn}"></div>
+    <div th:replace="~{fragments/chat :: chat}"></div>
 
-    <div th:replace="~{global-templates/header-footer :: header}"></div>
+    <div th:replace="~{fragments/header-footer :: header}"></div>
 
     <div class="modal-bg">
-        <div th:replace="~{global-templates/global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{global-templates/global-dialogue-modal :: global-selection}"></div>
+        <div th:replace="~{fragments/global-dialogue-modal :: global-dialogue}"></div>
+        <div th:replace="~{fragments/global-dialogue-modal :: global-selection}"></div>
     </div>
 
     <div id="page-body">
@@ -577,7 +577,7 @@
 
     <input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
 
-    <div th:replace="~{global-templates/header-footer :: footer}"></div>
+    <div th:replace="~{fragments/header-footer :: footer}"></div>
 </div>
 </body>
 

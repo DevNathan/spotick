@@ -16,18 +16,18 @@
 
 <body>
 <div>
-    <div th:replace="~{global-templates/chat :: chat}"></div>
+    <div th:replace="~{fragments/chat :: chat}"></div>
 
     <div class="modal-bg" id="modal">
-        <div th:replace="~{global-templates/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{global-templates/new-global-dialogue-modal :: global-selection}"></div>
+        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
+        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
         <div class="modal-review-form-container" id="reviewFormModal"></div>
     </div>
 
-    <header th:replace="~{global-templates/header-footer :: header}"></header>
+    <header th:replace="~{fragments/header-footer :: header}"></header>
 
     <main class="my-page-main" id="page-body">
-        <div th:replace="~{global-templates/mypage :: mypage-menu}"></div>
+        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
         <div class="mp-content">
             <article>
                 <div class="mpc-title not-with-line">
@@ -152,7 +152,7 @@
         </div>
     </main>
 
-    <footer th:replace="~{global-templates/header-footer :: footer}"></footer>
+    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
 </div>
 </body>
 <script th:inline="javascript">

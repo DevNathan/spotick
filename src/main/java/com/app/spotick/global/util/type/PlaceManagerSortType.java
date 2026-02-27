@@ -1,9 +1,11 @@
-package com.app.spotick.util.type;
+package com.app.spotick.global.util.type;
 
 import lombok.Getter;
 
 @Getter
-public enum PlaceSortType {
+public enum PlaceManagerSortType {
+    RESERVATION("예약 요청 순"),
+    INQUIRY("문의 순"),
     POPULARITY("인기순"),
     NEWEST("최신순"),
     INTEREST("관심순"),
@@ -15,7 +17,7 @@ public enum PlaceSortType {
 
     private final String displayName;
 
-    PlaceSortType(String displayName) {
+    PlaceManagerSortType(String displayName) {
         this.displayName = displayName;
     }
 }

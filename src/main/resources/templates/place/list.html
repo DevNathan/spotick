@@ -1,29 +1,20 @@
 <!doctype html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <link rel="stylesheet" th:href="@{/css/global-css/root.css}">
-    <link rel="stylesheet" th:href="@{/css/global-css/chat.css}">
+    <title layout:fragment="title">Spotick | 장소 대여</title>
+</head>
+
+<th:block layout:fragment="css">
     <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <link rel="icon" th:href="@{/imgs/logo/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/ticket/list-swiper.css}">
     <link rel="stylesheet" th:href="@{/css/global-css/list.css}">
+</th:block>
 
-    <title>Spotick | 장소 대여</title>
-</head>
-<body>
-<div>
-    <div th:replace="~{global-templates/topScroll :: topScrollBtn}"></div>
-
-    <div th:replace="~{global-templates/chat :: chat}"></div>
-
-    <header th:replace="~{global-templates/header-footer :: header}"></header>
-
+<div layout:fragment="content">
     <div id="page-body">
         <div id="ListContainer">
             <div class="FilterContainer pt-20">
@@ -41,7 +32,7 @@
                         <div class="SelectBoxList">
                             <button class="SelectBoxListItem"
                                     th:classappend="${iterStat.index == 0} ? 'SelectBoxListItem-select' : ''"
-                                    th:each="sortType, iterStat : ${T(com.app.spotick.util.type.PlaceSortType).values()}"
+                                    th:each="sortType, iterStat : ${T(com.app.spotick.global.util.type.PlaceSortType).values()}"
                                     th:sortType="${sortType}"
                                     th:text="${sortType.displayName}" type="button">
                             </button>
@@ -75,7 +66,6 @@
                             </div>
                         </div>
                         <div class="FilterContentContainer">
-                            <!-- 지역 -->
                             <div class="AreasContainer">
                                 <div class="AreaGroupContainer" id="areaGroupContainer">
                                     <button class="AreaGroupBtn On" data-target="서울특별시" type="button">서울</button>
@@ -96,7 +86,6 @@
                                     <button class="AreaGroupBtn" data-target="전라남도" type="button">전남</button>
                                     <button class="AreaGroupBtn" data-target="제주특별자치도" type="button">제주</button>
                                 </div>
-                                <!-- 지역 - 서울 -->
                                 <div class="AreasCityContainer On" id="서울특별시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -118,7 +107,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 경기 -->
                                 <div class="AreasCityContainer" id="경기도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -140,7 +128,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 인천 -->
                                 <div class="AreasCityContainer" id="인천광역시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -162,7 +149,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 부산 -->
                                 <div class="AreasCityContainer" id="부산광역시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -184,7 +170,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 대전 -->
                                 <div class="AreasCityContainer" id="대전광역시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -206,7 +191,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 대구 -->
                                 <div class="AreasCityContainer" id="대구광역시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -228,7 +212,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 울산 -->
                                 <div class="AreasCityContainer" id="울산광역시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -250,7 +233,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 세종 -->
                                 <div class="AreasCityContainer" id="세종특별자치시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -262,7 +244,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 광주 -->
                                 <div class="AreasCityContainer" id="광주광역시">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -284,7 +265,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 강원 -->
                                 <div class="AreasCityContainer" id="강원도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -306,7 +286,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 충북 -->
                                 <div class="AreasCityContainer" id="충청북도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -328,7 +307,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 충남 -->
                                 <div class="AreasCityContainer" id="충청남도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -350,7 +328,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 경북 -->
                                 <div class="AreasCityContainer" id="경상북도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -372,7 +349,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 경남 -->
                                 <div class="AreasCityContainer" id="경상남도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -394,7 +370,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 전북 -->
                                 <div class="AreasCityContainer" id="전라북도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -416,7 +391,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 전남 -->
                                 <div class="AreasCityContainer" id="전라남도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -438,7 +412,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- 지역 - 제주 -->
                                 <div class="AreasCityContainer" id="제주특별자치도">
                                     <div class="AreasCheckboxContainer">
                                         <label class="CheckBoxLabel">
@@ -487,15 +460,12 @@
                                 <a class="swiper-wrapper ImageLength"
                                    style="transform: translate3d(0px, 0px, 0px);"
                                    th:href="@{/place/{placeId}(placeId = ${place.id})}">
-                                    <!-- 이미지 한칸 -->
                                     <div class="swiper-slide swiper-slide-active" style="width: 287px;"
                                          th:each="placeImg :${place.placeFiles}">
                                         <img class="ItemImg"
                                              height="1350.6666666666665px" th:alt="${place.title}"
                                              th:src="@{/file/display(fileName=${placeImg.uploadPath+'/t_'+placeImg.uuid+'_'+placeImg.fileName})}">
                                     </div>
-                                    <!-- 이미지 한칸 -->
-
                                 </a>
                                 <div class="NavigationBtnContainer">
                                     <button class="NavigationBtn RightBtn" type="button">
@@ -556,18 +526,12 @@
             </div>
         </div>
     </div>
-
-    <input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
-
-    <footer th:replace="~{global-templates/header-footer :: footer}"></footer>
 </div>
-</body>
-<script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/utils/topScrollBtn.js}"></script>
-<script th:src="@{/js/global-js/image-slide.js}" type="module"></script>
-<script th:src="@{/js/place/list/list.js}" type="module"></script>
+
+<th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script th:src="@{/js/global-js/image-slide.js}" type="module"></script>
+    <script th:src="@{/js/place/list/list.js}" type="module"></script>
+</th:block>
 
 </html>

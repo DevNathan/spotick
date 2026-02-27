@@ -1,4 +1,4 @@
-package com.app.spotick.security.type;
+package com.app.spotick.global.security.type;
 
 import lombok.Getter;
 

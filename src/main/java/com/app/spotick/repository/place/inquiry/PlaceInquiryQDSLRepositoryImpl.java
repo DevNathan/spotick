@@ -8,6 +8,7 @@ import com.app.spotick.domain.type.post.PostStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLSubQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -54,15 +55,15 @@ public class PlaceInquiryQDSLRepositoryImpl implements PlaceInquiryQDSLRepositor
                 .join(placeInquiry.place, place)
                 .where(placeInquiry.user.id.eq(userId), place.placeStatus.eq(PostStatus.APPROVED));
 
-        JPQLQuery<Double> reviewAvg = JPAExpressions.select(placeReview.score.avg())
+        JPQLSubQuery<Double> reviewAvg = JPAExpressions.select(placeReview.score.avg())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
 
-        JPQLQuery<Long> reviewCount = JPAExpressions.select(placeReview.count())
+        JPQLSubQuery<Long> reviewCount = JPAExpressions.select(placeReview.count())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
 
-        JPQLQuery<Long> bookmarkCount = JPAExpressions.select(placeBookmark.count())
+        JPQLSubQuery<Long> bookmarkCount = JPAExpressions.select(placeBookmark.count())
                 .from(placeBookmark)
                 .where(placeBookmark.place.eq(place));
 

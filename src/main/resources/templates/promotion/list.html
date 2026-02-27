@@ -18,11 +18,11 @@
 </head>
 <body>
 <div class="PageContainer">
-    <div th:replace="~{global-templates/topScroll :: topScrollBtn}"></div>
+    <div th:replace="~{fragments/topScroll :: topScrollBtn}"></div>
 
-    <div th:replace="~{global-templates/chat :: chat}"></div>
+    <div th:replace="~{fragments/chat :: chat}"></div>
 
-    <div th:replace="~{global-templates/header-footer :: header}"></div>
+    <div th:replace="~{fragments/header-footer :: header}"></div>
 
     <div class="MainContainer" id="page-body">
         <div class="ReferenceHallContentListContainer">
@@ -139,7 +139,7 @@
     <input id="category" type="hidden">
     <input id="sortType" type="hidden" value="NEWEST">
 
-    <div th:replace="~{/global-templates/header-footer :: footer}"></div>
+    <div th:replace="~{/fragments/header-footer :: footer}"></div>
 </div>
 </body>
 <script th:src="@{/js/global-js/global.js}" type="module"></script>

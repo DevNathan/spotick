@@ -17,13 +17,13 @@
 <body>
 <div>
     <div class="modal-bg" id="modal">
-        <div th:replace="~{global-templates/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{global-templates/new-global-dialogue-modal :: global-selection}"></div>
+        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
+        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
     </div>
 
-    <div th:replace="~{global-templates/chat :: chat}"></div>
+    <div th:replace="~{fragments/chat :: chat}"></div>
 
-    <div th:replace="~{/global-templates/header-footer :: header}"></div>
+    <div th:replace="~{/fragments/header-footer :: header}"></div>
 
     <input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
 
@@ -66,7 +66,7 @@
                                  th:src="|/file/display?fileName=*{userProfileImage.uploadPath}/*{userProfileImage.uuid}_*{userProfileImage.fileName}|">
                             <img class="WriterImg"
                                  th:alt="*{nickName}"
-                                 th:src="@{/imgs/defaultProfileImgs/{fileName}(fileName=*{userProfileImage.fileName})}"
+                                 th:src="@{/imgs/default/{fileName}(fileName=*{userProfileImage.fileName})}"
                                  th:unless="*{userProfileImage.uuid != null}">
                             <div class="WriterNickName" th:text="*{nickName}"></div>
                             <input id="promo" th:value="*{promotionId}" type="hidden">
@@ -125,7 +125,7 @@
         </div>
     </div>
 
-    <div th:replace="~{/global-templates/header-footer :: footer}"></div>
+    <div th:replace="~{/fragments/header-footer :: footer}"></div>
 
 </div>
 </body>

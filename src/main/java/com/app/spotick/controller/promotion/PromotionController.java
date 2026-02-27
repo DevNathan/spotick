@@ -2,15 +2,14 @@ package com.app.spotick.controller.promotion;
 
 import com.app.spotick.domain.dto.promotion.*;
 import com.app.spotick.domain.dto.user.UserDetailsDto;
+import com.app.spotick.global.util.type.PromotionSortType;
 import com.app.spotick.service.promotion.PromotionService;
-import com.app.spotick.util.type.PromotionSortType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,6 +1,6 @@
-package com.app.spotick.security.handler;
+package com.app.spotick.global.security;
 
-import com.app.spotick.security.type.LoginErrorType;
+import com.app.spotick.global.security.type.LoginErrorType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

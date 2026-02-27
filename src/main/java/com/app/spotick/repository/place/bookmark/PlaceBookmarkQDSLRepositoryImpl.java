@@ -1,10 +1,9 @@
 package com.app.spotick.repository.place.bookmark;
 
-import com.app.spotick.domain.dto.place.file.PlaceFileDto;
 import com.app.spotick.domain.dto.place.PlaceListDto;
-import com.app.spotick.domain.entity.place.QPlace;
+import com.app.spotick.domain.dto.place.file.PlaceFileDto;
 import com.app.spotick.domain.type.post.PostStatus;
-import com.app.spotick.util.type.PlaceSortType;
+import com.app.spotick.global.util.type.PlaceSortType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -12,6 +11,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLSubQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.app.spotick.domain.entity.place.QPlace.*;
-import static com.app.spotick.domain.entity.place.QPlaceBookmark.*;
-import static com.app.spotick.domain.entity.place.QPlaceFile.*;
+import static com.app.spotick.domain.entity.place.QPlace.place;
+import static com.app.spotick.domain.entity.place.QPlaceBookmark.placeBookmark;
+import static com.app.spotick.domain.entity.place.QPlaceFile.placeFile;
 import static com.app.spotick.domain.entity.place.QPlaceInquiry.placeInquiry;
-import static com.app.spotick.domain.entity.place.QPlaceReview.*;
-import static com.querydsl.core.group.GroupBy.list;
+import static com.app.spotick.domain.entity.place.QPlaceReview.placeReview;
 
 @RequiredArgsConstructor
 public class PlaceBookmarkQDSLRepositoryImpl implements PlaceBookmarkQDSLRepository {
@@ -36,19 +35,17 @@ public class PlaceBookmarkQDSLRepositoryImpl implements PlaceBookmarkQDSLReposit
 
     @Override
     public Page<PlaceListDto> findBookmarkedPlacesByUserId(Long userId, Pageable pageable, PlaceSortType sortType) {
-        System.out.println("sortType = " + sortType);
-
         // 게시글 전체 갯수 확인
         JPAQuery<Long> totalCountQuery = queryFactory.select(place.count())
                 .from(placeBookmark)
                 .join(placeBookmark.place, place)
                 .where(placeBookmark.user.id.eq(userId), place.placeStatus.eq(PostStatus.APPROVED));
 
-        JPQLQuery<Double> reviewAvg = createReviewAvgSub();
+        JPQLSubQuery<Double> reviewAvg = createReviewAvgSub();
 
-        JPQLQuery<Long> reviewCount = createReviewCountSub();
+        JPQLSubQuery<Long> reviewCount = createReviewCountSub();
 
-        JPQLQuery<Long> bookmarkCount = createBookmarkCountSub();
+        JPQLSubQuery<Long> bookmarkCount = createBookmarkCountSub();
 
         /*
             리스트 생성 쿼리, (생성자에서 placeFileDto 리스트는 제외하여 Projections.constructor 사용에 걸림이 없게 한다.
@@ -141,26 +138,26 @@ public class PlaceBookmarkQDSLRepositoryImpl implements PlaceBookmarkQDSLReposit
         return PageableExecutionUtils.getPage(placeListDtos, pageable, totalCountQuery::fetchOne);
     }
 
-    private JPQLQuery<Double> createReviewAvgSub() {
+    private JPQLSubQuery<Double> createReviewAvgSub() {
         return JPAExpressions.select(placeReview.score.avg())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
     }
 
-    private JPQLQuery<Long> createReviewCountSub() {
+    private JPQLSubQuery<Long> createReviewCountSub() {
         return JPAExpressions.select(placeReview.count())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
     }
 
-    private JPQLQuery<Long> createBookmarkCountSub() {
+    private JPQLSubQuery<Long> createBookmarkCountSub() {
 
         return JPAExpressions.select(placeBookmark.count())
                 .from(placeBookmark)
                 .where(placeBookmark.place.eq(place));
     }
 
-    private JPQLQuery<Long> createInquiryCountSub() {
+    private JPQLSubQuery<Long> createInquiryCountSub() {
         return JPAExpressions.select(placeInquiry.id.count())
                 .from(placeInquiry)
                 .where(placeInquiry.place.eq(place));

@@ -5,6 +5,7 @@ import com.app.spotick.domain.dto.place.review.MypageReviewListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLSubQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -31,15 +32,15 @@ public class PlaceReviewQDSLRepositoryImpl implements PlaceReviewQDSLRepository 
                 .from(placeReview)
                 .where(placeReview.user.id.eq(userId));
 
-        JPQLQuery<Double> reviewAvg = JPAExpressions.select(placeReview.score.avg())
+        JPQLSubQuery<Double> reviewAvg = JPAExpressions.select(placeReview.score.avg())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
 
-        JPQLQuery<Long> reviewCount = JPAExpressions.select(placeReview.count())
+        JPQLSubQuery<Long> reviewCount = JPAExpressions.select(placeReview.count())
                 .from(placeReview)
                 .where(placeReview.placeReservation.place.eq(place));
 
-        JPQLQuery<Long> bookmarkCount = JPAExpressions.select(placeBookmark.count())
+        JPQLSubQuery<Long> bookmarkCount = JPAExpressions.select(placeBookmark.count())
                 .from(placeBookmark)
                 .where(placeBookmark.place.eq(place));
 

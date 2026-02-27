@@ -1,4 +1,4 @@
-package com.app.spotick.config;
+package com.app.spotick.global.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -7,12 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class QueryDslConfiguration {
+public class QueryDslConfig {
+
     @PersistenceContext
     private EntityManager em;
 
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
-        return new JPAQueryFactory(new CustomHibernate5Templates(), em);
+        return new JPAQueryFactory(em);
     }
 }

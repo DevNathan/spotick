@@ -19,9 +19,9 @@
 </head>
 <body>
 
-<div th:replace="~{global-templates/chat :: chat}"></div>
+<div th:replace="~{fragments/chat :: chat}"></div>
 
-<div th:replace="~{global-templates/header-footer :: header}"></div>
+<div th:replace="~{fragments/header-footer :: header}"></div>
 
 <input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
 
@@ -365,7 +365,7 @@
     </div>
 </div>
 
-<div th:replace="~{global-templates/header-footer :: footer}"></div>
+<div th:replace="~{fragments/header-footer :: footer}"></div>
 
 </body>
 

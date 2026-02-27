@@ -4,7 +4,7 @@ import com.app.spotick.domain.entity.user.User;
 import com.app.spotick.domain.entity.user.UserAuthority;
 import com.app.spotick.domain.entity.user.UserProfileFile;
 import com.app.spotick.domain.type.user.UserStatus;
-import com.app.spotick.security.type.OAuthType;
+import com.app.spotick.global.security.type.OAuthType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

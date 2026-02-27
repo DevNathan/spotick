@@ -5,7 +5,7 @@ import com.app.spotick.domain.dto.promotion.PromotionEditDto;
 import com.app.spotick.domain.dto.promotion.PromotionListDto;
 import com.app.spotick.domain.dto.promotion.PromotionRecommendListDto;
 import com.app.spotick.domain.type.promotion.PromotionCategory;
-import com.app.spotick.util.type.PromotionSortType;
+import com.app.spotick.global.util.type.PromotionSortType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 

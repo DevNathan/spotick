@@ -19,8 +19,8 @@
     <title th:text="${place.placeTitle}"/>
 </head>
 <body>
-<div th:replace="~{global-templates/chat :: chat}"></div>
-<header th:replace="~{global-templates/header-footer :: header}"></header>
+<div th:replace="~{fragments/chat :: chat}"></div>
+<header th:replace="~{fragments/header-footer :: header}"></header>
 <input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
 <div class="global-container">
 
@@ -425,7 +425,7 @@
     </div>
 </div>
 
-<footer th:replace="~{global-templates/header-footer :: footer}"></footer>
+<footer th:replace="~{fragments/header-footer :: footer}"></footer>
 
 
 <script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>

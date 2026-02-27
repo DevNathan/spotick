@@ -1,11 +1,10 @@
 package com.app.spotick.repository.ticket.inquiry;
 
 import com.app.spotick.domain.dto.place.inquiry.UnansweredInquiryDto;
-import com.app.spotick.domain.dto.ticket.TicketFileDto;
 import com.app.spotick.domain.dto.ticket.TicketInquiryListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLSubQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +16,11 @@ import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
 
-import static com.app.spotick.domain.entity.ticket.QTicket.*;
-import static com.app.spotick.domain.entity.ticket.QTicketFile.*;
-import static com.app.spotick.domain.entity.ticket.QTicketGrade.*;
-import static com.app.spotick.domain.entity.ticket.QTicketInquiry.*;
-import static com.app.spotick.domain.entity.user.QUser.*;
-import static com.app.spotick.domain.entity.user.QUserProfileFile.*;
+import static com.app.spotick.domain.entity.ticket.QTicket.ticket;
+import static com.app.spotick.domain.entity.ticket.QTicketGrade.ticketGrade;
+import static com.app.spotick.domain.entity.ticket.QTicketInquiry.ticketInquiry;
+import static com.app.spotick.domain.entity.user.QUser.user;
+import static com.app.spotick.domain.entity.user.QUserProfileFile.userProfileFile;
 
 @RequiredArgsConstructor
 public class TicketInquiryQDSLRepositoryImpl implements TicketInquiryQDSLRepository {
@@ -35,7 +33,7 @@ public class TicketInquiryQDSLRepositoryImpl implements TicketInquiryQDSLReposit
                 .from(ticketInquiry)
                 .where(ticketInquiry.user.id.eq(userId));
 
-        JPQLQuery<Integer> lowestPrice = JPAExpressions.select(ticketGrade.price.min())
+        JPQLSubQuery<Integer> lowestPrice = JPAExpressions.select(ticketGrade.price.min())
                 .from(ticketGrade)
                 .where(ticketGrade.ticket.eq(ticket));
 

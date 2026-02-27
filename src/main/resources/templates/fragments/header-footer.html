@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header class="header" id="page-header" th:fragment="header">
+    <div class="header__inner">
+        <div class="header__left">
+            <a class="header__logo" th:href="@{/}">
+                <img alt="로고" th:src="@{/imgs/logo/spotick-logo.svg}">
+            </a>
+            <div class="header__type-selector">
+                <button class="header__type-btn" data-type="place" type="button">장소</button>
+                <button class="header__type-btn" data-type="ticket" type="button">티켓</button>
+                <div class="header__type-current" id="currentContent"></div>
+            </div>
+        </div>
+
+        <nav class="header__center">
+            <ul class="header__nav-list">
+                <li class="header__nav-item-wrap" sec:authorize="hasRole('ADMIN')">
+                    <a class="header__nav-item" th:href="@{/admin/user}">관리자 메뉴</a>
+                </li>
+                <li class="header__nav-item-wrap">
+                    <a class="header__nav-item" th:href="@{/promotion}">홍보 게시판</a>
+                </li>
+                <li class="header__nav-item-wrap">
+                    <a class="header__nav-item" href="#">지도 서비스</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="header__right">
+            <div class="header__auth-before" sec:authorize="!isAuthenticated()">
+                <a class="header__login-btn" th:href="@{/user/login}">로그인</a>
+            </div>
+
+            <div class="header__auth-after" sec:authorize="isAuthenticated()">
+                <div class="header__register-links">
+                    <a class="header__register-btn" href="/place/register">장소 등록</a>
+                    <a class="header__register-btn" href="/ticket/register">티켓 등록</a>
+                </div>
+
+                <div class="header__user-profile" id="usermenu" th:object="${#authentication.principal}">
+                    <img th:alt="*{nickName}"
+                         th:src="*{isDefaultImage
+                    ? '/file/default/display?fileName=' + profileFileName
+                    : '/file/display?fileName=' + profileUploadPath + '/t_' + profileUUID + '_' + profileFileName}">
+                </div>
+
+                <div class="header__icon-btn" id="notification">
+                    <span></span>
+                    <i class="fa-regular fa-bell"></i>
+                </div>
+
+                <a class="header__icon-btn" th:href="@{/mypage/bookmarks}">
+                    <i class="fa-regular fa-bookmark"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="user-menu" sec:authorize="isAuthenticated()">
+            <div class="user-menu__name" sec:authentication="principal.nickName"></div>
+            <hr class="user-menu__divider">
+            <a class="user-menu__item" th:href="@{/mypage/user-info}"><p>개인정보 수정</p></a>
+            <hr class="user-menu__divider">
+            <a class="user-menu__item" th:href="@{/mypage/bookmarks}"><p>북마크</p></a>
+            <a class="user-menu__item" th:href="@{/mypage/reservations}"><p>예약내역</p></a>
+            <a class="user-menu__item" th:href="@{/mypage/inquiries}"><p>문의내역</p></a>
+            <a class="user-menu__item" th:href="@{/mypage/reviews}"><p>후기관리</p></a>
+            <hr class="user-menu__divider">
+            <a class="user-menu__item" th:href="@{/mypage/places}"><p>장소 관리</p></a>
+            <a class="user-menu__item" th:href="@{/mypage/tickets}"><p>티켓팅 관리</p></a>
+            <hr class="user-menu__divider">
+            <a class="user-menu__item" th:href="@{/logout}"><p>로그아웃</p></a>
+        </div>
+
+        <div class="notification" sec:authorize="isAuthenticated()">
+            <div class="notification__header">
+                <div>
+                    <p>알림&nbsp;</p>
+                    <span id="notificationCount"></span>
+                </div>
+                <button class="notification__reload-btn" id="notificationReload" type="button">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+            <div class="notification__body"></div>
+            <div class="loading-wrap show" id="notificationLoadingMark">
+                <img alt="로딩" src="/imgs/loading.svg">
+            </div>
+        </div>
+    </div>
+</header>
+
+<footer class="footer" id="page-footer" th:fragment="footer">
+    <div class="footer__inner">
+        <div class="footer__brand">
+            <span class="footer__copyright">© Spotick, Inc.</span>
+        </div>
+        <nav class="footer__nav">
+            <div class="footer__nav-group">
+                <div class="footer__nav-title" id="footerHome">홈페이지 <i class="fa-solid fa-chevron-up"></i></div>
+                <ul class="footer__popover">
+                    <li class="footer__popover-item"><a th:href="@{/place}">장소</a></li>
+                    <li class="footer__popover-item"><a th:href="@{/ticket}">티켓</a></li>
+                </ul>
+            </div>
+            <a class="footer__nav-link" th:href="@{/promotion}">홍보 게시판</a>
+            <a class="footer__nav-link" href="#">지도 서비스</a>
+            <a class="footer__nav-link" th:href="@{/mypage/user-info}">마이 페이지</a>
+            <a class="footer__nav-link" th:href="@{/mypage/bookmarks}">북마크</a>
+        </nav>
+    </div>
+</footer>
+</body>
+</html>

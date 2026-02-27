@@ -1,6 +1,5 @@
-package com.app.spotick.security.config;
+package com.app.spotick.global.security;
 
-import com.app.spotick.security.handler.CustomLoginFailureHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
