@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-    private final DefaultOAuth2UserService oAuth2UserService;
+    private final OAuth2UserService oAuth2UserService;
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
     @Bean
@@ -33,7 +33,6 @@ public class WebSecurityConfig {
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,6 +64,7 @@ public class WebSecurityConfig {
                                 .anyRequest().permitAll()
 
                 )
+
                 .formLogin((form) -> form
 //                        로그인 페이지의 url설정
                                 .loginPage("/user/login")
@@ -84,14 +84,12 @@ public class WebSecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedPage("/")
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendRedirect("/user/login?gm=true");
+                            response.sendRedirect("/user/login?req=true");
                         })
                 )
 
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/user/login")
-                        .redirectionEndpoint(endpoint ->
-                                endpoint.baseUri("/oauth2/callback/*"))
                         .userInfoEndpoint(endpoint ->
                                 endpoint.userService(oAuth2UserService))
                         .defaultSuccessUrl("/")

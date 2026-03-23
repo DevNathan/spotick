@@ -38,7 +38,7 @@ public class MypageController {
 
     /* ================================================유저정보수정=================================================== */
     @GetMapping("/user-info")
-    public void goToUserInfo(Model model, @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
+    public String goToUserInfo(Model model, @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
         // 가려진 이메일 정보
         String maskedEmail = getMaskedEmail(userDetailsDto.getEmail());
         model.addAttribute("maskedEmail", maskedEmail);
@@ -46,14 +46,18 @@ public class MypageController {
         UserProfileDto userProfileDto = userService.getUserProfile(userDetailsDto.getId());
 
         model.addAttribute("userProfile", userProfileDto);
+
+        model.addAttribute("currentPage", "userInfo");
+
+        return "mypage/user-info";
     }
 
     /* =================================================북마크====================================================== */
     @GetMapping("/bookmarks")
-    public void goToBookmarks(@RequestParam(value = "page", defaultValue = "1") int page,
-                              @RequestParam(value = "sort", defaultValue = "POPULARITY") PlaceSortType sortType,
-                              @AuthenticationPrincipal UserDetailsDto userDetailsDto,
-                              Model model) {
+    public String goToBookmarks(@RequestParam(value = "page", defaultValue = "1") int page,
+                                @RequestParam(value = "sort", defaultValue = "POPULARITY") PlaceSortType sortType,
+                                @AuthenticationPrincipal UserDetailsDto userDetailsDto,
+                                Model model) {
         Pageable pageable = PageRequest.of(page - 1, 6);
 
         Page<PlaceListDto> bookmarkedPlaces = userService.findBookmarkedPlacesByUserId(userDetailsDto.getId(), pageable, sortType);
@@ -62,26 +66,24 @@ public class MypageController {
         model.addAttribute("placeDtoList", bookmarkedPlaces);
         model.addAttribute("sort", sortType);
         model.addAttribute("pagination", pagination);
+
+        model.addAttribute("currentPage", "bookmarks");
+
+        return "mypage/bookmarks";
     }
 
     /* =================================================예약내역====================================================== */
     @GetMapping("/reservations")
-    public void goToReservations(@RequestParam(value = "page", defaultValue = "1") int page,
-                                 @RequestParam(value = "sort", defaultValue = "UPCOMING") PlaceReservationSortType sortType,
-                                 @AuthenticationPrincipal UserDetailsDto userDetailsDto,
-                                 Model model) {
-        Pageable pageable = PageRequest.of(page - 1, 6);
-
-        Page<PlaceReservationListDto> reservations = userService.findReservationsByUserId(userDetailsDto.getId(), pageable, sortType);
-        Pagination<PlaceReservationListDto> pagination = new Pagination<>(5, pageable, reservations);
-
-        model.addAttribute("reservationDtoList", reservations);
-        model.addAttribute("sort", sortType);
-        model.addAttribute("pagination", pagination);
+    public String goToReservations(Model m) {
+        m.addAttribute("currentPage", "reservations");
+        return "mypage/reservations";
     }
+
     /* =================================================문의내역====================================================== */
     @GetMapping("/inquiries")
-    public void goToInquiries() {
+    public String goToInquiries(Model m) {
+        m.addAttribute("currentPage", "inquiries");
+        return "mypage/inquiries";
     }
 
     /* =================================================리뷰내역====================================================== */
@@ -124,10 +126,10 @@ public class MypageController {
 
     /* =================================================장소관리====================================================== */
     @GetMapping("/places")
-    public void goToPlaces(@RequestParam(value = "page", defaultValue = "1") int page,
-                           @RequestParam(value = "sort", defaultValue = "RESERVATION") PlaceManagerSortType sortType,
-                           @AuthenticationPrincipal UserDetailsDto userDetailsDto,
-                           Model model) {
+    public String goToPlaces(@RequestParam(value = "page", defaultValue = "1") int page,
+                             @RequestParam(value = "sort", defaultValue = "RESERVATION") PlaceManagerSortType sortType,
+                             @AuthenticationPrincipal UserDetailsDto userDetailsDto,
+                             Model model) {
         Pageable pageable = PageRequest.of(page - 1, 6);
 
         Page<PlaceManageListDto> hostPlacesPage
@@ -138,12 +140,18 @@ public class MypageController {
         model.addAttribute("hostPlacesPage", hostPlacesPage);
         model.addAttribute("sort", sortType);
         model.addAttribute("pagination", pagination);
+
+        model.addAttribute("currentPage", "places");
+
+        return "mypage/places";
     }
 
     @GetMapping("/places/inquiries/{placeId}")
-    public String goToPlacesInquiryList(@PathVariable("placeId") Long placeId,
-                                        @AuthenticationPrincipal UserDetailsDto userDetailsDto,
-                                        Model model) {
+    public String goToPlacesInquiryList(
+            @PathVariable("placeId") Long placeId,
+            @AuthenticationPrincipal UserDetailsDto userDetailsDto,
+            Model model
+    ) {
 
         ContractedPlaceDto placeDto = userService.findPlaceBriefly(placeId, userDetailsDto.getId()).orElseThrow(
                 NoSuchElementException::new
@@ -151,7 +159,7 @@ public class MypageController {
 
         model.addAttribute("placeDto", placeDto);
 
-        return "/mypage/places/inquiries";
+        return "mypage/places/inquiries";
     }
 
     @GetMapping("/places/reservations/{placeId}")
@@ -165,7 +173,7 @@ public class MypageController {
 
         model.addAttribute("placeDto", placeDto);
 
-        return "/mypage/places/reservations";
+        return "mypage/places/reservations";
     }
 
     /* =================================================티켓관리====================================================== */
@@ -200,7 +208,7 @@ public class MypageController {
 
         model.addAttribute("ticketInfo", ticketInfo);
 
-        return "/mypage/tickets/inquiries";
+        return "mypage/tickets/inquiries";
     }
 
     private String getMaskedEmail(String email) {

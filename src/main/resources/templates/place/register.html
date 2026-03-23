@@ -1,248 +1,295 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Spotick | 장소 등록</title>
-    <link th:href="@{/imgs/logo/favicon.png}" rel="icon">
-    <link rel="stylesheet" th:href="@{/css/global-css/root.css}">
-    <link rel="stylesheet" th:href="@{/css/place/register.css}"/>
+    <title layout:fragment="title" th:text="${placeEditDto != null ? 'Spotick | 장소 수정' : 'Spotick | 장소 등록'}"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/place/register.min.css}"/>
 </head>
 <body>
 
-<header th:replace="~{fragments/header-footer :: header}"></header>
+<main layout:fragment="content" class="register-page" th:with="isEdit=${placeEditDto != null}">
+    <div class="register-container">
+        <div class="register-header">
+            <h1 class="register-header__title" th:text="${isEdit ? '장소 정보 수정' : '장소 등록 신청'}"></h1>
+            <p class="register-header__subtitle"
+               th:text="${isEdit ? '장소 정보 수정 시 관리자의 승인 이후 변경이 반영됩니다.' : '당신의 특별한 공간을 스포틱에 공유하고 호스트가 되어보세요.'}"></p>
+        </div>
 
-<div class="body">
-    <div class="place-register-container">
-        <form th:action="@{/place/register}" method="post" onsubmit="disableSubmitBtn()"
-              class="register-form" enctype="multipart/form-data" th:object="${placeRegisterDto}">
-            <div class="guide-title-box">
-                <p>장소 등록 신청</p>
-            </div>
+        <form th:if="${!isEdit}" th:action="@{/place/register}" method="post" id="registerForm" class="register-form"
+              enctype="multipart/form-data" th:object="${placeRegisterDto}">
+            <th:block th:replace="~{::form-fields(isEdit=false)}"></th:block>
+        </form>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">장소 이름</p>
-                    <img src="/imgs/invalid.svg" alt="필수입력">
-                    <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeName}"></p>
-                </div>
-                <div class="input-box">
-                    <input type="text" th:field="*{placeName}" placeholder="장소를 대표하는 이름을 입력해 주세요" required>
-                </div>
-            </div>
-
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">장소 소제목</p>
-                    <img src="/imgs/invalid.svg" alt="필수입력">
-                    <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeSubTitle}"></p>
-                </div>
-                <div class="input-box">
-                    <input type="text" th:field="*{placeSubTitle}" placeholder="장소를 짧게 나타내는 소제목을 입력해주세요"
-                           required>
-                </div>
-            </div>
-
-
-            <div class="map-box">
-                <div class="input-guide flex">
-                    <p class="input-title">위치 검색</p>
-                    <p class="guide-msg">장소를 검색하신 후 클릭하여 핀을 찍어주세요</p>
-                </div>
-                <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeLat}"></p>
-                <div class="search-wrap">
-                    <div class="input-box search-box">
-                        <input id="search" type="text" placeholder="장소를 검색해주세요">
-                    </div>
-
-                    <div class="flex-align-center">
-                        <button type="button" class="search-btn">
-                            <i class="fa-solid fa-magnifying-glass" style="color: #343434;"></i>
-                        </button>
-                    </div>
-                </div>
-                <div id="map"></div>
-                <input th:field="*{placeLat}" type="hidden" name="placeLat">
-                <input th:field="*{placeLng}" type="hidden" name="placeLng">
-            </div>
-
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">장소 주소</p>
-                    <img src="/imgs/invalid.svg" alt="필수입력">
-                    <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeAddressDetail}"></p>
-                </div>
-                <div class="input-box">
-                    <input type="text" th:field="*{placeAddress}" placeholder="장소 주소를 입력해 주세요" required>
-                </div>
-                <div class="input-box">
-                    <input type="text" th:field="*{placeAddressDetail}"
-                           placeholder="장소의 상세 주소를 입력해 주세요" required>
-                </div>
-            </div>
-
-            <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeFiles}"></p>
-            <div class="img-wrap">
-                <input type="file" th:field="*{placeFiles}" accept="image/*" multiple>
-                <label for="placeFiles" class="file-label flex-align-center">
-                    <i class="fa-regular fa-image"></i>
-                    <p>장소 사진을 넣어주세요</p>
-                </label>
-                <div class="file-container none">
-                    <ul class="file-wrap">
-                    </ul>
-
-                    <div class="img-button-box">
-                        <button type="button" class="prev">
-                            <i class="fa-solid fa-circle-chevron-left"></i>
-                        </button>
-                        <div></div>
-                        <button type="button" class="next">
-                            <i class="fa-solid fa-circle-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">장소 설명</p>
-                    <img src="/imgs/invalid.svg" alt="필수입력">
-                    <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeInfo}"></p>
-                </div>
-                <label for="placeInfo" class="input-box textarea-box">
-                    <textarea th:field="*{placeInfo}"
-                              placeholder="장소에 대해서 자세하게 설명해주세요" required></textarea>
-                </label>
-            </div>
-
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">장소 이용규칙</p>
-                    <img src="/imgs/invalid.svg" alt="필수입력">
-                    <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeRule}"></p>
-                </div>
-                <label for="placeRule" class="input-box textarea-box">
-                    <textarea th:field="*{placeRule}"
-                              placeholder="장소 이용규칙에 대해서 적어주세요" required>- 대여 시간보다 적게 사용 하더라도 대관비는 환불되지 않습니다.
-
-                        - 기물 파손 및 청소 등의 사유로 보증금을 호스트에게 입금하여야 합니다.
-
-                        - 사용자 인원이나 사용 시간이 추가될 경우, 현장에서 추가 과금이 진행됩니다.
-
-                        - 입실은 정시, 퇴실은 5분 전에 준비해서 예약 시간 안에 이용
-
-                        - 시설 훼손 및 기물 파손 시 손해액을 호스트에게 배상하여야 합니다.
-                        (CCTV는 방범/분실/기물파손/인원확인 등의 이유로 녹화됨)
-
-                        - 이용 후, 쓰레기(일반/재활용/음식물) 분리수거를 꼭 진행해주세요. 미 진행 시, 추가요금이 청구될 수 있습니다.</textarea>
-                </label>
-            </div>
-
-            <div class="price-people-container">
-                <div class="input-wrap hour-price-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title price-title">시간당 대여 금액</p>
-                        <img src="/imgs/invalid.svg" alt="필수입력">
-                        <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeDefaultPrice}"></p>
-                    </div>
-                    <div class="input-box">
-                        <input th:field="*{placeDefaultPrice}" min="0" type="number"
-                               placeholder="금액을 입력해주세요"
-                               required>
-                        <p class="unit">원</p>
-                    </div>
-                </div>
-                <div class="input-wrap hour-price-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title">할증금액</p>
-                        <img src="/imgs/invalid.svg" alt="필수입력">
-                        <p class="guide-msg">기본 인원을 초과하면 해당 금액만큼 할증이 붙어요</p>
-                        <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeSurcharge}"></p>
-                    </div>
-                    <div class="input-box">
-                        <input th:field="*{placeSurcharge}" min="1" type="number"
-                               placeholder="할증 금액을 입력해주세요">
-                        <p class="unit">원</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-wrap default-people-container">
-                <div class="input-guide flex">
-                    <p class="input-title">기본 인원</p>
-                    <img src="/imgs/invalid.svg" alt="필수입력">
-                    <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{placeDefaultPeople}"></p>
-                </div>
-                <div class="input-box">
-                    <input th:field="*{placeDefaultPeople}" min="1" type="number"
-                           placeholder="장소의 기본 이용인원을 적어주세요" required>
-                    <p class="unit">명</p>
-                </div>
-            </div>
-
-            <div class="guide-title-box">
-                <p>호스트 정보</p>
-            </div>
-
-            <div class="price-people-container">
-                <div class="input-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title">예금주</p>
-                        <img src="/imgs/invalid.svg" alt="필수입력">
-                        <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{accountHolder}"></p>
-                    </div>
-                    <div class="input-box">
-                        <input th:field="*{accountHolder}" type="text"
-                               placeholder="예금주를 입력해주세요"
-                               required>
-                    </div>
-                </div>
-                <div class="input-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title">은행명</p>
-                        <img src="/imgs/invalid.svg" alt="필수입력">
-                        <p class="invalid-msg"></p>
-                    </div>
-                    <div class="input-box select-box">
-                        <select class="select" th:field="*{bankName}">
-                            <option selected value="국민">국민</option>
-                            <option value="우리">우리</option>
-                            <option value="농협">농협</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">계좌번호</p>
-                    <img src="/imgs/invalid.svg" alt="필수입력">
-                    <p class="invalid-msg" th:if="${#fields.hasErrors()}" th:errors="*{accountNumber}"></p>
-                </div>
-                <div class="input-box">
-                    <input th:field="*{accountNumber}" type="text"  placeholder="계좌번호를 입력해주세요"
-                           required>
-                </div>
-            </div>
-            <div class="flex-center start">
-                <a th:href="@{/place/list}" class="cancel flex-align-center">취소</a>
-                <button id="submit" class="submit-btn flex-align-center on">신청하기</button>
-            </div>
+        <form th:if="${isEdit}" th:action="@{/place/edit/{id}(id=*{placeId})}" method="post" id="registerForm"
+              class="register-form" enctype="multipart/form-data" th:object="${placeEditDto}">
+            <th:block th:replace="~{::form-fields(isEdit=true)}"></th:block>
         </form>
     </div>
-</div>
+</main>
 
+<th:block th:fragment="form-fields(isEdit)">
+    <div id="savedFilesContainer" th:if="${isEdit}" style="display: none;">
+        <th:block th:each="file : *{placeSavedFileDtos}">
+            <input type="hidden" name="saveFileIdList" th:value="${file.placeFileId}">
+        </th:block>
+    </div>
 
-<footer th:replace="~{fragments/header-footer :: footer}"></footer>
+    <section class="register-section">
+        <h2 class="register-section__title">1. 기본 정보</h2>
 
-<script src="https://kit.fontawesome.com/c6992f5b12.js" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3dc12d7c2624483dc7c019a0a91b727f&libraries=services"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/loading.js}"></script>
-<script th:src="@{/js/place/register/register.js}"></script>
-<script th:src="@{/js/place/register/kakaoMapApi.js}"></script>
+        <div class="register-form__field">
+            <div class="register-form__label-group">
+                <label class="register-form__label">장소 이름</label>
+                <span class="register-form__required"></span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('placeName')}" th:errors="*{placeName}"></p>
+            </div>
+            <div class="register-form__input-wrapper">
+                <input type="text" th:field="*{placeName}" class="register-form__input"
+                       placeholder="장소를 대표하는 이름을 입력해 주세요" required>
+            </div>
+        </div>
+
+        <div class="register-form__field">
+            <div class="register-form__label-group">
+                <label class="register-form__label">장소 소제목</label>
+                <span class="register-form__required"></span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('placeSubTitle')}"
+                   th:errors="*{placeSubTitle}"></p>
+            </div>
+            <div class="register-form__input-wrapper">
+                <input type="text" th:field="*{placeSubTitle}" class="register-form__input"
+                       placeholder="장소를 짧게 나타내는 소제목을 입력해주세요" required>
+            </div>
+        </div>
+    </section>
+
+    <section class="register-section">
+        <h2 class="register-section__title">2. 위치 정보</h2>
+
+        <div class="register-form__field">
+            <div class="register-form__label-group">
+                <label class="register-form__label">위치 검색</label>
+                <span class="register-form__guide">검색 후 지도에서 정확한 핀 위치를 클릭해주세요.</span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('placeLat')}" th:errors="*{placeLat}"></p>
+            </div>
+            <div class="register-form__search-wrap">
+                <div class="register-form__input-wrapper">
+                    <input id="search" type="text" class="register-form__input" placeholder="장소를 검색해주세요">
+                    <button type="button" class="register-form__search-btn" id="mapSearchBtn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="map" class="register-form__map"></div>
+            <input th:field="*{placeLat}" type="hidden" id="placeLat" name="placeLat">
+            <input th:field="*{placeLng}" type="hidden" id="placeLng" name="placeLng">
+        </div>
+
+        <div class="register-form__field">
+            <div class="register-form__label-group">
+                <label class="register-form__label">장소 주소</label>
+                <span class="register-form__required"></span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('placeAddressDetail')}"
+                   th:errors="*{placeAddressDetail}"></p>
+            </div>
+            <div class="register-form__input-group">
+                <div class="register-form__input-wrapper">
+                    <input type="text" th:field="*{placeAddress}" id="placeAddress"
+                           class="register-form__input register-form__input--readonly"
+                           placeholder="지도에서 핀을 클릭하면 주소가 입력됩니다" readonly required>
+                </div>
+                <div class="register-form__input-wrapper">
+                    <input type="text" th:field="*{placeAddressDetail}" class="register-form__input"
+                           placeholder="상세 주소를 입력해 주세요" required>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="register-section">
+        <h2 class="register-section__title">3. 공간 소개</h2>
+
+        <div class="register-form__field">
+            <div class="register-form__label-group">
+                <label class="register-form__label">장소 사진</label>
+                <span class="register-form__required"></span>
+
+                <th:block th:if="${!isEdit}">
+                    <p class="register-form__error" th:if="${#fields.hasErrors('placeFiles')}"
+                       th:errors="*{placeFiles}"></p>
+                </th:block>
+                <th:block th:if="${isEdit}">
+                    <p class="register-form__error" th:if="${#fields.hasErrors('placeNewFiles')}"
+                       th:errors="*{placeNewFiles}"></p>
+                </th:block>
+
+                <p class="register-form__error" th:if="${fileError != null}" th:text="${fileError}"></p>
+            </div>
+
+            <div class="image-uploader" id="imageUploader">
+                <input type="file" id="placeFiles" th:name="${isEdit ? 'placeNewFiles' : 'placeFiles'}" accept="image/*"
+                       multiple hidden>
+
+                <label for="placeFiles" class="image-uploader__empty" id="imageEmptyState">
+                    <i class="fa-regular fa-image"></i>
+                    <p>클릭하여 장소 사진을 업로드하세요 (총 5장 필수)</p>
+                </label>
+
+                <div class="image-uploader__preview image-uploader__preview--hidden" id="imagePreviewState">
+                    <div class="image-uploader__slider" id="imageSlider">
+                        <th:block th:if="${isEdit}">
+                            <div class="image-uploader__item is-saved" th:each="file : *{placeSavedFileDtos}">
+                                <img th:src="@{/file/display(fileName=${file.uploadPath} + '/t_' + ${file.uuid} + '_' + ${file.fileName})}"
+                                     alt="저장된 이미지">
+                                <button type="button" class="image-uploader__delete-btn"
+                                        th:data-saved-id="${file.placeFileId}"><i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </th:block>
+                    </div>
+                    <button type="button" class="image-uploader__nav image-uploader__nav--prev" id="imgPrevBtn"><i
+                            class="fa-solid fa-chevron-left"></i></button>
+                    <button type="button" class="image-uploader__nav image-uploader__nav--next" id="imgNextBtn"><i
+                            class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="register-form__field">
+            <div class="register-form__label-group">
+                <label class="register-form__label">장소 설명</label>
+                <span class="register-form__required"></span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('placeInfo')}" th:errors="*{placeInfo}"></p>
+            </div>
+            <div class="register-form__textarea-wrapper">
+                <textarea th:field="*{placeInfo}" class="register-form__textarea" placeholder="장소에 대해서 자세하게 설명해주세요"
+                          required></textarea>
+            </div>
+        </div>
+
+        <div class="register-form__field">
+            <div class="register-form__label-group">
+                <label class="register-form__label">장소 이용규칙</label>
+                <span class="register-form__required"></span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('placeRule')}" th:errors="*{placeRule}"></p>
+            </div>
+            <div class="register-form__textarea-wrapper">
+                <textarea id="placeRule" name="placeRule" class="register-form__textarea" placeholder="이용규칙을 입력해주세요"
+                          required
+                          th:text="*{placeRule} != null ? *{placeRule} : '- 대여 시간보다 적게 사용 하더라도 대관비는 환불되지 않습니다.&#10;- 기물 파손 및 청소 등의 사유로 보증금을 호스트에게 입금하여야 합니다.&#10;- 사용자 인원이나 사용 시간이 추가될 경우, 현장에서 추가 과금이 진행됩니다.&#10;- 이용 후, 쓰레기 분리수거를 꼭 진행해주세요.'"></textarea>
+            </div>
+        </div>
+    </section>
+
+    <section class="register-section">
+        <h2 class="register-section__title">4. 이용 및 요금</h2>
+
+        <div class="register-form__row">
+            <div class="register-form__field register-form__field--half">
+                <div class="register-form__label-group">
+                    <label class="register-form__label">시간당 대여 금액</label>
+                    <span class="register-form__required"></span>
+                    <p class="register-form__error" th:if="${#fields.hasErrors('placeDefaultPrice')}"
+                       th:errors="*{placeDefaultPrice}"></p>
+                </div>
+                <div class="register-form__input-wrapper">
+                    <input th:field="*{placeDefaultPrice}" type="number" min="0"
+                           class="register-form__input register-form__input--right" placeholder="0" required>
+                    <span class="register-form__unit">원</span>
+                </div>
+            </div>
+
+            <div class="register-form__field register-form__field--half">
+                <div class="register-form__label-group">
+                    <label class="register-form__label">할증 금액 (인원 초과시)</label>
+                    <span class="register-form__required"></span>
+                    <p class="register-form__error" th:if="${#fields.hasErrors('placeSurcharge')}"
+                       th:errors="*{placeSurcharge}"></p>
+                </div>
+                <div class="register-form__input-wrapper">
+                    <input th:field="*{placeSurcharge}" type="number" min="0"
+                           class="register-form__input register-form__input--right" placeholder="0" required>
+                    <span class="register-form__unit">원</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="register-form__field register-form__field--half">
+            <div class="register-form__label-group">
+                <label class="register-form__label">기본 인원</label>
+                <span class="register-form__required"></span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('placeDefaultPeople')}"
+                   th:errors="*{placeDefaultPeople}"></p>
+            </div>
+            <div class="register-form__input-wrapper">
+                <input th:field="*{placeDefaultPeople}" type="number" min="1"
+                       class="register-form__input register-form__input--right" placeholder="1" required>
+                <span class="register-form__unit">명</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="register-section">
+        <h2 class="register-section__title">5. 정산 정보</h2>
+
+        <div class="register-form__row">
+            <div class="register-form__field register-form__field--half">
+                <div class="register-form__label-group">
+                    <label class="register-form__label">예금주</label>
+                    <span class="register-form__required"></span>
+                    <p class="register-form__error" th:if="${#fields.hasErrors('accountHolder')}"
+                       th:errors="*{accountHolder}"></p>
+                </div>
+                <div class="register-form__input-wrapper">
+                    <input th:field="*{accountHolder}" type="text" class="register-form__input" placeholder="예금주 성명"
+                           required>
+                </div>
+            </div>
+
+            <div class="register-form__field register-form__field--half">
+                <div class="register-form__label-group">
+                    <label class="register-form__label">은행명</label>
+                    <span class="register-form__required"></span>
+                </div>
+                <div class="register-form__input-wrapper">
+                    <select class="register-form__select" th:field="*{bankName}">
+                        <option value="국민" selected>국민은행</option>
+                        <option value="신한">신한은행</option>
+                        <option value="우리">우리은행</option>
+                        <option value="농협">농협은행</option>
+                        <option value="카카오뱅크">카카오뱅크</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="register-form__field" style="margin-bottom: 0;">
+            <div class="register-form__label-group">
+                <label class="register-form__label">계좌번호</label>
+                <span class="register-form__required"></span>
+                <p class="register-form__error" th:if="${#fields.hasErrors('accountNumber')}"
+                   th:errors="*{accountNumber}"></p>
+            </div>
+            <div class="register-form__input-wrapper">
+                <input th:field="*{accountNumber}" type="text" class="register-form__input" placeholder="'-' 제외 입력"
+                       required>
+            </div>
+        </div>
+    </section>
+
+    <div class="register-actions">
+        <a th:href="@{/place/list}" class="register-actions__btn register-actions__btn--cancel">취소</a>
+        <button type="submit" id="submitBtn" class="register-actions__btn register-actions__btn--submit"
+                th:text="${isEdit ? '수정 완료' : '등록 완료'}"></button>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript"
+            th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsKey}&libraries=services&autoload=false|"></script>
+    <script type="module" th:src="@{/dist/js/place/register.min.js}"></script>
+</th:block>
 </body>
 </html>

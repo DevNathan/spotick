@@ -1,100 +1,78 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mypage/layout}"
+      th:with="currentPage='tickets'">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Spotick | 티켓팅 > 문의</title>
-    <link href="/imgs/logo/favicon.png" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <link href="/css/mypage/mypage.css" rel="stylesheet">
-    <link href="/css/mypage/mypage-modal.css" rel="stylesheet">
-    <link href="/css/ticket/ticket-register.css" rel="stylesheet"/>
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/2364e2b536.js"></script>
+    <title layout:fragment="title">Spotick | 티켓 문의 관리</title>
+    <th:block layout:fragment="mypage-css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" th:href="@{/dist/css/mypage/ti-inquiries.min.css}">
+    </th:block>
 </head>
-
 <body>
-<div>
-    <div th:replace="~{fragments/chat :: chat}"></div>
+<div layout:fragment="mypage-content">
+    <input type="hidden" id="ticketId" th:value="${ticketInfo.ticketId}">
+    <input type="hidden" id="startDate" th:value="${ticketInfo.startDate}">
+    <input type="hidden" id="endDate" th:value="${ticketInfo.endDate}">
 
-    <div class="modal-bg" id="modal">
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
-        <div class="modal-place" id="ticketModal"></div>
+    <div class="ti-header">
+        <h2 class="ti-header__title">티켓 문의 관리</h2>
+        <a th:href="@{/mypage/tickets}" class="ti-header__back"><i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기</a>
     </div>
 
-    <header th:replace="~{fragments/header-footer :: header}"></header>
+    <div class="ti-container">
+        <main class="ti-main">
+            <h3 class="ti-section-title">들어온 문의</h3>
+            <div class="ti-list" id="inquiryList">
+            </div>
+            <div class="ti-loading" id="loadingSpinner" style="display: none;">
+                <img src="/imgs/loading.svg" alt="로딩 중">
+            </div>
+            <div id="scrollTarget" style="height: 10px; width: 100%;"></div>
+        </main>
 
-    <main class="my-page-main" id="page-body">
-        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
-        <div class="mp-content">
-            <article>
-                <div class="mpc-title">
-                    <div class="flex items-center">
-                        <h2>티켓팅 관리</h2>
-                        <i class="fa-solid fa-angle-right"></i>
-                        <h2>문의</h2>
-                    </div>
+        <aside class="ti-sidebar">
+            <div class="ti-sales-box">
+                <h3 class="ti-section-title">티켓 판매 현황</h3>
+                <div class="ti-calendar-wrap">
+                    <input type="hidden" id="selectedDate">
+                    <div id="salesDatePicker"></div>
                 </div>
-                <div class="mpct-content-wrap">
-                    <div class="mpcp-list" style="width: 45%">
-                        <div id="inquiryContainer"></div>
-                        <div class="loading-wrap" id="mpLoadingMark">
-                            <img alt="" src="/imgs/loading.svg">
-                        </div>
-                    </div>
-                    <div class="mpc-ticket-detail-con" id="ticketDetail" th:object="${ticketInfo}">
-                        <div class="mpctd-title">
-                            <p th:text="*{title}"></p>
-                        </div>
-                        <p>행사 장소 주소</p>
-                        <label class="mpctd-input-con" style="margin-bottom: 8px">
-                            <input readonly="" th:value="*{ticketAddress.address}" type="text">
-                        </label>
-                        <label class="mpctd-input-con" style="margin-bottom: 40px">
-                            <input readonly="" th:value="*{ticketAddress.addressDetail}" type="text">
-                        </label>
-
-                        <p>날짜 선택</p>
-                        <div class="date-pick-container" id="detailDates"></div>
-
-                        <p>티켓 판매 현황</p>
-                        <div class="mpctd-ticket-container" id="ticket-regular">
-                            <table class="ticket-table">
-                                <thead>
-                                <tr>
-                                    <td>등급</td>
-                                    <td>가격</td>
-                                    <td>판매수</td>
-                                    <td>총 좌석수</td>
-                                </tr>
-                                </thead>
-
-                                <tbody id="detailGrades">
-                                </tbody>
-                                <div class="loading-wrap" id="loadingMark">
-                                    <img alt="" src="/imgs/loading.svg">
-                                </div>
-                            </table>
-                        </div>
-                    </div>
+                <div class="ti-grade-container">
+                    <table class="ti-grade-table">
+                        <thead>
+                        <tr>
+                            <th>등급</th>
+                            <th>가격</th>
+                            <th>판매수</th>
+                            <th>총 좌석</th>
+                        </tr>
+                        </thead>
+                        <tbody id="gradeList">
+                        </tbody>
+                    </table>
                 </div>
-            </article>
+            </div>
+        </aside>
+    </div>
+
+    <div class="ti-modal-overlay" id="replyModal">
+        <div class="ti-modal">
+            <button class="ti-modal__close" id="replyModalClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="ti-modal__title">문의 답변하기</h3>
+            <input type="hidden" id="targetInquiryId">
+            <div class="ti-modal__textarea-box">
+                <textarea class="ti-modal__textarea" id="replyContent" rows="6" placeholder="답변 내용을 작성해주세요 (최대 200자)"></textarea>
+                <div class="ti-modal__counter"><span id="replyLength">0</span>/200자</div>
+            </div>
+            <button class="ti-btn ti-btn--submit" id="replySubmitBtn" type="button" disabled>답변 등록</button>
         </div>
-    </main>
-
-    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
+    </div>
 </div>
+
+<th:block layout:fragment="mypage-script">
+    <script type="module" th:src="@{/dist/js/mypage/ti-inquiries.min.js}"></script>
+</th:block>
 </body>
-<script th:inline="javascript">
-    document.getElementById('tickets').classList.add('active');
-
-    const {ticketId, startDate, endDate} = [[${ticketInfo}]];
-</script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/mypage/ticket-inquiry.js}" type="module"></script>
-
 </html>

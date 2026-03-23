@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      th:with="currentAdminPage='pay'">
+<head>
+    <title layout:fragment="title">Spotick | 결제 관리</title>
+    <link rel="stylesheet" th:href="@{/dist/css/admin/payment.min.css}">
+</head>
+<body>
+
+<div layout:fragment="admin-content">
+    <div class="admin-header">
+        <h2>결제 관리</h2>
+        <div class="admin-tabs">
+            <a href="#" class="active">결제 내역</a>
+        </div>
+    </div>
+
+    <form class="admin-search-form" onsubmit="return false;">
+        <div class="search-group">
+            <label>주문자 : <input type="text" id="email" placeholder="이메일" class="search-input"></label>
+            <label>결제수단 :
+                <select id="paymentMethod" class="search-select">
+                    <option value="">전체</option>
+                    <option value="CARD">신용카드</option>
+                    <option value="TRANSFER">계좌이체</option>
+                    <option value="KAKAOPAY">카카오페이</option>
+                </select>
+            </label>
+            <button type="button" class="search-btn">검색</button>
+        </div>
+    </form>
+
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>주문번호</th>
+                <th>주문자(이메일)</th>
+                <th>결제 금액</th>
+                <th>결제 수단</th>
+                <th>결제일</th>
+                <th>상태</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody id="paymentTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<th:block layout:fragment="admin-script">
+    <script type="module" th:src="@{/dist/js/admin/payment.min.js}"></script>
+</th:block>
+
+</body>
+</html>

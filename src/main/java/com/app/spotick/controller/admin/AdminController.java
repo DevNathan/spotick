@@ -18,35 +18,35 @@ public class AdminController {
     @GetMapping("/user")
     public String adminUser(Model model){
         model.addAttribute("enumValues",getDisplayableDtoList(UserStatus.values()));
-        return "admin/adminUser";
+        return "admin/user";
     }
 
     @GetMapping("/place")
     public String adminBoard(Model model){
         model.addAttribute("enumValues",getDisplayableDtoList(PostStatus.values()));
-        return "admin/adminPlace";
+        return "admin/place";
     }
     @GetMapping("/ticket")
     public String adminTicket(Model model){
         model.addAttribute("enumValues",getDisplayableDtoList(PostStatus.values()));
-        return "admin/adminTicket";
+        return "admin/ticket";
     }
 
     @GetMapping("/reply")
     public String adminReply(){
 
-        return "admin/adminReply";
+        return "admin/reply";
     }
 
     @GetMapping("/pay")
     public String adminPay(){
 
-        return "admin/adminPayment";
+        return "admin/payment";
     }
 
     @GetMapping("/approval")
     public String adminApproval(){
 
-        return "admin/adminApproval";
+        return "admin/approval";
     }
 }

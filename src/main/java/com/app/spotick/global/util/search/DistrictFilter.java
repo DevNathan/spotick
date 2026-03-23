@@ -6,11 +6,11 @@ import java.util.List;
 
 @Data
 public class DistrictFilter {
-    private String district;
-    private List<String> detailDistrict;
+    private String region;
+    private List<String> district;
 
-    public DistrictFilter(String district, List<String> detailDistrict) {
+    public DistrictFilter(String region, List<String> district) {
+        this.region = region;
         this.district = district;
-        this.detailDistrict = detailDistrict;
     }
 }

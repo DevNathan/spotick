@@ -3,535 +3,57 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
-
 <head>
     <title layout:fragment="title">Spotick | 장소 대여</title>
+    <link rel="stylesheet" th:href="@{/dist/css/place/list.min.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/global/district-filter.min.css}">
 </head>
 
-<th:block layout:fragment="css">
-    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" th:href="@{/css/ticket/list-swiper.css}">
-    <link rel="stylesheet" th:href="@{/css/global-css/list.css}">
-</th:block>
-
 <div layout:fragment="content">
-    <div id="page-body">
-        <div id="ListContainer">
-            <div class="FilterContainer pt-20">
-                <label class="search-input-box" for="searchInput">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input id="searchInput" placeholder="검색어를 입력해주세요." type="text">
-                </label>
-                <div class="FilterRightContainer">
-                    <div class="SelectBox" id="sortType">
-                        <button class="SelectBoxBtn" type="button">
-                            <span class="SelectBoxBtnText">인기순</span>
-                            <input id="sortInput" type="hidden">
-                            <img alt="날짜 형식" class="SelectBoxBtnImg" th:src="@{/imgs/arrow_down_gray014.f502da9d.svg}">
-                        </button>
-                        <div class="SelectBoxList">
-                            <button class="SelectBoxListItem"
-                                    th:classappend="${iterStat.index == 0} ? 'SelectBoxListItem-select' : ''"
-                                    th:each="sortType, iterStat : ${T(com.app.spotick.global.util.type.PlaceSortType).values()}"
-                                    th:sortType="${sortType}"
-                                    th:text="${sortType.displayName}" type="button">
-                            </button>
-                        </div>
-                    </div>
-                    <button class="FilterBtn" id="filterBtn" type="button">
-                        <img alt="필터" th:src="@{/imgs/filter_filled_rainyblue086.50bb2e40.svg}">
+    <input type="hidden" id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}">
+
+    <main class="place-list-page">
+        <section class="place-toolbar">
+            <div class="place-search">
+                <i class="fa-solid fa-magnifying-glass place-search__icon"></i>
+                <input id="searchInput" class="place-search__input" placeholder="검색어를 입력해주세요." type="text">
+            </div>
+
+            <div class="place-controls">
+                <div class="place-sort" id="sortTypeBox">
+                    <button class="place-sort__btn" type="button">
+                        <span class="place-sort__text" id="sortTypeText">인기순</span>
+                        <input id="sortInput" type="hidden" value="POPULARITY">
+                        <img alt="정렬" class="place-sort__icon" th:src="@{/imgs/arrow_down_gray014.f502da9d.svg}">
                     </button>
-                </div>
-            </div>
-            <div class="FilterModalContainer" id="filterModal">
-                <div style="position: relative; transform: translateY(0px) translateZ(0px);">
-                    <div class="FilterModal">
-                        <div>
-                            <div class="FilterModalHeader">
-                                <span class="FilterModalHeaderTitle">필터</span>
-                                <button class="FilterModalCloseBtn" id="filterModalClose" type="button">
-                                    <img alt="닫기" class="FilterModalCloseBtnImg" src="/imgs/cross_gray024.c8b03031.svg">
-                                </button>
-                            </div>
-                            <div class="FilterTitleList">
-                                <div class="swiper swiper-initialized swiper-horizontal swiper-pointer-events">
-                                    <div class="swiper-wrapper"
-                                         style="transition-duration: 0ms; transform: translate3d(26px, 0px, 0px);">
-                                        <div class="swiper-slide swiper-slide-active FilterTitle search-filter-title"
-                                             style="margin-right: 27px;">
-                                            <div class="FilterTitleText On">지역</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="FilterContentContainer">
-                            <div class="AreasContainer">
-                                <div class="AreaGroupContainer" id="areaGroupContainer">
-                                    <button class="AreaGroupBtn On" data-target="서울특별시" type="button">서울</button>
-                                    <button class="AreaGroupBtn" data-target="경기도" type="button">경기</button>
-                                    <button class="AreaGroupBtn" data-target="인천광역시" type="button">인천</button>
-                                    <button class="AreaGroupBtn" data-target="부산광역시" type="button">부산</button>
-                                    <button class="AreaGroupBtn" data-target="대전광역시" type="button">대전</button>
-                                    <button class="AreaGroupBtn" data-target="대구광역시" type="button">대구</button>
-                                    <button class="AreaGroupBtn" data-target="울산광역시" type="button">울산</button>
-                                    <button class="AreaGroupBtn" data-target="세종특별자치시" type="button">세종</button>
-                                    <button class="AreaGroupBtn" data-target="광주광역시" type="button">광주</button>
-                                    <button class="AreaGroupBtn" data-target="강원도" type="button">강원</button>
-                                    <button class="AreaGroupBtn" data-target="충청북도" type="button">충북</button>
-                                    <button class="AreaGroupBtn" data-target="충청남도" type="button">충남</button>
-                                    <button class="AreaGroupBtn" data-target="경상북도" type="button">경북</button>
-                                    <button class="AreaGroupBtn" data-target="경상남도" type="button">경남</button>
-                                    <button class="AreaGroupBtn" data-target="전라북도" type="button">전북</button>
-                                    <button class="AreaGroupBtn" data-target="전라남도" type="button">전남</button>
-                                    <button class="AreaGroupBtn" data-target="제주특별자치도" type="button">제주</button>
-                                </div>
-                                <div class="AreasCityContainer On" id="서울특별시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="서울특별시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">서울 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.SeoulDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="경기도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="경기도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">경기 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.GyenggiDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="인천광역시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="인천광역시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">인천 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.IncheonDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="부산광역시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="부산광역시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">부산 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.BusanDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="대전광역시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="대전광역시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">대전 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.DaejeonDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="대구광역시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="대구광역시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">대구 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.DaeguDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="울산광역시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="울산광역시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">울산 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.UlsanDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="세종특별자치시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="세종특별자치시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">세종 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="광주광역시">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="광주광역시" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">광주 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.GwangjuDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="강원도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="강원특별자치도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">강원 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.GangwonDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="충청북도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="충청북도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">충북 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.ChungbukDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="충청남도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="충청남도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">충남 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.ChungnamDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="경상북도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="경상북도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">경북 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.GyeongbukDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="경상남도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="경상남도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">경남 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.GyeongnamDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="전라북도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="전라북도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">전북 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.JeonbukDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="전라남도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="전라남도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">전남 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.JeonnamDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="AreasCityContainer" id="제주특별자치도">
-                                    <div class="AreasCheckboxContainer">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox all" name="제주특별자치도" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText">제주 전체</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="AreasCheckboxContainer"
-                                         th:each="detailDistrict : ${T(com.app.spotick.domain.district.JejuDistrict).values()}">
-                                        <label class="CheckBoxLabel">
-                                            <input class="checkBox" th:name="${detailDistrict}" type="checkbox">
-                                            <div class="CheckBoxContainer">
-                                                <div class="checkBoxImg"></div>
-                                                <span class="CheckBoxText" th:text="${detailDistrict}"></span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="SelectedListContainer" id="selectedListContainer">
-                            <div class="swiper swiper-initialized swiper-horizontal swiper-pointer-events swiper-backface-hidden">
-                                <div class="swiper-wrapper selectItemContainer"
-                                     style="transform: translate3d(26px, 0px, 0px);">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="FilterModalButtonContainer">
-                            <div class="FilterModalButtonInnerContainer">
-                                <button class="FilterResetBtn" id="filterResetBtn" type="button">초기화</button>
-                                <button class="FilterSubmitBtn" id="filterSubmitBtn" type="button">필터적용</button>
-                            </div>
-                        </div>
+                    <div class="place-sort__list">
+                        <button class="place-sort__item place-sort__item--active" data-sort="POPULARITY" type="button">
+                            인기순
+                        </button>
+                        <button class="place-sort__item" data-sort="NEWEST" type="button">최신순</button>
+                        <button class="place-sort__item" data-sort="PRICE_HIGH" type="button">가격 높은순</button>
+                        <button class="place-sort__item" data-sort="PRICE_LOW" type="button">가격 낮은순</button>
                     </div>
                 </div>
+                <button class="place-filter-btn" id="filterOpenBtn" type="button">
+                    <img alt="필터" th:src="@{/imgs/filter_filled_rainyblue086.50bb2e40.svg}">
+                </button>
             </div>
+        </section>
 
-            <div class="content-center" id="contentsContainer">
-                <div class="ListItemsContainer">
-                    <div class="OneItemContainer hover" th:each="place : ${placeList}">
-                        <div class="OneItemImgContainer">
-                            <div class="swiper ImageSwiper swiper-initialized swiper-horizontal swiper-pointer-events swiper-backface-hidden">
-                                <a class="swiper-wrapper ImageLength"
-                                   style="transform: translate3d(0px, 0px, 0px);"
-                                   th:href="@{/place/{placeId}(placeId = ${place.id})}">
-                                    <div class="swiper-slide swiper-slide-active" style="width: 287px;"
-                                         th:each="placeImg :${place.placeFiles}">
-                                        <img class="ItemImg"
-                                             height="1350.6666666666665px" th:alt="${place.title}"
-                                             th:src="@{/file/display(fileName=${placeImg.uploadPath+'/t_'+placeImg.uuid+'_'+placeImg.fileName})}">
-                                    </div>
-                                </a>
-                                <div class="NavigationBtnContainer">
-                                    <button class="NavigationBtn RightBtn" type="button">
-                                        <img alt="다음" th:src="@{/imgs/round_arrow_right_gray024.7f7e18a3.svg}">
-                                    </button>
-                                    <button class="NavigationBtn LeftBtn" type="button">
-                                        <img alt="이전" th:src="@{/imgs/round_arrow_left_gray024.707193e8.svg}">
-                                    </button>
-                                </div>
-                                <div class="ItemImgPagination">
-                                    <p><span class="snapIndex">1</span>/5</p>
-                                </div>
-                            </div>
-                            <button class="ItemBookMarkBtn" th:data-placeid="${place.id}"
-                                    th:data-status="${place.isBookmarkChecked()}" type="button">
-                        <span th:class="${!place.isBookmarkChecked?'':'none'}">
-                            <i class="fa-regular fa-bookmark"></i>
-                        </span>
-                                <span th:class="${place.isBookmarkChecked?'':'none'}">
-                            <i class="fa-solid fa-bookmark" style="color: white"></i>
-                        </span>
-                            </button>
-                        </div>
-                        <div class="ItemTextContainer">
-                            <div class="ItemHostNameContainer">
-                                <span class="ItemHostName" th:text="${place.placeAddress.address}"></span>
-                                <div class="ItemCountsContainer">
-                                    <div class="ItemsStarCountContainer">
-                                        <img alt="후기갯수" class="ItemCountImg"
-                                             th:src="@{/imgs/star_filled_paintYellow056.a8eb6e44.svg}">
-                                        <span class="ItemCountText"
-                                              th:text="${place.evalAvg+'('+place.evalCount+')'}"></span>
-                                    </div>
-                                    <div class="ItemsLikeCountContainer">
-                                        <img alt="북마크갯수" class="bookmark-img" th:src="@{/imgs/bookmark_thin.svg}">
-                                        <span class="ItemCountText bookmark-count"
-                                              th:text="${place.bookmarkCount}"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ItemSpaceNameContainer">
-                                <p class="ItemSpaceName">
-                                    <a th:href="@{/place/{placeId}(placeId = ${place.id})}"
-                                       th:text="${place.title}"></a>
-                                </p>
-                            </div>
-                            <div class="ItemPriceContainer">
-                            <span class="place-price"
-                                  th:text="${#numbers.formatInteger(place.price,1,'COMMA')+'원'}"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div th:replace="~{fragments/district-filter :: filter-modal}"></div>
 
-            <div class="loading-wrap" id="loadingMark">
-                <img alt="" src="/imgs/loading.svg">
-            </div>
+        <section class="place-grid" id="placeGrid"></section>
+
+        <div class="place-loading" id="loadingSpinner">
+            <img alt="로딩" src="/imgs/loading.svg">
         </div>
-    </div>
+
+        <div id="scrollTarget" style="height: 10px; width: 100%;"></div>
+    </main>
 </div>
 
 <th:block layout:fragment="script">
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script th:src="@{/js/global-js/image-slide.js}" type="module"></script>
-    <script th:src="@{/js/place/list/list.js}" type="module"></script>
+    <script th:src="@{/dist/js/place/list.min.js}" type="module"></script>
 </th:block>
-
 </html>

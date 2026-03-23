@@ -1,0 +1,234 @@
+/* 필터 모달 전체 래퍼 */
+.global-filter-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.global-filter-modal--active {
+    display: flex;
+}
+
+.global-filter-modal__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.global-filter-modal__content {
+    position: relative;
+    width: 760px;
+    height: 680px;
+    background: #ffffff;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.global-filter-modal__header {
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #eef0f2;
+}
+
+.global-filter-modal__title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.global-filter-modal__close {
+    position: absolute;
+    right: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #1c1c1e;
+}
+
+.global-filter-modal__tabs {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #eef0f2;
+}
+
+.global-filter-modal__tab {
+    padding: 16px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #8a8a8e;
+    border-bottom: 2px solid transparent;
+}
+
+.global-filter-modal__tab--active {
+    color: #3c82fa;
+    border-bottom-color: #3c82fa;
+}
+
+.global-filter-modal__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.global-filter-modal__sidebar {
+    width: 200px;
+    background: #f8f9fa;
+    overflow-y: auto;
+    border-right: 1px solid #eef0f2;
+}
+
+.global-filter-modal__region-btn {
+    width: 100%;
+    padding: 16px 24px;
+    text-align: left;
+    background: transparent;
+    border: none;
+    font-size: 15px;
+    color: #636366;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.global-filter-modal__region-btn--active {
+    background: #ffffff;
+    color: #3c82fa;
+    font-weight: 700;
+}
+
+.global-filter-modal__districts {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.global-filter-modal__district-group {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    align-content: start;
+}
+
+.global-filter-modal__district-group--active {
+    display: grid;
+}
+
+.global-filter-modal__checkbox-wrap {
+    height: 50px;
+    border-bottom: 1px solid #f4f5f7;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+}
+
+/* 커스텀 체크박스 */
+.global-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.global-checkbox__input {
+    display: none;
+}
+
+.global-checkbox__ui {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d1d1d6;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.global-checkbox__input:checked + .global-checkbox__ui {
+    background-color: #3c82fa;
+    border-color: #3c82fa;
+}
+
+.global-checkbox__input:checked + .global-checkbox__ui::after {
+    content: '';
+    width: 5px;
+    height: 10px;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-bottom: 2px;
+}
+
+.global-checkbox__text {
+    font-size: 15px;
+    color: #1c1c1e;
+}
+
+/* 선택된 태그 목록 */
+.global-filter-modal__selected-tags {
+    padding: 16px 24px;
+    background: #ffffff;
+    border-top: 1px solid #eef0f2;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.global-filter-modal__tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #eef5ff;
+    color: #3c82fa;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.global-filter-modal__tag-close {
+    cursor: pointer;
+}
+
+/* 푸터 버튼 */
+.global-filter-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #eef0f2;
+}
+
+.global-filter-modal__reset-btn, .global-filter-modal__submit-btn {
+    height: 48px;
+    padding: 0 32px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+}
+
+.global-filter-modal__reset-btn {
+    background: #f4f5f7;
+    color: #636366;
+}
+
+.global-filter-modal__submit-btn {
+    background: #3c82fa;
+    color: #ffffff;
+}

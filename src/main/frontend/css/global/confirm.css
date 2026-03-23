@@ -1,0 +1,105 @@
+/* Spotick Global Confirm Modal */
+.spotick-confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    backdrop-filter: blur(2px);
+}
+
+.spotick-confirm-overlay--active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.spotick-confirm-box {
+    width: 360px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 24px 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.spotick-confirm-overlay--active .spotick-confirm-box {
+    transform: scale(1) translateY(0);
+}
+
+.spotick-confirm-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1c1c1e;
+    margin-bottom: 12px;
+}
+
+.spotick-confirm-msg {
+    font-size: 15px;
+    color: #636366;
+    line-height: 1.5;
+    margin-bottom: 28px;
+    word-break: keep-all;
+}
+
+.spotick-confirm-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+
+.spotick-confirm-btn {
+    flex: 1;
+    height: 48px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.spotick-confirm-btn:active {
+    transform: scale(0.97);
+}
+
+.spotick-confirm-btn--cancel {
+    background-color: #f4f5f7;
+    color: #636366;
+}
+
+.spotick-confirm-btn--cancel:hover {
+    background-color: #eef0f2;
+}
+
+/* Point 타입: 일반적인 승인, 확인 */
+.spotick-confirm-btn--point {
+    background-color: #3c82fa;
+    color: #ffffff;
+}
+
+.spotick-confirm-btn--point:hover {
+    background-color: #2a6df0;
+}
+
+/* Destroy 타입: 삭제, 비활성화 등 위험한 작업 */
+.spotick-confirm-btn--destroy {
+    background-color: #ff3b30;
+    color: #ffffff;
+}
+
+.spotick-confirm-btn--destroy:hover {
+    background-color: #e02a20;
+}

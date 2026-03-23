@@ -1,173 +1,119 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mypage/layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Spotick | 북마크</title>
-    <link href="/imgs/logo/favicon.png" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <link href="/css/mypage/mypage.css" rel="stylesheet">
-    <link href="/css/global-css/post-list-card-item.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/2364e2b536.js"></script>
+    <title layout:fragment="title">Spotick | 북마크</title>
+    <link rel="stylesheet" th:href="@{/dist/css/place/place-card.min.css}">
+    <link rel="stylesheet" th:href="@{/dist/css/mypage/bookmarks.min.css}">
 </head>
 
-<body>
-<div>
-    <div th:replace="~{fragments/chat :: chat}"></div>
+<div layout:fragment="mypage-content">
+    <header class="bookmark-header">
+        <h2 class="bookmark-title">북마크</h2>
+        <div class="place-sort" id="sortTypeBox">
+            <button class="place-sort__btn" type="button">
+                <span class="place-sort__text" th:text="${sort != null ? sort.displayName : '인기순'}">인기순</span>
+                <img alt="정렬" class="place-sort__icon" th:src="@{/imgs/arrow_down_gray014.f502da9d.svg}">
+            </button>
+            <div class="place-sort__list">
+                <button class="place-sort__item"
+                        th:each="sortTypeItem : ${T(com.app.spotick.global.util.type.PlaceSortType).values()}"
+                        th:data-sort="${sortTypeItem.name()}"
+                        th:text="${sortTypeItem.displayName}"
+                        th:classappend="${sort != null and sortTypeItem.name() == sort.name()} ? 'place-sort__item--active' : ''"
+                        type="button"></button>
+            </div>
+        </div>
+    </header>
 
-    <header th:replace="~{fragments/header-footer :: header}"></header>
-
-    <main class="my-page-main" id="page-body">
-        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
-        <div class="mp-content">
-            <article>
-                <div class="mpc-title">
-                    <h2>북마크</h2>
-                    <div class="select-box" id="sortType">
-                        <button class="select-box-btn" type="button">
-                            <span th:text="*{sort.displayName}"></span>
-                            <input id="sortInput" type="hidden">
-                            <img alt="" src="/imgs/arrow_down_gray014.f502da9d.svg">
-                        </button>
-                        <div class="select-box-list">
-                            <button th:class="${sortType.toString() == sort.toString()} ? 'selected' : ''"
-                                    th:each="sortType : ${T(com.app.spotick.util.type.PlaceSortType).values()}"
-                                    th:sortType="${sortType}"
-                                    th:text="${sortType.displayName}" type="button">
-                            </button>
+    <div class="bookmark-grid" id="bookmarkGrid">
+        <th:block th:if="${placeDtoList.getTotalElements() > 0}">
+            <article class="place-card" th:each="place : ${placeDtoList}">
+                <div class="place-card__slider-wrap">
+                    <button type="button" class="place-card__bookmark"
+                            th:data-id="${place.id}"
+                            th:data-checked="${place.isBookmarkChecked}">
+                        <i th:class="${place.isBookmarkChecked ? 'fa-solid fa-bookmark place-card__bookmark--active' : 'fa-regular fa-bookmark'}"></i>
+                    </button>
+                    <div class="place-card__slider">
+                        <div class="place-card__slide" th:each="file : ${place.placeFiles}">
+                            <img class="place-card__img"
+                                 th:src="@{/file/display(fileName=${file.uploadPath + '/t_' + file.uuid + '_' + file.fileName})}"
+                                 th:alt="${place.title}">
                         </div>
                     </div>
-                </div>
-                <div class="mpc-cards-wrap">
-                    <th:block th:if="${#lists.size(placeDtoList)}">
-                        <th:block th:each="placeDto:${placeDtoList}">
-                            <div class="OneItemContainer hover mybookmark" th:object="${placeDto}">
-                                <div class="OneItemImgContainer">
-                                    <div class="swiper ImageSwiper swiper-initialized swiper-horizontal swiper-pointer-events swiper-backface-hidden">
-                                        <a class="swiper-wrapper ImageLength"
-                                           style="transform: translate3d(0px, 0px, 0px);"
-                                           th:href="@{/place/{placeId}(placeId = ${placeDto.id})}">
-                                            <!-- 이미지 한칸 -->
-                                            <th:block th:each="placeFile:${placeDto.placeFiles}">
-                                                <div class="swiper-slide swiper-slide-next" th:object="${placeFile}">
-                                                    <img class="ItemImg"
-                                                         th:alt="${placeDto.title}"
-                                                         th:src="*{'/file/display?fileName=' + uploadPath + '/t_' + uuid + '_' + fileName}">
-                                                </div>
-                                            </th:block>
-                                            <!-- 이미지 한칸 -->
-                                        </a>
-                                        <div class="NavigationBtnContainer">
-                                            <button class="NavigationBtn RightBtn" type="button">
-                                                <img alt="다음" src="/imgs/round_arrow_right_gray024.7f7e18a3.svg">
-                                            </button>
-                                            <button class="NavigationBtn LeftBtn" type="button">
-                                                <img alt="이전" src="/imgs/round_arrow_left_gray024.707193e8.svg">
-                                            </button>
-                                        </div>
-                                        <div class="ItemImgPagination">
-                                            <p><span class="snapIndex">1</span>/<span class="slideIndex">5</span></p>
-                                        </div>
-                                    </div>
-                                    <button class="ItemBookMarkBtn active" th:data-id="*{id}"
-                                            th:data-status="*{isBookmarkChecked}" type="button">
-                                        <span th:class="${!placeDto.isBookmarkChecked?'':'none'}">
-                                            <i class="fa-regular fa-bookmark"></i>
-                                        </span>
-                                            <span th:class="${placeDto.isBookmarkChecked?'':'none'}">
-                                            <i class="fa-solid fa-bookmark" style="color: white"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                                <a class="ItemTextContainer" th:href="@{/place/{placeId}(placeId = ${placeDto.id})}">
-                                    <div class="ItemHostNameContainer">
-                                        <span class="ItemHostName" th:text="*{placeAddress.address}"></span>
-                                        <div class="ItemCountsContainer">
-                                            <div class="ItemsStarCountContainer">
-                                                <img alt="후기갯수" class="ItemCountImg"
-                                                     src="/imgs/star_filled_paintYellow056.a8eb6e44.svg">
-                                                <span class="ItemCountText"
-                                                      th:text="|*{evalAvg}(*{evalCount})|"></span>
-                                            </div>
-                                            <div class="ItemsLikeCountContainer">
-                                                <img alt="북마크갯수" class="ItemCountImg bookmark"
-                                                     src="/imgs/bookmark_thin.svg">
-                                                <span class="ItemCountText" th:text="*{bookmarkCount}"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="ItemSpaceNameContainer">
-                                        <p class="ItemSpaceName" th:text="*{title}"></p>
-                                    </div>
-                                    <div class="ItemPriceContainer">
-                                    <span class="ItemPrice"
-                                          th:text="${#numbers.formatInteger(placeDto.price, 3, 'COMMA')} + '원'"></span>
-                                    </div>
-                                </a>
-                            </div>
-                        </th:block>
-                    </th:block>
-                </div>
-                <th:block th:if="${placeDtoList.getTotalElements() == 0}">
-                    <div class="mp-no-list">
-                        <span>저장된 북마크가 없습니다.</span>
+                    <button class="place-card__nav place-card__nav--prev"><i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="place-card__nav place-card__nav--next"><i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <div class="place-card__pagination">
+                        <span class="curr-idx">1</span> / <span th:text="${#lists.size(place.placeFiles)}">1</span>
                     </div>
-                </th:block>
+                </div>
+                <div class="place-card__info" th:onclick="|location.href='/place/${place.id}'|">
+                    <div class="place-card__meta">
+                        <span th:text="${place.placeAddress.address}">주소</span>
+                        <div class="place-card__stats">
+                            <span class="place-card__stat"><i class="fa-solid fa-star place-card__stat-icon"></i>
+                                <th:block th:text="${place.evalAvg}"></th:block> (<th:block
+                                        th:text="${place.evalCount}"></th:block>)
+                            </span>
+                            <span class="place-card__stat"><i class="fa-solid fa-bookmark" style="color: #8a8a8e;"></i> <th:block
+                                    th:text="${place.bookmarkCount}"></th:block></span>
+                        </div>
+                    </div>
+                    <h3 class="place-card__title" th:text="${place.title}">장소명</h3>
+                    <div class="place-card__price">
+                        <th:block th:text="${#numbers.formatInteger(place.price, 1, 'COMMA')}"></th:block>
+                        원
+                        <span style="font-size: 12px; font-weight: 500; color: #8a8a8e;">/ 시간</span>
+                    </div>
+                </div>
             </article>
+        </th:block>
+        <th:block th:if="${placeDtoList.getTotalElements() == 0}">
+            <div class="bookmark-empty">
+                <i class="fa-regular fa-bookmark" style="font-size: 48px;"></i>
+                <p>저장된 북마크가 없습니다.</p>
+            </div>
+        </th:block>
+    </div>
 
+    <section class="pagination-container" th:if="${placeDtoList.getTotalElements() > 0}">
+        <th:block th:if="${pagination.hasPrevBlock()}">
+            <a class="pagination-btns" th:href="@{/mypage/bookmarks(page=1, sort=${sort})}" title="맨 처음">
+                <i class="fa-solid fa-angles-left"></i>
+            </a>
+            <a class="pagination-btns" th:href="@{/mypage/bookmarks(page=${pagination.startPage - 1}, sort=${sort})}"
+               title="이전">
+                <i class="fa-solid fa-angle-left"></i>
+            </a>
+        </th:block>
 
-            <section class="pagination-container" th:if="${placeDtoList.getTotalElements() != 0}">
-            <span class="pagination-previous" th:if="${pagination.hasPrevBlock()}">
-                <a class="pagination-btns first" th:href="@{/mypage/bookmarks(page=1, sort=${sort})}" title="맨 처음">
-                    <i class="fa-solid fa-chevron-left"></i>
-                    <i class="fa-solid fa-chevron-left"></i>
-                </a>
-                <a class="pagination-btns"
-                   th:href="@{/mypage/bookmarks(page=${pagination.startPage - 1}, sort=${sort})}" title="이전">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </a>
-            </span>
+        <th:block th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
+            <a class="pagination-btns"
+               th:classappend="${i == pagination.currentPage ? 'active' : ''}"
+               th:href="@{/mypage/bookmarks(page=${i}, sort=${sort})}"
+               th:text="${i}"></a>
+        </th:block>
 
-                <span class="pagination-body">
-                <span class="pagination-btns"
-                      th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
-                    <a th:class="${i == pagination.currentPage ? 'active' : ''}"
-                       th:href="@{/mypage/bookmarks(page=${i}, sort=${sort})}"
-                       th:text="${i}"></a>
-                </span>
-            </span>
-
-                <span class="pagination-next" th:if="${pagination.hasNextBlock()}">
-                <a class="pagination-btns" th:href="@{/mypage/bookmarks(page=${pagination.endPage+1}, sort=${sort})}"
-                   title="다음">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>
-                <a class="pagination-btns end" th:href="@{/mypage/bookmarks(page=${pagination.lastPage}, sort=${sort})}"
-                   title="맨 끝">
-                    <i class="fa-solid fa-chevron-right"></i>
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>
-            </span>
-            </section>
-
-        </div>
-    </main>
-
-    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
+        <th:block th:if="${pagination.hasNextBlock()}">
+            <a class="pagination-btns" th:href="@{/mypage/bookmarks(page=${pagination.endPage + 1}, sort=${sort})}"
+               title="다음">
+                <i class="fa-solid fa-angle-right"></i>
+            </a>
+            <a class="pagination-btns" th:href="@{/mypage/bookmarks(page=${pagination.lastPage}, sort=${sort})}"
+               title="맨 끝">
+                <i class="fa-solid fa-angles-right"></i>
+            </a>
+        </th:block>
+    </section>
 </div>
-</body>
-<script th:inline="javascript">
-    document.getElementById('bookmarks').classList.add('active');
 
-    const currentPage = [[${pagination.currentPage}]];
-    const sort = [[${sort}]];
-</script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/mypage/bookmarks.js}" type="module"></script>
-
+<th:block layout:fragment="mypage-script">
+    <input type="hidden" id="currentPage" th:value="${pagination.currentPage}">
+    <script th:src="@{/dist/js/mypage/bookmarks.min.js}" type="module"></script>
+</th:block>
 </html>

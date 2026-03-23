@@ -1,5 +1,6 @@
 package com.app.spotick.controller.place;
 
+import com.app.spotick.domain.district.Region;
 import com.app.spotick.domain.dto.place.PlaceDetailDto;
 import com.app.spotick.domain.dto.place.PlaceEditDto;
 import com.app.spotick.domain.dto.place.PlaceListDto;
@@ -37,13 +38,8 @@ public class PlaceController {
     private final PlaceReservationService reservationService;
 
     @GetMapping
-    public String placeList(@AuthenticationPrincipal UserDetailsDto userDetailsDto,
-                            Model model) {
-        Pageable pageable = PageRequest.of(0, 12);
-        Long userId = userDetailsDto == null ? null : userDetailsDto.getId();
-
-        Slice<PlaceListDto> contents = placeService.newFindPlaceListPagination(pageable, userId, PlaceSortType.POPULARITY, null, null);
-        model.addAttribute("placeList", contents);
+    public String placeList(Model model) {
+        // CSR(Client-Side Rendering) 방식으로 전환.
         return "place/list";
     }
 
@@ -91,23 +87,6 @@ public class PlaceController {
         return "place/reserve";
     }
 
-    @PostMapping("/reserve/register")
-    public String placeReservationRegister(@ModelAttribute PlaceReserveRegisterDto placeReserveRegisterDto,
-                                           @AuthenticationPrincipal UserDetailsDto userDetailsDto, Model model) {
-
-        if (!reservationService.isReservationAvailable(placeReserveRegisterDto)) {
-            PlaceReserveBasicInfoDto placeReserveDefaultInfo = placeService
-                    .findPlaceReserveDefaultInfo(placeReserveRegisterDto.getPlaceId());
-            model.addAttribute("place", placeReserveDefaultInfo);
-            model.addAttribute("invalidReservation", true);
-            return "place/reserve";
-        }
-
-        reservationService.registerPlaceReservation(
-                placeReserveRegisterDto, userDetailsDto.getId());
-        return "redirect:/place/" + placeReserveRegisterDto.getPlaceId();
-    }
-
     @GetMapping("/edit/{placeId}")
     public String goToPlaceEdit(@PathVariable("placeId") Long placeId,
                                 @AuthenticationPrincipal UserDetailsDto userDetailsDto,
@@ -118,7 +97,7 @@ public class PlaceController {
         );
 
         model.addAttribute("placeEditDto", placeEditDto);
-        return "/place/edit";
+        return "/place/register";
     }
 
     @PostMapping("/edit/{placeId}")
@@ -128,19 +107,17 @@ public class PlaceController {
                             @AuthenticationPrincipal UserDetailsDto userDetailsDto,
                             RedirectAttributes redirectAttributes) {
 
-        System.out.println("placeEditDto = " + placeEditDto);
-
         if (result.hasErrors()) {
             for (FieldError error : result.getFieldErrors()) {
                 redirectAttributes.addFlashAttribute(error.getField() + "Error", error.getDefaultMessage());
             }
-            return "redirect:/place/edit/" + placeId;
+            return "redirect:/place/register/" + placeId;
         }
 
         if (placeEditDto.getSaveFileIdList().size() +
             (hasFiles(placeEditDto.getPlaceNewFiles()) ? placeEditDto.getPlaceNewFiles().size() : 0) < 5) {
             redirectAttributes.addFlashAttribute("fileError", "파일은 총 5개 이상이어야 합니다.");
-            return "redirect:/place/edit/" + placeId;
+            return "redirect:/place/register/" + placeId;
         }
 
 
@@ -148,7 +125,7 @@ public class PlaceController {
             placeService.updatePlace(placeEditDto, userDetailsDto.getId());
         } catch (IOException e) {
             log.error("Exception [Err_Msg]: {}", e.getMessage());
-            return "redirect:/place/edit/" + placeId;
+            return "redirect:/place/register/" + placeId;
         }
 
         return "redirect:/mypage/places";

@@ -51,6 +51,8 @@ public class PlacePaymentServiceImpl implements PlacePaymentService {
                 NoSuchElementException::new
         );
 
+        System.out.println("paymentDetail = " + paymentDetail);
+
         return new ResponseEntity<>(
                 DataResponse.builder()
                         .success(true)

@@ -1,58 +1,85 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>에러 페이지</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" />
-  <style>
-    .error-container {
-      text-align: center;
-      padding: 40px;
-      background-color: #fff;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-      border-radius: 4px;
-      width: 60%;
-      margin: 100px auto;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotick | 시스템 오류</title>
+    <link rel="icon" th:href="@{/imgs/logo/favicon.png}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
-    .error-container h1 {
-      margin-top: 0;
-      margin-bottom: 24px;
-      font-size: 32px;
-      font-weight: bold;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-    .error-container p {
-      margin-bottom: 24px;
-    }
+        body {
+            background-color: #ffffff;
+            color: #1c1c1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
 
-    .error-container a {
-      display: inline-block;
-      padding: 12px 24px;
-      text-decoration: none;
-      background-color: #1b5192;
-      color: #fff;
-      border-radius: 4px;
-      margin-right: 12px;
-    }
+        .err-wrap {
+            text-align: center;
+            max-width: 480px;
+            padding: 40px;
+        }
 
-    .error-container a:hover {
-      background-color: #153f71;
-    }
-  </style>
+        .err-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            color: #ef4444;
+        }
+
+        .err-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .err-desc {
+            font-size: 17px;
+            color: #636366;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .err-btn {
+            display: inline-block;
+            padding: 16px 40px;
+            border-radius: 12px;
+            background-color: #3c82fa;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s;
+            box-shadow: 0 8px 20px rgba(60, 130, 250, 0.2);
+        }
+
+        .err-btn:hover {
+            background-color: #2868d7;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(60, 130, 250, 0.3);
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <div class="error-container">
-    <h1>잘못된 접근입니다.</h1>
-    <p>아래 버튼을 눌러 로그인 페이지나 메인 페이지로 이동하세요.</p>
-    <div >
-      <a sec:authorize="!isAuthenticated()" href="/user/login">로그인</a>
-      <a href="/">메인 페이지</a>
-    </div>
-  </div>
+<div class="err-wrap">
+    <div class="err-icon">⚠️</div>
+    <h1 class="err-title">서버에 문제가 발생했습니다.</h1>
+    <p class="err-desc">요청을 처리하는 도중 예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도해 주시기 바랍니다.</p>
+    <a href="/" class="err-btn">메인 페이지로 돌아가기</a>
 </div>
+<script>
+    // 상남자는 에러 로그를 콘솔에 남겨서 나중에 추적한다.
+    console.error("Internal Server Error occurred. Check the server logs for more details.");
+</script>
 </body>
 </html>

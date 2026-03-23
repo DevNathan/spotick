@@ -26,18 +26,21 @@ public class PlaceRestController {
     private final PlaceService placeService;
 
     @GetMapping("/list")
-    public ResponseEntity<Slice<PlaceListDto>> placeList(@RequestParam("page") int page,
-                                                         @RequestParam(name = "sort", defaultValue = "POPULARITY") PlaceSortType sortType,
-                                                         @RequestParam(value = "district", required = false) String district,
-                                                         @RequestParam(value = "detailDistrict", required = false) List<String> detailDistrict,
-                                                         @RequestParam(name = "keyword", required = false) String keyword,
-                                                         @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
+    public ResponseEntity<Slice<PlaceListDto>> placeList(
+            @RequestParam("page") int page,
+            @RequestParam(name = "sort", defaultValue = "POPULARITY") PlaceSortType sortType,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "district", required = false) List<String> district,
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @AuthenticationPrincipal UserDetailsDto userDetailsDto
+    ) {
         Pageable pageable = PageRequest.of(page, 12);
         Long userId = userDetailsDto == null ? null : userDetailsDto.getId();
 
-        DistrictFilter districtFilter = new DistrictFilter(district, detailDistrict);
+        DistrictFilter districtFilter = new DistrictFilter(region, district);
 
         Slice<PlaceListDto> placeList = placeService.newFindPlaceListPagination(pageable, userId, sortType, districtFilter, keyword);
+
         return ResponseEntity.ok(placeList);
     }
 

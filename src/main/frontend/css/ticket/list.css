@@ -1,0 +1,263 @@
+.tk-list-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.tk-cat {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid #eef0f2;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.tk-cat::-webkit-scrollbar {
+    display: none;
+}
+
+.tk-cat__item {
+    padding: 16px 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #8a8a8e;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+}
+
+.tk-cat__item--active {
+    color: #1c1c1e;
+}
+
+.tk-cat__item--active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #1c1c1e;
+    border-radius: 3px 3px 0 0;
+}
+
+.tk-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.tk-search {
+    position: relative;
+    width: 320px;
+}
+
+.tk-search__icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8a8a8e;
+}
+
+.tk-search__input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border: 1px solid #dfe2e7;
+    border-radius: 8px;
+    background: #f9fafb;
+    outline: none;
+    transition: 0.2s;
+}
+
+.tk-search__input:focus {
+    border-color: #3c82fa;
+    background: #ffffff;
+}
+
+.tk-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.tk-drop {
+    position: relative;
+}
+
+.tk-drop__btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid #dfe2e7;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    color: #3a3a3c;
+}
+
+.tk-drop__list {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 160px;
+    background: #ffffff;
+    border: 1px solid #dfe2e7;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: none;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.tk-drop__list--active {
+    display: block;
+}
+
+.tk-drop__item {
+    width: 100%;
+    padding: 12px 16px;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #3a3a3c;
+}
+
+.tk-drop__item:hover {
+    background: #f4f5f7;
+}
+
+.tk-drop__item--active {
+    font-weight: 700;
+    color: #3c82fa;
+}
+
+.tk-filter-btn {
+    padding: 10px 16px;
+    border: 1px solid #dfe2e7;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+    font-weight: 500;
+    color: #3a3a3c;
+}
+
+.tk-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.tk-card {
+    cursor: pointer;
+}
+
+.tk-card__img-box {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.tk-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.tk-card:hover .tk-card__img {
+    transform: scale(1.05);
+}
+
+.tk-card__like-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    z-index: 2;
+}
+
+.tk-card__like--active {
+    color: #ef4444;
+}
+
+.tk-card__meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #8a8a8e;
+    margin-bottom: 6px;
+}
+
+.tk-card__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1c1c1e;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tk-card__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tk-card__price-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tk-card__price-label {
+    font-size: 12px;
+    color: #8a8a8e;
+    border: 1px solid #dfe2e7;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.tk-card__price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1c1c1e;
+}
+
+.tk-card__date {
+    font-size: 13px;
+    color: #8a8a8e;
+}
+
+.tk-list-loading {
+    text-align: center;
+    padding: 40px 0;
+    display: none;
+}
+
+.tk-list-loading--active {
+    display: block;
+}
+
+.tk-list-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 100px 0;
+    color: #8a8a8e;
+    line-height: 1.6;
+}

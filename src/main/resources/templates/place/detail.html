@@ -1,446 +1,172 @@
 <!doctype html>
-<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <!--    달력css-->
-    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
-          integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ=="
-          referrerpolicy="no-referrer" rel="stylesheet"/>
-    <link rel="icon" th:href="@{/imgs/logo/favicon.png}">
-    <link rel="stylesheet" th:href="@{/css/global-css/datepicker.css}">
-    <link rel="stylesheet" th:href="@{/css/global-css/root.css}">
-    <link rel="stylesheet" th:href="@{/css/place/detail.css}"/>
-    <link rel="stylesheet" th:href="@{/css/global-css/chat.css}">
-
-    <title th:text="${place.placeTitle}"/>
+    <title layout:fragment="title" th:text="${place.placeTitle} + ' | Spotick'"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/place/detail.min.css}">
 </head>
-<body>
-<div th:replace="~{fragments/chat :: chat}"></div>
-<header th:replace="~{fragments/header-footer :: header}"></header>
-<input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
-<div class="global-container">
 
-    <!--   장소 대표사진-->
-    <div class="place-img-container">
-        <button class="grid-item main-img" data-imgidx="1" type="button">
-            <img alt="장소 메인이미지"
-                 th:alt="${'장소 이미지'+0}"
-                 th:src="${'/file/display?fileName=' + place.placeFileList[0].uploadPath +
-            '/' + place.placeFileList[0].uuid + '_' + place.placeFileList[0].fileName}">
-        </button>
-        <button th:class="${'common-img grid-item grid'+(i+1)}" th:data-imgidx="${i+1}" th:each="i : ${#numbers.sequence(1,4)}"
-                type="button">
-            <img th:alt="${'장소 이미지'+i}"
-                 th:src="${'/file/display?fileName=' + place.placeFileList[i].uploadPath +
-            '/' + place.placeFileList[i].uuid + '_' + place.placeFileList[i].fileName}">
-        </button>
+<div layout:fragment="content">
+    <input type="hidden" id="placeId" th:value="${place.placeId}">
+    <input type="hidden" id="placeLat" th:value="${place.placeLat}">
+    <input type="hidden" id="placeLng" th:value="${place.placeLng}">
+    <input type="hidden" id="placePrice" th:value="${place.placePrice}">
+    <input type="hidden" id="placeSurcharge" th:value="${place.placeSurcharge}">
+    <input type="hidden" id="placeDefaultPeople" th:value="${place.placeDefaultPeople}">
 
-        <button class="more-img-btn flex-align-center" type="button">
-            +
-            <th:block th:if="${place.placeFileList.size() - 5 > 0}">
-                <span th:text="${(place.placeFileList.size() - 5)}"></span>
-            </th:block>
-            <img alt="" src="https://shareit.kr/_next/static/media/plus_ractangle_repeated_white.e641653f.svg">
-        </button>
-    </div>
-    <div class="content-global-wrap">
-        <div class="content-wrap">
-            <div class="basic-info-box">
-                <p class="sub-title" th:text="${place.placeSubTitle}"></p>
-                <div class="flex-between-align">
-                    <span class="place-name" th:text="${place.placeTitle}"></span>
-                    <button class="place-like-btn" type="button">
-                        <span th:class="${!place.isBookmarkChecked()?'':'none'}"><i class="fa-regular fa-bookmark"></i></span>
-                        <span th:class="${place.isBookmarkChecked()?'':'none'}"><i class="fa-solid fa-bookmark"
-                                                                                   style="color: #007AFF"></i></span>
-                    </button>
-                </div>
-                <div class="place-address-box">
-                    <img alt="" src="https://shareit.kr/_next/static/media/location_filled_sweetBlue046.de36d6ce.svg">
-                    <span th:text="${place.placeAddress+' '+place.placeAddressDetail}"></span>
-                </div>
-
-                <div class="review-box flex-between-align">
-                    <div class="flex">
-                        <div class="star-box">
-                            <!--리뷰 평점%-->
-                            <div class="filled-stars" th:style="${'width: '+(place.evalAvg*20)+'%'}">
-                                <img alt="평점"
-                                     class="filled-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                <img alt="평점"
-                                     class="filled-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                <img alt="평점"
-                                     class="filled-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                <img alt="평점"
-                                     class="filled-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                <img alt="평점"
-                                     class="filled-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                            </div>
-                            <div class="default-stars">
-                                <img alt=""
-                                     class="default-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                <img alt=""
-                                     class="default-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                <img alt=""
-                                     class="default-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                <img alt=""
-                                     class="default-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                <img alt=""
-                                     class="default-star"
-                                     src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                            </div>
-                        </div>
-                        <span class="review-score" th:text="${place.evalAvg}"></span>
-                        <span>|</span>
-                        <span th:text="${'후기('+place.evalCount+')'}"></span>
-                    </div>
-
-                    <!--장소 수정하기 -->
-                    <th:block sec:authorize="isAuthenticated()">
-                        <a class="place-modify-btn" th:href="@{/place/edit/{placeId}(placeId=*{placeId})}"
-                           th:if="${#authentication.principal != null and #authentication.principal.id == place.hostId}">수정하기</a>
-                    </th:block>
-
+    <main class="pd-container">
+        <section class="pd-gallery">
+            <div class="pd-gallery__main" id="galleryMainBtn" data-idx="0">
+                <img th:src="@{/file/display(fileName=${place.placeFileList[0].uploadPath + '/' + place.placeFileList[0].uuid + '_' + place.placeFileList[0].fileName})}"
+                     alt="메인 사진">
+            </div>
+            <div class="pd-gallery__sub">
+                <div th:each="i : ${#numbers.sequence(1, 4)}" th:if="${place.placeFileList.size() > i}"
+                     class="pd-gallery__item" th:data-idx="${i}">
+                    <img th:src="@{/file/display(fileName=${place.placeFileList[i].uploadPath + '/' + place.placeFileList[i].uuid + '_' + place.placeFileList[i].fileName})}"
+                         alt="서브 사진">
                 </div>
             </div>
+            <button class="pd-gallery__more" th:if="${place.placeFileList.size() > 5}" type="button">
+                + <span th:text="${place.placeFileList.size() - 5}"></span>
+            </button>
+        </section>
 
-            <div class="place-nav-box flex">
-                <button class="nav-item nav-focus menu1" data-menu="placeIntroduction">
-                    <p>장소 소개</p>
-                </button>
-                <button class="nav-item menu2" data-menu="placeRule">
-                    <p>이용규칙</p>
-                </button>
-                <button class="nav-item menu3" data-menu="placeReview">
-                    <p>리뷰<span th:text="${place.evalCount}"></span></p>
-                </button>
-                <button class="nav-item menu4" data-menu="placeInquiry">
-                    <p>문의<span class="inquiry-cnt" th:text="${place.inquiryCount}"></span></p>
-                </button>
-            </div>
-
-            <div class="care-wrap">
-                <div class="care-box">
-                    <p class="care-title">
-                        <img alt="" src="https://shareit.kr/_next/static/media/caution_filled_red066.539a3741.svg">
-                        직거래 유도 주의 안내
-                    </p>
-                    <p>호스트 현금 결제 유도 시, 신고바랍니다. <br>
-                        스포틱은 현금 직거래로 발생하는 사고를 책임지지 않습니다.</p>
-                </div>
-            </div>
-
-            <div class="place-content-wrap">
-                <div class="place-info-box menu" id="placeIntroduction">
-                    <p class="title">공간 정보</p>
-                    <p class="content" th:text="${place.placeInfo}"></p>
-                </div>
-
-                <div class="place-map-box">
-                    <p class="title">위치</p>
-                    <input id="placeLat" th:value="${place.placeLat}" type="hidden">
-                    <input id="placeLng" th:value="${place.placeLng}" type="hidden">
-                    <div id="map"></div>
-                    <div class="place-address-box">
-                        <img alt=""
-                             src="https://shareit.kr/_next/static/media/location_filled_sweetBlue046.de36d6ce.svg">
-                        <span th:text="${place.placeAddress +' '+place.placeAddressDetail}"></span>
-                    </div>
-                </div>
-
-                <div class="place-rule-box menu" id="placeRule">
-                    <p class="title">이용규칙</p>
-                    <p class="content" th:text="${place.placeRule}">- 대여 시간보다 적게 사용 하더라도 대관비는 환불되지 않습니다.
-
-                        - 기물 파손 및 청소 등의 사유로 보증금을 호스트에게 입금하여야 합니다.
-
-                        - 사용자 인원이나 사용 시간이 추가될 경우, 현장에서 추가 과금이 진행됩니다.
-
-                        - 입실은 정시, 퇴실은 5분 전에 준비해서 예약 시간 안에 이용
-
-                        - 시설 훼손 및 기물 파손 시 손해액을 호스트에게 배상하여야 합니다.
-                        (CCTV는 방범/분실/기물파손/인원확인 등의 이유로 녹화됨)
-
-                        - 이용 후, 쓰레기(일반/재활용/음식물) 분리수거를 꼭 진행해주세요. 미 진행 시, 추가요금이 청구될 수 있습니다.</p>
-                </div>
-
-                <div class="review-wrap menu" id="placeReview">
-                    <div class="flex-between-align">
-                        <p class="title">후기 <span class="review-count" th:text="${place.evalCount}"></span></p>
-                        <!--                        <button type="button" class="review-write-btn">후기작성</button>-->
-                    </div>
-                    <div class="review-summary-box">
-                        <div class="flex-center">
-                            <div class="star-box">
-                                <div class="filled-stars" th:style="${'width: '+(place.evalAvg*20)+'%'}">
-                                    <img alt="평점"
-                                         class="filled-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                    <img alt="평점"
-                                         class="filled-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                    <img alt="평점"
-                                         class="filled-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                    <img alt="평점"
-                                         class="filled-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                    <img alt="평점"
-                                         class="filled-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_paintYellow056.a8eb6e44.svg" width="17">
-                                </div>
-                                <div class="default-stars">
-                                    <img alt=""
-                                         class="default-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                    <img alt=""
-                                         class="default-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                    <img alt=""
-                                         class="default-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                    <img alt=""
-                                         class="default-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                    <img alt=""
-                                         class="default-star"
-                                         src="https://shareit.kr/_next/static/media/star_filled_gray084.e69177ff.svg">
-                                </div>
-                            </div>
-                            <span class="review-score" th:text="${place.evalAvg}"></span>
-                        </div>
-                        <p>
-                            <span th:text="${place.eval5ScoreCount != 0 ? #numbers.formatInteger((place.eval5ScoreCount/(place.evalCount*1.0)*100),1,'COMMA') : 0}"></span>%의
-                            고객이 5점을 주었어요.
-                        </p>
-                    </div>
-
-                    <div class="review-list">
-                        <!--                        리뷰 반복 시작-->
-
-                    </div>
-                    <div class="flex-center review-more-btn-box">
-                        <button class="review-more-btn" type="button">
-                            더보기
-                            <img alt=""
-                                 class="more-img" src="https://shareit.kr/_next/static/media/arrow_down_gray014.f502da9d.svg">
+        <div class="pd-layout">
+            <article class="pd-content">
+                <header class="pd-header">
+                    <p class="pd-header__subtitle" th:text="${place.placeSubTitle}"></p>
+                    <div class="pd-header__title-box">
+                        <h1 class="pd-header__title" th:text="${place.placeTitle}"></h1>
+                        <button class="pd-bookmark" id="bookmarkBtn" type="button"
+                                th:data-checked="${place.bookmarkChecked}">
+                            <i th:class="${place.bookmarkChecked ? 'fa-solid fa-bookmark pd-bookmark--on' : 'fa-regular fa-bookmark'}"></i>
                         </button>
                     </div>
+                    <div class="pd-header__address">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span th:text="${place.placeAddress + ' ' + place.placeAddressDetail}"></span>
+                    </div>
+                    <div class="pd-header__stats">
+                        <i class="fa-solid fa-star" style="color:#ffd600;"></i>
+                        <span th:text="${place.evalAvg} + ' (' + ${place.evalCount} + ')'"></span>
+                    </div>
+                </header>
 
+                <nav class="pd-nav" id="pdNav">
+                    <button class="pd-nav__item active" data-target="section-info">장소 소개</button>
+                    <button class="pd-nav__item" data-target="section-rule">이용 규칙</button>
+                    <button class="pd-nav__item" data-target="section-review">리뷰 (<span
+                            th:text="${place.evalCount}"></span>)
+                    </button>
+                    <button class="pd-nav__item" data-target="section-inquiry">문의 (<span id="navInquiryCount"
+                                                                                         th:text="${place.inquiryCount}"></span>)
+                    </button>
+                </nav>
 
-                </div>
+                <section class="pd-section" id="section-info">
+                    <h2 class="pd-section__title">장소 소개</h2>
+                    <p class="pd-section__text" th:text="${place.placeInfo}"></p>
+                    <div class="pd-map" id="map"></div>
+                </section>
 
-                <div class="place-inquiry-box menu" id="placeInquiry">
-                    <div class="flex-between-align">
-                        <p class="title">문의 <span class="inquiry-count inquiry-cnt"
-                                                  th:text="${place.inquiryCount}"></span></p>
-                        <button class="inquiry-write-btn" type="button">문의하기</button>
+                <section class="pd-section" id="section-rule">
+                    <h2 class="pd-section__title">이용 규칙</h2>
+                    <p class="pd-section__text" th:text="${place.placeRule}"></p>
+                </section>
+
+                <section class="pd-section" id="section-review">
+                    <h2 class="pd-section__title">후기 <span th:text="${place.evalCount}"></span></h2>
+                    <div id="reviewList" class="pd-list"></div>
+                </section>
+
+                <section class="pd-section" id="section-inquiry">
+                    <div class="pd-section__header">
+                        <h2 class="pd-section__title">문의 <span id="titleInquiryCount"
+                                                               th:text="${place.inquiryCount}"></span></h2>
+                        <button class="pd-btn pd-btn--outline" id="inquiryOpenBtn" type="button">문의하기</button>
+                    </div>
+                    <div id="inquiryList" class="pd-list"></div>
+                </section>
+            </article>
+
+            <aside class="pd-sidebar">
+                <div class="pd-reserve">
+                    <h3 class="pd-reserve__title" th:text="${place.placeTitle}"></h3>
+                    <div class="pd-reserve__price">
+                        <strong th:text="${#numbers.formatInteger(place.placePrice, 1, 'COMMA')} + '원'"></strong> / 시간
                     </div>
 
-                    <div class="inquiry-list-wrap">
-                        <!--문의 질문 반복 시작-->
+                    <div class="pd-reserve__group">
+                        <p class="pd-reserve__label">스케줄</p>
+                        <button class="pd-reserve__input-btn" id="scheduleBtn" type="button">스케줄을 선택하세요</button>
 
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="reservation-container">
-            <div class="reservation-wrap">
-                <p class="pay-guide-msg">결제하면 예약이 확정돼요.</p>
-                <!--                <p class="pay-guide-msg">현재 단계에서는 요금이 청구되지 않습니다.</p>-->
-                <p class="title" th:text="${place.placeTitle}"></p> <!--장소 이름-->
-                <div class="flex-align">
-                    <p class="title" th:text="${#numbers.formatInteger(place.placePrice,1,'COMMA')+'원'}">55,000원</p>
-                    <!--                    장소기본 요금-->
-                    <input id="placePrice" th:value="${place.placePrice}" type="hidden">
-                    <!--                    인원 초과시 인당 추가 요금-->
-                    <input id="placeSurcharge" th:value="${place.placeSurcharge}" type="hidden">
-                    <!--                    장소 기본 인원 -->
-                    <input id="placeDefaultPeople" th:value="${place.placeDefaultPeople}" type="hidden">
-                    <p class="hour"> / 시간</p>
-                </div>
-                <div class="line"></div>
-                <p class="small-title">스케줄</p>
-                <div class="date-box">
-                    <p class="date-guide">시작 날짜 ~ 종료 날짜</p>
-                    <div class="schedule-box flex-align">
-                        <p>스케줄을 선택하세요</p>
-                    </div>
-                    <div class="calendar-wrap none">
-                        <div class="choice-box">
-                            <div class="calendar-box">
-                                <input id="reservationDate" type="hidden">
-                                <div id="datepicker"></div>
+                        <div class="pd-popup" id="schedulePopup">
+                            <div class="pd-popup__cal-wrapper" id="flatpickrWrapper">
+                                <input type="hidden" id="datePicker">
                             </div>
-                            <div class="time-choice-wrap flex-column">
-                                <div>
-                                    <p class="time-guide">시작 시간</p>
-                                    <select class="checkInOut" id="checkIn" name="reservationCheckIn">
-                                        <option disabled selected>시작 시간</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <p class="time-guide">종료 시간</p>
-                                    <select class="checkInOut" disabled id="checkOut" name="reservationCheckOut">
-                                        <option disabled selected>종료 시간</option>
-                                        <!-- <option disabled value="0">-->
-                                        <!--    <del>오전 12시</del>-->
-                                        <!-- </option>-->
-                                        <!-- <option value="23">오후 11시</option>-->
-                                    </select>
-                                </div>
-                                <button class="flex-align-center" type="button">
-                                    완료
-                                </button>
+
+                            <div class="pd-popup__time-header">
+                                <p id="scheduleTimeText" class="pd-time-text">날짜를 먼저 선택해주세요</p>
                             </div>
+                            <div class="pd-time-grid" id="timeGrid">
+                            </div>
+
+                            <button class="pd-btn pd-btn--black" id="scheduleConfirmBtn" type="button">완료</button>
                         </div>
                     </div>
-                </div>
 
-                <p class="small-title">총인원</p>
-                <div class="people-wrap">
-                    <p class="people-guide"
-                       th:text="${'기본 인원인 '+place.placeDefaultPeople+'명을 넘으면 인당 '+
-                    #numbers.formatInteger(place.placeSurcharge,1,'COMMA')+'원이 추가돼요'}"></p>
-                    <div class="people-box flex-align">
-                        <p>총인원 수를 입력하세요</p>
-                    </div>
-                    <div class="select-people-wrap none">
-                        <div class="people-select-box">
-                            <p>총인원 수</p>
-                            <div class="flex-align">
-                                <button class="minus" type="button">-</button>
-                                <div class="reservation-visitors flex-align-center">
-                                    <input class="visitors" max="99" min="1" type="number" value="1">
-                                </div>
-                                <button class="plus" type="button">+</button>
+                    <div class="pd-reserve__group">
+                        <p class="pd-reserve__label">총 인원 <span style="font-weight:400; font-size:12px; color:#8a8a8e;"
+                                                                th:text="'(기본 ' + ${place.placeDefaultPeople} + '명)'"></span>
+                        </p>
+                        <button class="pd-reserve__input-btn" id="peopleBtn" type="button">총 인원 수를 입력하세요</button>
+
+                        <div class="pd-popup" id="peoplePopup">
+                            <div class="pd-popup__counter">
+                                <button class="pd-counter-btn" id="peopleMinus" type="button">-</button>
+                                <input type="number" id="peopleCount" value="1" readonly>
+                                <button class="pd-counter-btn" id="peoplePlus" type="button">+</button>
                             </div>
-                        </div>
-                        <div class="visitor-ctr-box flex-between-align">
-                            <button class="visitors-reset" type="button">초기화</button>
-                            <button class="visitors-btn" type="button">완료</button>
+                            <button class="pd-btn pd-btn--black" id="peopleConfirmBtn" type="button">완료</button>
                         </div>
                     </div>
+
+                    <div id="calcResultBox" class="pd-calc-box"></div>
+
+                    <form id="reservationForm" method="post" th:action="@{/place/reserve/register}">
+                        <input name="placeId" th:value="${place.placeId}" type="hidden">
+                        <input id="formCheckIn" name="reservationCheckIn" type="hidden">
+                        <input id="formCheckOut" name="reservationCheckOut" type="hidden">
+                        <input id="formVisitors" name="visitors" type="hidden">
+                        <button class="pd-btn pd-btn--submit" id="submitBtn" type="button" disabled>예약 요청하기</button>
+                    </form>
                 </div>
-
-                <div class="calculate-box">
-
-                </div>
-                <!--                장소 예약하기 확인 폼-->
-                <form id="reservationForm" method="get" th:action="@{/place/check/reserve}">
-                    <input id="placeId" name="placeId" th:value="${place.placeId}" type="hidden">
-                    <input id="reservationCheckIn" name="reservationCheckIn" type="hidden">
-                    <input id="reservationCheckOut" name="reservationCheckOut" type="hidden">
-                    <input id="reservationVisitors" name="reservationVisitors" type="hidden">
-                </form>
-
-                <div class="flex-align-center reservation-submit-box">
-                    <button class="reservation-btn " type="button">예약 요청하기</button>
-                </div>
-            </div>
-
+            </aside>
         </div>
+    </main>
 
-    </div>
-</div>
-
-<!--사진 모달창 시작-->
-<div class="img-modal-container none">
-    <div class="modal-wrap">
-        <div class="place-img-info-wrap flex-between-align">
-            <div class="place-img-info-box">
-                <div class="img-count">
-                    <span class="current-img-num">1</span>/
-                    <th:block th:text="${place.placeFileList.size()}"></th:block>
-                </div>
-                <p th:text="${place.placeTitle}"></p>
-
-            </div>
-            <button class="flex-align-center modal-close" type="button">닫기 X</button>
-        </div>
-
-        <div class="modal-img-wrap flex-center">
-            <div class="modal-img-box">
-                <!-- 모달 이미지   -->
-                <div class="modal-img-item"
-                     th:each="file :${place.placeFileList}">
-                    <img class="modal-img"
-                         th:alt="${file.fileName}"
-                         th:src="${'/file/display?fileName=' + file.uploadPath +
-                '/' + file.uuid + '_' + file.fileName}">
-                </div>
-
-            </div>
-            <button class="prev" type="button">
-                <img alt="" th:src="@{/imgs/place/circularArrowLeft.svg}">
+    <div class="pd-modal" id="inquiryModal">
+        <div class="pd-modal__box">
+            <button class="pd-modal__close" id="inquiryCloseBtn" type="button"><i class="fa-solid fa-xmark"></i>
             </button>
-            <button class="next" type="button">
-                <img alt="" th:src="@{/imgs/place/circularArrowRight.svg}">
-            </button>
+            <h3 class="pd-modal__title">호스트에게 문의하기</h3>
+            <input type="text" class="pd-modal__input" id="inquiryTitle" placeholder="문의 제목">
+            <div style="position:relative; margin-bottom: 24px;">
+                <textarea class="pd-modal__textarea" id="inquiryContent" rows="6" placeholder="문의 내용"></textarea>
+                <div class="pd-modal__counter"><span id="inquiryLength">0</span>/200자</div>
+            </div>
+            <button class="pd-btn pd-btn--submit" id="inquirySubmitBtn" type="button" disabled>등록하기</button>
         </div>
     </div>
 </div>
-<!--사진 모달창 끝-->
 
-<!--문의 모달창 시작-->
-<div class="inquiry-modal-container flex-align-center none">
-    <div class="inquiry-modal-wrap flex-align">
-        <button class="inquiry-cancel" type="button">
-            <img alt="" src="https://s3.hourplace.co.kr/web/images/icon/close_v4.svg">
-        </button>
-        <p class="small-title">궁금한 내용을 적어주세요</p>
-        <p class="sub-title">호스트가 확인 후 답변을 드릴 거예요!</p>
-        <div class="inquiry-content-box flex-between-align">
-            <p class="inquiry-guide">문의 제목</p>
-        </div>
-        <!--        <div class="inquiry-title-box ">-->
-        <!--        </div>-->
-        <input id="inquiryTitle" name="inquiryTitle" placeholder="문의 제목을 입력해주세요" type="text">
-
-        <div class="inquiry-content-box flex-between-align">
-            <p class="inquiry-guide">내용</p>
-            <p class="letter-count"><span>0</span>/200자</p>
-        </div>
-        <textarea cols="30" id="inquiryContent" name="inquiryContent" placeholder="장소에 대해서 궁금한 점을 문의해주세요"
-                  rows="10"></textarea>
-        <div class="flex-align-center">
-            <button class="inquiry-submit" type="button">문의등록</button>
-        </div>
-
-    </div>
-</div>
-
-<footer th:replace="~{fragments/header-footer :: footer}"></footer>
-
-
-<script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<!-- 달력-->
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<script th:src="@{/js/place/detail/calendar.js}"></script>
-
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3dc12d7c2624483dc7c019a0a91b727f&libraries=services"
-        type="text/javascript"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/loading.js}"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-
-<script th:src="@{/js/place/detail/detail.js}"></script>
-<script th:src="@{/js/place/detail/kakaoMapApi.js}"></script>
-</body>
+<th:block layout:fragment="script">
+    <script type="text/javascript"
+            th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsKey}&libraries=services&autoload=false|"></script>
+    <script th:src="@{/dist/js/place/detail.min.js}" type="module"></script>
+</th:block>
 </html>

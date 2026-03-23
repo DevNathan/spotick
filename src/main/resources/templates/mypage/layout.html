@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title layout:fragment="title">Spotick | 마이페이지</title>
+    <link rel="stylesheet" th:href="@{/dist/css/mypage/layout.min.css}"/>
+</head>
+<body>
+
+<main layout:fragment="content" class="mypage-layout">
+    <div class="mypage-layout__container">
+
+        <aside class="mypage-sidebar">
+            <div class="mypage-sidebar__sticky">
+                <section class="mypage-sidebar__section">
+                    <h3 class="mypage-sidebar__title">계정관리</h3>
+                    <ul class="mypage-sidebar__list">
+                        <li class="mypage-sidebar__item"
+                            th:classappend="${currentPage == 'userInfo'} ? 'mypage-sidebar__item--active'">
+                            <a th:href="@{/mypage/user-info}" class="mypage-sidebar__link">개인정보 수정</a>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="mypage-sidebar__section">
+                    <h3 class="mypage-sidebar__title">My활동</h3>
+                    <ul class="mypage-sidebar__list">
+                        <li class="mypage-sidebar__item"
+                            th:classappend="${currentPage == 'bookmarks'} ? 'mypage-sidebar__item--active'">
+                            <a th:href="@{/mypage/bookmarks}" class="mypage-sidebar__link">북마크</a>
+                        </li>
+                        <li class="mypage-sidebar__item"
+                            th:classappend="${currentPage == 'reservations'} ? 'mypage-sidebar__item--active'">
+                            <a th:href="@{/mypage/reservations}" class="mypage-sidebar__link">예약 내역</a>
+                        </li>
+                        <li class="mypage-sidebar__item"
+                            th:classappend="${currentPage == 'inquiries'} ? 'mypage-sidebar__item--active'">
+                            <a th:href="@{/mypage/inquiries}" class="mypage-sidebar__link">문의 내역</a>
+                        </li>
+                        <li class="mypage-sidebar__item"
+                            th:classappend="${currentPage == 'reviews'} ? 'mypage-sidebar__item--active'">
+                            <a th:href="@{/mypage/reviews}" class="mypage-sidebar__link">후기관리</a>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="mypage-sidebar__section">
+                    <h3 class="mypage-sidebar__title">장소 관리</h3>
+                    <ul class="mypage-sidebar__list">
+                        <li class="mypage-sidebar__item"
+                            th:classappend="${currentPage == 'places'} ? 'mypage-sidebar__item--active'">
+                            <a th:href="@{/mypage/places}" class="mypage-sidebar__link">장소 관리</a>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="mypage-sidebar__section">
+                    <h3 class="mypage-sidebar__title">티켓팅 관리</h3>
+                    <ul class="mypage-sidebar__list">
+                        <li class="mypage-sidebar__item"
+                            th:classappend="${currentPage == 'tickets'} ? 'mypage-sidebar__item--active'">
+                            <a th:href="@{/mypage/tickets}" class="mypage-sidebar__link">티켓팅 관리</a>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </aside>
+
+        <div class="mypage-content">
+            <th:block layout:fragment="mypage-content"></th:block>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script type="module" th:src="@{/dist/js/mypage/layout.min.js}"></script>
+    <th:block layout:fragment="mypage-script"></th:block>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      th:with="currentAdminPage='place'">
+<head>
+    <title layout:fragment="title">Spotick | 장소 관리</title>
+    <link rel="stylesheet" th:href="@{/dist/css/admin/place.min.css}">
+</head>
+<body>
+
+<div layout:fragment="admin-content">
+    <div class="admin-header">
+        <h2>장소 관리</h2>
+        <div class="admin-tabs">
+            <a href="#" class="active">게시글 목록</a>
+        </div>
+    </div>
+
+    <form class="admin-search-form" onsubmit="return false;">
+        <div class="search-group">
+            <label>호스트 : <input type="text" id="email" placeholder="이메일" class="search-input"></label>
+            <label>장소명 : <input type="text" id="placeTitle" placeholder="장소명" class="search-input"></label>
+            <label>상태 :
+                <select id="status" class="search-select">
+                    <option value="">전체</option>
+                    <option th:each="status : ${enumValues}" th:value="${status.name}"
+                            th:text="${status.displayName}"></option>
+                </select>
+            </label>
+            <button type="button" class="search-btn">검색</button>
+        </div>
+    </form>
+
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>호스트 이메일</th>
+                <th>장소 이름</th>
+                <th>작성일</th>
+                <th>현재 상태</th>
+                <th>승인/거절</th>
+            </tr>
+            </thead>
+            <tbody id="placeTableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<th:block layout:fragment="admin-script">
+    <script type="module" th:src="@{/dist/js/admin/place.min.js}"></script>
+</th:block>
+
+</body>
+</html>

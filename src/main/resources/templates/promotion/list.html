@@ -1,150 +1,77 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <title>Spotick | 홍보 게시판</title>
-    <link rel="icon" th:href="@{/imgs/logo/favicon.png}">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
-    <link href="/css/promotion/promotion-list.css" rel="stylesheet">
-    <link href="/css/promotion/promotion-list-swiper.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
+    <title layout:fragment="title">Spotick | 홍보 게시판</title>
+    <link rel="stylesheet" th:href="@{/dist/css/promotion/list.min.css}">
 </head>
-<body>
-<div class="PageContainer">
-    <div th:replace="~{fragments/topScroll :: topScrollBtn}"></div>
 
-    <div th:replace="~{fragments/chat :: chat}"></div>
+<div layout:fragment="content">
+    <main class="pro-page">
 
-    <div th:replace="~{fragments/header-footer :: header}"></div>
-
-    <div class="MainContainer" id="page-body">
-        <div class="ReferenceHallContentListContainer">
-            <div class="ReferenceHallContentList">
-                <div class="ReferenceHallContentListTitle">주목할 만한 컨텐츠</div>
-                <div>
-                    <div class="swiper top-swiper">
-                        <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
-                            <div class="swiper-slide swiper-slide-active" th:each="recommend: ${data.recommendations}"
-                                 th:object="${recommend}">
-                                <a class="ReferenceHallContent ContentWrapper"
-                                   th:href="@{/promotion/{promotionId}(promotionId=*{promotionId})}">
-                                    <div>
-                                        <img class="ReferenceHallContentImg"
-                                             th:alt="*{title}"
-                                             th:src="|/file/display?fileName=*{thumbnailImage.uploadPath}/*{thumbnailImage.uuid}_*{thumbnailImage.fileName}|">
-                                    </div>
-                                    <div class="ReferenceHallContentTitle" th:text="*{title}"/>
-                                    <div class="ReferenceHallContentText" th:text="*{subTitle}"></div>
-                                </a>
-                            </div>
+        <section class="pro-recommend">
+            <h2 class="pro-recommend__title">주목할 만한 컨텐츠</h2>
+            <div class="pro-slider" id="recommendSlider">
+                <div class="pro-slider__track">
+                    <a class="pro-slider__item" th:each="recommend : ${data.recommendations}"
+                       th:href="@{/promotion/{id}(id=${recommend.promotionId})}">
+                        <img class="pro-slider__img" th:alt="${recommend.title}"
+                             th:src="|/file/display?fileName=${recommend.thumbnailImage.uploadPath}/${recommend.thumbnailImage.uuid}_${recommend.thumbnailImage.fileName}|">
+                        <div class="pro-slider__info">
+                            <h3 class="pro-title" th:text="${recommend.title}"></h3>
+                            <p class="pro-desc" th:text="${recommend.subTitle}"></p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
-        </div>
-        <!--컨텐츠 리스트-->
-        <div class="ListWrapper">
-            <label class="search-input-box" for="searchInput">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input id="searchInput" placeholder="검색어를 입력해주세요." type="text">
-            </label>
-            <div class="ListCategoryContainer">
-                <div class="swiper category-swiper swiper-initialized swiper-horizontal swiper-pointer-events">
-                    <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
-                        <div class="swiper-slide swiper-slide-active" style="margin-right: 10px;">
-                            <div class="CategoryList Category All On">전체</div>
-                        </div>
-                        <div class="swiper-slide swiper-slide-active" style="margin-right: 10px;"
-                             th:each="category : ${T(com.app.spotick.domain.type.promotion.PromotionCategory).values()}">
-                            <div class="CategoryList Category" th:category="${category}"
-                                 th:text="${category.displayName}"/>
-                        </div>
+        </section>
+
+        <section class="pro-toolbar">
+            <div class="pro-search">
+                <i class="fa-solid fa-magnifying-glass pro-search__icon"></i>
+                <input type="text" id="searchInput" class="pro-search__input" placeholder="검색어를 입력해주세요.">
+            </div>
+
+            <div class="pro-controls">
+                <div class="pro-category" id="categorySlider">
+                    <div class="pro-category__track">
+                        <button type="button" class="pro-category__btn pro-category__btn--active" data-category="ALL">전체</button>
+                        <button type="button" class="pro-category__btn"
+                                th:each="category : ${T(com.app.spotick.domain.type.promotion.PromotionCategory).values()}"
+                                th:data-category="${category.name()}" th:text="${category.displayName}"></button>
                     </div>
                 </div>
-                <div class="FilterBtn">
-                    <button type="button">
-                        <img alt="필터" src="/imgs/Nout_filter_filled_rainyblue08624.svg">
+
+                <div class="pro-sort" id="sortBox">
+                    <button class="pro-sort__btn" type="button">
+                        <span class="pro-sort__text">최신순</span>
+                        <input id="sortInput" type="hidden" value="NEWEST">
+                        <i class="fa-solid fa-chevron-down"></i>
                     </button>
-                </div>
-                <!--필터 모달창-->
-                <div class="FilterModal">
-                    <div class="FilterModalContainer">
-                        <div class="FilterModalHeader">
-                            <p>정렬 및 필터</p>
-                            <button class="FilterModalCloseBtn" type="button">
-                                <img alt="닫기" src="/imgs/cross_1G_24.svg">
-                            </button>
-                        </div>
-                        <div class="FilterModalBody">
-                            <div class="FilterModalBodyHeader">
-                                <p>정렬</p>
-                                <label>
-                                    <select class="SelectBox" id="modalSortType" name="log-filter">
-                                        <option th:each="sortType : ${T(com.app.spotick.util.type.PromotionSortType).values()}"
-                                                th:text="${sortType.displayName}"
-                                                th:value="${sortType}"/>
-                                    </select>
-                                </label>
-                            </div>
-                            <div class="FilterModalBodyHeader">
-                                <p>행사유형</p>
-                                <div class="FilterModalCategory">
-                                    <button class="FilterModalCategoryChild">전체</button>
-                                    <button class="FilterModalCategoryChild"
-                                            th:each="category : ${T(com.app.spotick.domain.type.promotion.PromotionCategory).values()}"
-                                            th:text="${category.displayName}"></button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="FilterModalFooter">
-                            <div class="FilterModalFooterBtnContainer">
-                                <button class="FilterModalFooterResetBtn" type="button">초기화</button>
-                                <button class="FilterModalFooterSaveBtn" type="button">필터적용</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--필터 모달창-->
-            </div>
-            <div class="content-center" id="contentsContainer">
-                <div class="ContentListContainer">
-                    <div class="ContentOneContainer" th:each="promotion: ${data.promotionList}"
-                         th:object="${promotion}">
-                        <div class="ContentMainImgContainer">
-                            <img class="ContentMainImg"
-                                 th:alt="*{title}"
-                                 th:src="|/file/display?fileName=*{thumbnailImage.uploadPath}/t_*{thumbnailImage.uuid}_*{thumbnailImage.fileName}|">
-                        </div>
-                        <div class="ContentTitle">
-                            <p th:text="*{title}"></p>
-                        </div>
+                    <div class="pro-sort__list">
+                        <button class="pro-sort__item pro-sort__item--active" data-sort="NEWEST" type="button">최신순</button>
+                        <button class="pro-sort__item" data-sort="POPULARITY" type="button">인기순</button>
                     </div>
                 </div>
             </div>
-            <div class="loading-wrap" id="loadingMark">
-                <img alt="" src="/imgs/loading.svg">
-            </div>
+        </section>
+
+        <section class="pro-grid" id="promotionGrid"></section>
+
+        <div class="pro-loading" id="loadingSpinner">
+            <img alt="로딩" src="/imgs/loading.svg">
         </div>
-    </div>
-    <a class="register-btn" href="/promotion/register">
-        <img alt="작성" src="/imgs/write.png">
-    </a>
-    <input id="category" type="hidden">
-    <input id="sortType" type="hidden" value="NEWEST">
 
-    <div th:replace="~{/fragments/header-footer :: footer}"></div>
+        <div id="scrollTarget" style="height: 10px; width: 100%;"></div>
+
+        <a class="pro-fab" th:href="@{/promotion/register}">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+    </main>
 </div>
-</body>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/utils/topScrollBtn.js}"></script>
-<script th:src="@{/js/promotion/promotion-list.js}" th:type="module"></script>
 
+<th:block layout:fragment="script">
+    <script th:src="@{/dist/js/promotion/list.min.js}" type="module"></script>
+</th:block>
 </html>

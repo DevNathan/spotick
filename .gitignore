@@ -37,9 +37,11 @@ out/
 .vscode/
 
 ### yml ###
-*.yml
+**/application.yml
+**/docker-compose.yml
 
 ### generated Files ###
 /src/main/generated
 
 files
+**/dist

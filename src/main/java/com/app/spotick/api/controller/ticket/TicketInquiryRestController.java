@@ -39,7 +39,7 @@ public class TicketInquiryRestController {
     @GetMapping("/{ticketId}/list")
     public ResponseEntity<PageResponse<TicketInquiryDto.Response>> getInquiryList(@PathVariable("ticketId") Long ticketId,
                                                                                   @RequestParam("page") int page) {
-        Pageable pageable = PageRequest.of(page - 1, 5);
+        Pageable pageable = PageRequest.of(page, 5);
 
         Page<TicketInquiryDto.Response> contents = ticketInquiryService.findInquiryListPageById(ticketId, pageable);
 

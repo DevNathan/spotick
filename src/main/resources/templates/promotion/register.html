@@ -1,112 +1,113 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Spotick | 홍보 작성</title>
-    <link th:href="@{/imgs/logo/favicon.png}" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-    <link href="/css/promotion/promotion-register.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
+    <title layout:fragment="title" th:text="${promotionEditDto != null ? 'Spotick | 홍보 수정' : 'Spotick | 홍보 작성'}"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/promotion/register.min.css}">
 </head>
 <body>
 
-<div th:replace="~{/fragments/header-footer :: header}"></div>
-<div class="header-back"></div>
-<div class="body">
-    <div class="place-register-container">
-        <form class="register-form" enctype="multipart/form-data" method="post" th:action="@{/promotion/register}"
-              th:object="${promotionRegisterDto}">
-            <div class="guide-title-box">
-                <p>홍보 게시글 작성</p>
-            </div>
+<main class="layout-wrapper__main" layout:fragment="content">
+    <div class="pr-register" th:with="isEdit=${promotionEditDto != null}">
+        <div class="pr-header">
+            <h1 class="pr-header__title" th:text="${isEdit ? '홍보 게시글 수정' : '홍보 게시글 작성'}"></h1>
+            <p class="pr-header__subtitle">Spotick에 멋진 행사를 홍보해보세요.</p>
+        </div>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">게시글 제목</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg" th:errors="*{title}" th:if="${#fields.hasErrors()}"></p>
-                </div>
-                <label class="input-box" style="width: 60%">
-                    <input name="promotionTitle" placeholder="게시글 제목을 입력해 주세요." required
-                           th:field="*{title}" type="text">
-                </label>
-            </div>
+        <form th:if="${!isEdit}" class="pr-form" enctype="multipart/form-data" method="post"
+              th:action="@{/promotion/register}" th:object="${promotionRegisterDto}" id="promotionForm">
+            <th:block th:replace="~{::form-fields(isEdit=false)}"></th:block>
+        </form>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">게시글 부제목</p>
-                </div>
-                <label class="input-box" style="width: 60%">
-                    <input name="promotionTitle" placeholder="부제목을 입력해 주세요."
-                           th:field="*{subTitle}" type="text">
-                </label>
-            </div>
+        <form th:if="${isEdit}" class="pr-form" enctype="multipart/form-data" method="post"
+              th:action="@{/promotion/edit}" th:object="${promotionEditDto}" id="promotionForm">
+            <input type="hidden" th:field="*{promotionId}">
+            <th:block th:replace="~{::form-fields(isEdit=true)}"></th:block>
+        </form>
+    </div>
+</main>
 
-            <p class="invalid-msg" th:errors="*{file}" th:if="${#fields.hasErrors()}"></p>
-            <div class="img-wrap">
-                <input accept="image/*" th:field="*{file}" type="file">
-                <label class="file-label flex-align-center" th:for="file">
+<th:block th:fragment="form-fields(isEdit)">
+    <section class="pr-section">
+        <div class="pr-field">
+            <div class="pr-field__label-group">
+                <label class="pr-field__label">게시글 제목 <span class="pr-field__required">*</span></label>
+                <p class="pr-field__error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+            </div>
+            <input type="text" class="pr-input" placeholder="게시글 제목을 입력해 주세요." required th:field="*{title}">
+        </div>
+
+        <div class="pr-field">
+            <div class="pr-field__label-group">
+                <label class="pr-field__label">게시글 부제목</label>
+            </div>
+            <input type="text" class="pr-input" placeholder="부제목을 입력해 주세요." th:field="*{subTitle}">
+        </div>
+
+        <div class="pr-field">
+            <div class="pr-field__label-group">
+                <label class="pr-field__label">썸네일 사진 <span class="pr-field__required">*</span></label>
+                <th:block th:if="${!isEdit}">
+                    <p class="pr-field__error" th:if="${#fields.hasErrors('file')}" th:errors="*{file}"></p>
+                </th:block>
+                <th:block th:if="${isEdit}">
+                    <input type="hidden" th:field="*{fileDto.uploadPath}">
+                    <input type="hidden" th:field="*{fileDto.uuid}">
+                    <input type="hidden" th:field="*{fileDto.fileName}">
+                </th:block>
+            </div>
+            <div class="pr-image">
+                <input accept="image/*" type="file" id="thumbnailFile" name="file" hidden>
+
+                <label class="pr-image__label" for="thumbnailFile" id="uploadLabel"
+                       th:style="${isEdit and promotionEditDto?.fileDto != null ? 'display: none;' : ''}">
                     <i class="fa-regular fa-image"></i>
                     <p>썸네일 사진을 선택해주세요.</p>
                 </label>
-                <div class="file-container none">
-                    <ul class="file-wrap"></ul>
 
-                    <div class="img-button-box">
-                        <button class="prev" type="button">
-                            <i class="fa-solid fa-circle-chevron-left"></i>
-                        </button>
-                        <div></div>
-                        <button class="next" type="button">
-                            <i class="fa-solid fa-circle-chevron-right"></i>
-                        </button>
-                    </div>
+                <div class="pr-image__preview" id="imagePreview"
+                     th:style="${isEdit and promotionEditDto?.fileDto != null ? 'display: block;' : 'display: none;'}">
+                    <img th:if="${isEdit and promotionEditDto?.fileDto != null}"
+                         th:src="|/file/display?fileName=*{fileDto.uploadPath}/t_*{fileDto.uuid}_*{fileDto.fileName}|"
+                         alt="미리보기" class="pr-image__img" id="previewImg">
+                    <img th:unless="${isEdit and promotionEditDto?.fileDto != null}" src="" alt="미리보기" class="pr-image__img" id="previewImg">
+                    <button type="button" class="pr-image__delete" id="deleteImgBtn"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
+        </div>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">행사 카테고리</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg" th:errors="*{category}" th:if="${#fields.hasErrors()}"></p>
-                </div>
-                <div class="input-box category-box">
-                    <label>
-                        <select class="select" required th:field="*{category}">
-                            <option value="">카테고리를 선택해주세요.</option>
-                            <option th:each="category : ${T(com.app.spotick.domain.type.promotion.PromotionCategory).values()}"
-                                    th:text="${category.displayName}" th:value="${category}"></option>
-                        </select>
-                    </label>
-                </div>
+        <div class="pr-field">
+            <div class="pr-field__label-group">
+                <label class="pr-field__label">행사 카테고리 <span class="pr-field__required">*</span></label>
+                <p class="pr-field__error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></p>
             </div>
+            <select class="pr-select" required th:field="*{category}">
+                <option value="">카테고리를 선택해주세요.</option>
+                <option th:each="cat : ${T(com.app.spotick.domain.type.promotion.PromotionCategory).values()}"
+                        th:text="${cat.displayName}" th:value="${cat}"></option>
+            </select>
+        </div>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">행사 내용</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg" th:errors="*{content}" th:if="${#fields.hasErrors()}"></p>
-                </div>
-                <div style="min-height: 500px">
-                    <label>
-                        <textarea id="summernote" required th:field="*{content}"></textarea>
-                    </label>
-                </div>
+        <div class="pr-field">
+            <div class="pr-field__label-group">
+                <label class="pr-field__label">행사 내용 <span class="pr-field__required">*</span></label>
+                <p class="pr-field__error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
             </div>
-            <div class="flex-center start">
-                <button class="cancel" type="button">취소</button>
-                <button class="submit-btn on flex-align-center" type="submit">신청하기</button>
-            </div>
-        </form>
+            <div id="editor" class="pr-editor"></div>
+            <textarea id="hiddenContent" style="display: none;" th:field="*{content}"></textarea>
+        </div>
+    </section>
+
+    <div class="pr-actions">
+        <a th:href="@{/promotion}" class="pr-actions__btn pr-actions__btn--cancel">취소</a>
+        <button type="submit" class="pr-actions__btn pr-actions__btn--submit" th:text="${isEdit ? '수정하기' : '신청하기'}"></button>
     </div>
-</div>
-<div th:replace="~{/fragments/header-footer :: footer}"></div>
-</body>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script src="/js/summernote/summernote-lite.js"></script>
-<script src="/js/summernote/summernote-ko-KR.js"></script>
-<script src="/js/promotion/promotion-register.js"></script>
+</th:block>
 
+<th:block layout:fragment="script">
+    <script type="module" th:src="@{/dist/js/promotion/register.min.js}"></script>
+</th:block>
+</body>
 </html>

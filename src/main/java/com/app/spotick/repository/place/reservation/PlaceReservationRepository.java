@@ -35,12 +35,10 @@ public interface PlaceReservationRepository extends JpaRepository<PlaceReservati
      * @return true -> 예약 불가, false -> 예약 가능
      */
     @Query("""
-                SELECT EXISTS (
-                    SELECT 1 FROM PlaceReservation p
-                    WHERE p.place.id = :placeId
-                    AND p.place.placeStatus NOT IN ('REJECTED', 'CANCELLED')
-                    AND (p.checkIn < :checkOut AND p.checkOut > :checkIn)
-                )
+                SELECT COUNT(p) > 0 FROM PlaceReservation p
+                WHERE p.place.id = :placeId
+                AND p.reservationStatus NOT IN ('REJECTED', 'CANCELLED')
+                AND (p.checkIn < :checkOut AND p.checkOut > :checkIn)
             """)
     boolean isOverlappingReservation(@Param("placeId") Long placeId, @Param("checkIn") LocalDateTime checkIn,
                                      @Param("checkOut") LocalDateTime checkOut);
@@ -60,7 +58,7 @@ public interface PlaceReservationRepository extends JpaRepository<PlaceReservati
 
     @Modifying
     @Query("UPDATE PlaceReservation pr SET pr.place = :changedPlace WHERE pr.place = :originalPlace")
-    void bulkUpdateReservationPlace(@Param("originalPlace")Place originalPlace, @Param("changedPlace")Place changedPlace);
+    void bulkUpdateReservationPlace(@Param("originalPlace") Place originalPlace, @Param("changedPlace") Place changedPlace);
 }
 
 

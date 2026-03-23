@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="filter-modal">
+    <div class="global-filter-modal" id="filterModal">
+        <div class="global-filter-modal__overlay"></div>
+        <div class="global-filter-modal__content">
+            <header class="global-filter-modal__header">
+                <h3 class="global-filter-modal__title">지역 검색</h3>
+                <button type="button" class="global-filter-modal__close" id="filterModalClose">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </header>
+
+            <div class="global-filter-modal__tabs">
+                <button type="button" class="global-filter-modal__tab global-filter-modal__tab--active">지역별</button>
+            </div>
+
+            <div class="global-filter-modal__body">
+                <aside class="global-filter-modal__sidebar">
+                    <button th:each="region, iterStat : ${T(com.app.spotick.domain.district.Region).values()}"
+                            type="button"
+                            class="global-filter-modal__region-btn"
+                            th:classappend="${iterStat.index == 0} ? 'global-filter-modal__region-btn--active' : ''"
+                            th:data-target="${region.fullName}"
+                            th:text="${region.fullName}"></button>
+                </aside>
+
+                <main class="global-filter-modal__districts">
+                    <th:block th:each="region, iterStat : ${T(com.app.spotick.domain.district.Region).values()}">
+                        <div class="global-filter-modal__district-group"
+                             th:id="${region.fullName}"
+                             th:classappend="${iterStat.index == 0} ? 'global-filter-modal__district-group--active' : ''">
+
+                            <div class="global-filter-modal__checkbox-wrap">
+                                <label class="global-checkbox">
+                                    <input type="checkbox" class="global-checkbox__input global-checkbox__input--all"
+                                           th:data-region="${region.fullName}" value="전체">
+                                    <div class="global-checkbox__ui"></div>
+                                    <span class="global-checkbox__text">전체</span>
+                                </label>
+                            </div>
+
+                            <div class="global-filter-modal__checkbox-wrap" th:each="district : ${region.districts}">
+                                <label class="global-checkbox">
+                                    <input type="checkbox" class="global-checkbox__input global-checkbox__input--item"
+                                           th:data-region="${region.fullName}" th:value="${district.displayName}">
+                                    <div class="global-checkbox__ui"></div>
+                                    <span class="global-checkbox__text" th:text="${district.displayName}"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </th:block>
+                </main>
+            </div>
+
+            <div class="global-filter-modal__selected-tags" id="selectedTagsContainer"></div>
+
+            <footer class="global-filter-modal__footer">
+                <button type="button" class="global-filter-modal__reset-btn" id="filterResetBtn">초기화</button>
+                <button type="button" class="global-filter-modal__submit-btn" id="filterSubmitBtn">필터적용</button>
+            </footer>
+        </div>
+    </div>
+</th:block>
+</html>

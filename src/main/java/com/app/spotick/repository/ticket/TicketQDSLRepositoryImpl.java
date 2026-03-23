@@ -11,10 +11,12 @@ import com.app.spotick.domain.type.ticket.TicketRequestType;
 import com.app.spotick.global.util.search.DistrictFilter;
 import com.app.spotick.global.util.type.TicketSortType;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -189,11 +191,11 @@ public class TicketQDSLRepositoryImpl implements TicketQDSLRepository {
             whereClause.and(ticket.ticketCategory.eq(ticketCategory));
         }
 
-        if (districtFilter != null && districtFilter.getDistrict() != null) {
+        if (districtFilter != null && districtFilter.getRegion() != null) {
 
-            if (!districtFilter.getDetailDistrict().isEmpty()) {
+            if (!districtFilter.getDistrict().isEmpty()) {
                 BooleanBuilder booleanBuilder = new BooleanBuilder();
-                for (String detailDistrict : districtFilter.getDetailDistrict()) {
+                for (String detailDistrict : districtFilter.getDistrict()) {
                     booleanBuilder.or(ticket.ticketEventAddress.address.like(districtFilter.getDistrict() + "%" + detailDistrict + "%"));
                 }
                 whereClause.and(booleanBuilder);
@@ -336,13 +338,20 @@ public class TicketQDSLRepositoryImpl implements TicketQDSLRepository {
                 .where(ticketInquiry.ticket.eq(ticket));
     }
 
-    private BooleanExpression isLiked(Long userId) {
-        return userId == null ?
-                Expressions.asBoolean(false)
-                : JPAExpressions.select(ticketLike.id.isNotNull())
-                .from(ticketLike)
-                .where(ticketLike.ticket.eq(ticket).and(ticketLike.user.id.eq(userId)))
-                .exists();
+    private Expression<Boolean> isLiked(Long userId) {
+        if (userId == null) {
+            return Expressions.constant(false);
+        }
+
+        return new CaseBuilder()
+                .when(
+                        JPAExpressions.selectOne()
+                                .from(ticketLike)
+                                .where(ticketLike.ticket.eq(ticket).and(ticketLike.user.id.eq(userId)))
+                                .exists()
+                )
+                .then(true)
+                .otherwise(false);
     }
 
     private OrderSpecifier<?>[] createOrderByClause(TicketSortType ticketSortType) {

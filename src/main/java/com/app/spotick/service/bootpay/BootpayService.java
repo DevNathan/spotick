@@ -51,18 +51,18 @@ public class BootpayService {
 
             if (res.get("error_code") == null) {
                 log.info("Bootpay 결제 승인 성공: {}", res);
-                Long orderId = Long.valueOf(res.get("order_id").toString());
+                Long dbOrderId = Long.valueOf(res.get("order_id").toString());
 
                 if (paymentType == PaymentType.PLACE) {
-                    PlacePayment foundPayment = placePaymentRepository.findById(orderId)
+                    PlacePayment foundPayment = placePaymentRepository.findById(dbOrderId)
                             .orElseThrow(() -> new NoSuchElementException("존재하지 않는 장소 결제 내역입니다."));
                     foundPayment.updatePaymentStatus(PaymentStatus.APPROVED);
 
-                    PlaceReservation foundReservation = placePaymentRepository.findReservationByPaymentId(orderId);
+                    PlaceReservation foundReservation = placePaymentRepository.findReservationByPaymentId(dbOrderId);
                     foundReservation.updateStatus(PlaceReservationStatus.APPROVED);
 
                 } else if (paymentType == PaymentType.TICKET) {
-                    TicketOrder foundOrder = ticketOrderRepository.findById(orderId)
+                    TicketOrder foundOrder = ticketOrderRepository.findById(dbOrderId)
                             .orElseThrow(() -> new NoSuchElementException("존재하지 않는 티켓 주문 내역입니다."));
                     foundOrder.updatePaymentStatus(PaymentStatus.APPROVED);
                 }
@@ -78,10 +78,11 @@ public class BootpayService {
 
     /*
      * 결제 검증 실패 시 데이터베이스의 결제 상태를 거절로 변경합니다.
+     * 파라미터를 문자열 영수증 ID가 아닌 실제 데이터베이스 주문 ID로 변경하였습니다.
      */
-    private void deny(String orderId, PaymentType paymentType) {
+    private void deny(Long dbOrderId, PaymentType paymentType) {
         if (paymentType == PaymentType.PLACE) {
-            PlacePayment foundPayment = placePaymentRepository.findById(Long.valueOf(orderId))
+            PlacePayment foundPayment = placePaymentRepository.findById(dbOrderId)
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 장소 결제 내역입니다."));
             foundPayment.updatePaymentStatus(PaymentStatus.DECLINED);
         }
@@ -89,27 +90,43 @@ public class BootpayService {
 
     /*
      * Bootpay 영수증의 가격과 내부 데이터베이스의 주문 가격을 비교하여 결제의 유효성을 검증합니다.
+     * 파라미터 변수명을 실제 전달받는 값에 맞추어 receiptId로 수정하였습니다.
      */
-    public ResponseEntity<?> priceCheck(String orderId, PaymentType paymentType) {
-        HashMap<String, Object> res = getBootpayReceipt(orderId);
+    public ResponseEntity<?> priceCheck(String receiptId, PaymentType paymentType) {
+        /*
+         * 결제 영수증 조회 시작을 알리는 로그를 추가하였습니다.
+         */
+        log.info("Bootpay 영수증 검증 시작 - receiptId: {}", receiptId);
+
+        HashMap<String, Object> res = getBootpayReceipt(receiptId);
 
         if (res == null || res.get("price") == null) {
+            /*
+             * 영수증 조회가 실패하거나 가격 정보가 누락된 경우의 에러 로그를 추가하였습니다.
+             */
+            log.error("Bootpay 영수증 정보가 없거나 가격 정보가 없습니다. res: {}", res);
             return buildErrorResponse("영수증을 정상적으로 불러오지 못했습니다.");
         }
 
         long receiptPrice = Long.parseLong(res.get("price").toString());
+        Long dbOrderId = Long.valueOf(res.get("order_id").toString());
         Long fullPrice;
 
         if (paymentType == PaymentType.PLACE) {
-            fullPrice = placePaymentRepository.findAmountById(Long.valueOf(res.get("order_id").toString()))
+            fullPrice = placePaymentRepository.findAmountById(dbOrderId)
                     .orElseThrow(() -> new NoSuchElementException("결제 금액을 확인할 수 없습니다."));
         } else {
-            fullPrice = ticketOrderRepository.findAmountById(Long.valueOf(res.get("order_id").toString()))
+            fullPrice = ticketOrderRepository.findAmountById(dbOrderId)
                     .orElseThrow(() -> new NoSuchElementException("결제 금액을 확인할 수 없습니다."));
         }
 
+        /*
+         * 부트페이 측 영수증 금액과 데이터베이스에 저장된 실제 결제 금액을 비교하기 전 로그를 출력합니다.
+         */
+        log.info("결제 금액 비교 - 부트페이 영수증 금액: {}, DB 주문 금액: {}", receiptPrice, fullPrice);
+
         if (receiptPrice == fullPrice) {
-            HashMap<String, Object> confirmationData = confirm(orderId, paymentType);
+            HashMap<String, Object> confirmationData = confirm(receiptId, paymentType);
             return new ResponseEntity<>(
                     BootPayResponse.builder()
                             .success(true)
@@ -120,7 +137,11 @@ public class BootpayService {
                     HttpStatus.OK
             );
         } else {
-            deny(orderId, paymentType);
+            /*
+             * 금액 불일치로 인해 결제가 거부된 경우 명확한 원인 파악을 위해 에러 로그를 남깁니다.
+             */
+            log.error("결제 금액 불일치 발생! 영수증 금액: {}, DB 금액: {}", receiptPrice, fullPrice);
+            deny(dbOrderId, paymentType);
             return buildErrorResponse("결제 금액이 일치하지 않아 결제가 거부되었습니다.");
         }
     }

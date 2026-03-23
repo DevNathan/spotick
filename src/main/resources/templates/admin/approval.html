@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      th:with="currentAdminPage='approval'">
+<head>
+  <title layout:fragment="title">Spotick | 승인 관리</title>
+  <link rel="stylesheet" th:href="@{/dist/css/admin/approval.min.css}">
+</head>
+<body>
+
+<div layout:fragment="admin-content">
+  <div class="admin-header">
+    <h2>승인 관리</h2>
+    <div class="admin-tabs">
+      <a href="#" class="active">권한 신청 목록</a>
+    </div>
+  </div>
+
+  <form class="admin-search-form" onsubmit="return false;">
+    <div class="search-group">
+      <label>이름 : <input type="text" id="name" placeholder="이름" class="search-input"></label>
+      <label>아이디 : <input type="text" id="email" placeholder="아이디(이메일)" class="search-input"></label>
+      <label>유형 :
+        <select id="type" class="search-select">
+          <option value="">전체</option>
+          <option value="PLACE">대여</option>
+          <option value="TICKET">발매</option>
+        </select>
+      </label>
+      <button type="button" class="search-btn">검색</button>
+    </div>
+  </form>
+
+  <div class="table-wrapper">
+    <table class="admin-table">
+      <thead>
+      <tr>
+        <th><input type="checkbox" id="checkAll"></th>
+        <th>호스트</th>
+        <th>아이디</th>
+        <th>유형</th>
+        <th>등록일</th>
+        <th>상태 변경</th>
+        <th>현재 상태</th>
+      </tr>
+      </thead>
+      <tbody id="approvalTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="admin-actions">
+    <button type="button" class="btn-change-status" id="changeApprovalBtn">선택 상태 변경</button>
+  </div>
+</div>
+
+<th:block layout:fragment="admin-script">
+  <script type="module" th:src="@{/dist/js/admin/approval.min.js}"></script>
+</th:block>
+
+</body>
+</html>

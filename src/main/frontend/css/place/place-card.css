@@ -1,0 +1,157 @@
+.place-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    cursor: pointer;
+}
+
+.place-card__slider-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.place-card__slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    width: 100%;
+    height: 100%;
+}
+
+.place-card__slider::-webkit-scrollbar {
+    display: none;
+}
+
+.place-card__slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: center;
+}
+
+.place-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #eef0f2;
+}
+
+.place-card__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.place-card:hover .place-card__nav {
+    opacity: 1;
+}
+
+.place-card__nav--prev {
+    left: 8px;
+}
+
+.place-card__nav--next {
+    right: 8px;
+}
+
+.place-card__pagination {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+}
+
+.place-card__bookmark {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: transform 0.2s;
+}
+
+.place-card__bookmark:hover {
+    transform: scale(1.1);
+}
+
+.place-card__bookmark--active {
+    color: #3c82fa;
+}
+
+.place-card__info {
+    display: flex;
+    flex-direction: column;
+}
+
+.place-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #8a8a8e;
+    margin-bottom: 4px;
+}
+
+.place-card__stats {
+    display: flex;
+    gap: 8px;
+}
+
+.place-card__stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.place-card__stat-icon {
+    color: #ffd600;
+}
+
+.place-card__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.place-card__price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1c1c1e;
+}

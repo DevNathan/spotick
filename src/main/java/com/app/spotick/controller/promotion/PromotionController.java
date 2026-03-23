@@ -31,15 +31,12 @@ public class PromotionController {
     @GetMapping
     public String goToList(Model model) {
         Map<String, Object> data = new HashMap<>();
-        Pageable pageable = PageRequest.of(0, 12);
-
+        
         List<PromotionRecommendListDto> recommendations = promotionService.getRecommendPromotionBoards();
-        Slice<PromotionListDto> promotionList = promotionService.getPromotionBoards(pageable, null, PromotionSortType.NEWEST, null);
 
         data.put("recommendations", recommendations);
-        data.put("promotionList", promotionList);
-
         model.addAttribute("data", data);
+
         return "promotion/list";
     }
 
@@ -56,7 +53,7 @@ public class PromotionController {
         return "promotion/detail";
     }
 
-    ///////////////////////////////////////////// 프로모션 등록 //////////////////////////////////////////////
+    /// ////////////////////////////////////////// 프로모션 등록 //////////////////////////////////////////////
     @GetMapping("/register")
     public String promotionRegister(@ModelAttribute("promotionRegisterDto")
                                     PromotionRegisterDto promotionRegisterDto) {
@@ -77,18 +74,18 @@ public class PromotionController {
 
         Long id = promotionService.promotionBoardSave(promotionRegisterDto);
 
-        return "redirect:/promotion/" + id;
+        return "redirect:/promotion";
     }
 
-    ///////////////////////////////////////////// 프로모션 수정 //////////////////////////////////////////////
+    /// ////////////////////////////////////////// 프로모션 수정 //////////////////////////////////////////////
     @GetMapping("/{id}/edit")
     public String goToEdit(@PathVariable("id") Long promotionId,
                            @AuthenticationPrincipal UserDetailsDto userDetailsDto,
                            Model model) {
         PromotionEditDto content = promotionService.getPromotionBoardEdit(promotionId, userDetailsDto.getId());
 
-        model.addAttribute("promotion", content);
-        return "promotion/edit";
+        model.addAttribute("promotionEditDto", content);
+        return "promotion/register";
     }
 
     @PostMapping("/edit")
@@ -105,6 +102,6 @@ public class PromotionController {
 
         Long id = promotionService.updatePromotionBoard(promotionEditDto);
 
-        return "redirect:/promotion/" + id;
+        return "redirect:/promotion";
     }
 }

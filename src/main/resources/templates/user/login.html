@@ -1,106 +1,77 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
-    <link th:href="@{/imgs/logo/favicon.png}" rel="icon">
-    <link rel="stylesheet" th:href="@{/css/global-css/root.css}">
-    <link rel="stylesheet" th:href="@{/css/user/login.css}"/>
-    <title>로그인</title>
-
+    <title layout:fragment="title">Spotick | 로그인</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/dist/css/user/login.min.css}"/>
+    </th:block>
 </head>
 
 <body>
-<header th:replace="~{fragments/header-footer :: header}"></header>
-
-<div class="body">
-    <div class="main">
-        <div class="main-container">
-            <div class="sign-wrap">
-                <form th:action="@{/user/login}" method="post" class="login-form">
-                    <div class="signin">
-
-                        <div class="flex login-logo">
-                            <img th:src="@{/imgs/logo/spotick-logo.svg}" alt="로고이미지">
-                        </div>
-                        <p class="flex-center">고객님 환영합니다! 기다리고 있었습니다.</p>
-
-                        <div class="login-box">
-                            <div class="input_container bottom">
-                                <input type="email" name="username" placeholder="이메일" id="email" required="required"
-                                       th:value="${param.username}">
-                            </div>
-
-                            <div class="input_container bottom">
-                                <input type="password" id="password" name="password" placeholder="비밀번호"/>
-                            </div>
-                            <!-- 로그인 실패 메세지 -->
-                            <div class="fail-msg">
-                                <p th:text="${errorMsg}" th:if="${param.error}"></p>
-                            </div>
-
-                            <!-- <div class="auto-log">
-                              <div class="check-box">
-                                <input type="checkbox" id="saveId" name="saveId" />
-                                <label class="save-id">아이디 저장</label>
-                              </div>
-                            </div> -->
-                            <div class="submit-box flex-center">
-                                <div class="flex-center submit login-btn " id="submit">
-                                    <p>로그인</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="oauth">
-                            <!--              카카오로그인 url : https://kauth.kakao.com/oauth/authorize-->
-                            <a th:href="@{/oauth2/authorization/kakao}" class="kakao-login login-btn">
-                  <span>
-                    <img src="https://img.lifet.co.kr/icon/icon_kakao.svg" alt="">
-                  </span>
-                                <p>카카오 로그인</p>
-                            </a>
-                            <a th:href="@{/oauth2/authorization/naver}" class="naver-login login-btn">
-                  <span>
-                    <img src="https://img.lifet.co.kr/icon/icon_naver.svg" alt="">
-                  </span>
-                                <p>네이버 로그인</p>
-                            </a>
-                            <a th:href="@{/oauth2/authorization/google}" class="google-login login-btn">
-                  <span>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
-                         alt="Google Icon">
-                  </span>
-                                <p>Google 로그인</p>
-                            </a>
-
-                        </div>
-                        <div class="split-line">
-                            <hr>
-                            <span>or</span>
-                        </div>
-                        <div class="join flex-center">
-                            <a th:href="@{/user/find}" class="find-id">아이디/비밀번호 찾기</a>
-                            <a th:href="@{/user/join}">이메일로 회원가입</a>
-                        </div>
-
+<main layout:fragment="content">
+    <section class="login-page">
+        <div class="login-card">
+            <form th:action="@{/user/login}" method="post" class="login-card__form">
+                <div class="login-card__header">
+                    <div class="login-card__logo">
+                        <img th:src="@{/imgs/logo/spotick-logo.svg}" alt="Spotick 로고">
                     </div>
-                </form>
-            </div>
+                    <p class="login-card__welcome">스포틱에 오신 것을 환영합니다.</p>
+                </div>
+
+                <div class="login-card__body">
+                    <div class="login-card__input-group">
+                        <div class="login-card__input-wrapper">
+                            <input name="username" class="login-card__input" placeholder="이메일" type="text" required>
+                        </div>
+                        <div class="login-card__input-wrapper">
+                            <input name="password" class="login-card__input" placeholder="비밀번호" type="password" required>
+                        </div>
+                    </div>
+
+                    <div class="login-card__messages">
+                        <p th:if="${param.error}" class="login-card__error-msg">아이디 또는 비밀번호가 일치하지 않습니다.</p>
+                        <p th:if="${param.gm}" class="login-card__error-msg">로그인이 필요한 서비스입니다.</p>
+                    </div>
+
+                    <button class="login-card__submit-btn" type="submit">로그인</button>
+                </div>
+
+                <div class="login-card__social">
+                    <a th:href="@{/oauth2/authorization/kakao}" class="login-card__social-btn login-card__social-btn--kakao">
+                        <span class="login-card__social-icon"><img src="https://img.lifet.co.kr/icon/icon_kakao.svg" alt="Kakao"></span>
+                        <span class="login-card__social-text">카카오 로그인</span>
+                    </a>
+                    <a th:href="@{/oauth2/authorization/naver}" class="login-card__social-btn login-card__social-btn--naver">
+                        <span class="login-card__social-icon"><img src="https://img.lifet.co.kr/icon/icon_naver.svg" alt="Naver"></span>
+                        <span class="login-card__social-text">네이버 로그인</span>
+                    </a>
+                    <a th:href="@{/oauth2/authorization/google}" class="login-card__social-btn login-card__social-btn--google">
+                        <span class="login-card__social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"></span>
+                        <span class="login-card__social-text">Google 로그인</span>
+                    </a>
+                </div>
+
+                <div class="login-card__divider">
+                    <hr class="login-card__divider-line">
+                    <span class="login-card__divider-text">또는</span>
+                </div>
+
+                <div class="login-card__footer">
+                    <a th:href="@{/user/find}" class="login-card__link login-card__link--secondary">아이디/비밀번호 찾기</a>
+                    <a th:href="@{/user/join}" class="login-card__link login-card__link--primary">이메일로 회원가입</a>
+                </div>
+            </form>
         </div>
-    </div>
-</div>
-<input type="hidden" class="msg" name="guideMsg" th:value="${guideMsg}">
-<footer th:replace="~{fragments/header-footer :: footer}"></footer>
+    </section>
+    <input type="hidden" class="msg" name="guideMsg" th:value="${guideMsg}">
+</main>
 
-<script src="https://kit.fontawesome.com/c6992f5b12.js" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/loading.js}"></script>
-<script th:src="@{/js/user/login.js}"></script>
+<th:block layout:fragment="script">
+    <script type="module" th:src="@{/dist/js/user/login.min.js}"></script>
+</th:block>
 </body>
-
 </html>

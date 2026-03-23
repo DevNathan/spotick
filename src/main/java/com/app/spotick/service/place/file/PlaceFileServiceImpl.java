@@ -8,13 +8,15 @@ import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -32,6 +34,7 @@ public class PlaceFileServiceImpl implements PlaceFileService {
     @Override
     public void registerAndSavePlaceFile(List<MultipartFile> placeFiles, Place place) throws IOException {
         for (MultipartFile file : placeFiles) {
+            if (file.isEmpty()) continue;
             PlaceFile placeFile = saveFile(file);
             placeFile.setPlace(place);
             placeFileRepository.save(placeFile);
@@ -40,40 +43,56 @@ public class PlaceFileServiceImpl implements PlaceFileService {
 
     private PlaceFile saveFile(MultipartFile placeFile) throws IOException {
         String originName = placeFile.getOriginalFilename();
-        originName = originName.replace("\\s", ""); //파일 이름에 공백 제거
-        UUID uuid = UUID.randomUUID();
 
-        String sysName = uuid + "_" + originName;
-
-        File uploadPath = new File(ROOT_DIR, getUploadPath());
-
-        if (!uploadPath.exists()) {
-            uploadPath.mkdirs();
+        // Path Traversal 방어 로직
+        if (originName != null) {
+            originName = StringUtils.cleanPath(originName);
+            if (originName.contains("..")) {
+                throw new SecurityException("Path traversal attempt detected. Invalid file name.");
+            }
         }
 
-        File uploadFile = new File(uploadPath, sysName);
+        String extension = "";
+        if (originName != null && originName.contains(".")) {
+            extension = originName.substring(originName.lastIndexOf("."));
+        }
 
-        placeFile.transferTo(uploadFile);
+        // Linux 환경 InvalidPathException 방지를 위한 안전한 파일명 치환
+        String safeFileName = UUID.randomUUID().toString().substring(0, 10) + extension;
+        UUID uuid = UUID.randomUUID();
+        String sysName = uuid + "_" + safeFileName;
 
-        if (Files.probeContentType(uploadFile.toPath()).startsWith("image")) {
-            File thumbnailFile = new File(uploadPath, "t_" + sysName);
+        String datePath = getUploadPath();
+        Path uploadDirPath = Paths.get(ROOT_DIR, datePath).normalize();
 
-            try (FileOutputStream out = new FileOutputStream(thumbnailFile);
-                 InputStream in = placeFile.getInputStream()) {
+        // NIO.2 기반 디렉토리 생성
+        if (Files.notExists(uploadDirPath)) {
+            Files.createDirectories(uploadDirPath);
+        }
+
+        Path targetPath = uploadDirPath.resolve(sysName).normalize();
+        placeFile.transferTo(targetPath);
+
+        // 이미지 파일인 경우 썸네일 생성
+        String contentType = Files.probeContentType(targetPath);
+        if (contentType != null && contentType.startsWith("image")) {
+            Path thumbnailPath = uploadDirPath.resolve("t_" + sysName).normalize();
+
+            // try-with-resources로 스트림 누수 완벽 차단
+            try (InputStream in = Files.newInputStream(targetPath);
+                 OutputStream out = Files.newOutputStream(thumbnailPath)) {
                 Thumbnailator.createThumbnail(in, out, 300, 225);
             }
-            // try resource 를 활용해 자동으로 리소스를 닫아준다 out.close 생략 가능
         }
 
         return PlaceFile.builder()
                 .uuid(uuid.toString())
-                .fileName(originName)
-                .uploadPath(getUploadPath())
+                .fileName(safeFileName)
+                .uploadPath(datePath)
                 .build();
     }
 
     private String getUploadPath() {
         return LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
     }
-
 }

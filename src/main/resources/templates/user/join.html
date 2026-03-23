@@ -1,103 +1,98 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입</title>
-    <link th:href="@{/imgs/logo/favicon.png}" rel="icon">
-    <link rel="stylesheet" th:href="@{/css/global-css/root.css}">
-    <link rel="stylesheet" th:href="@{/css/user/join.css}"/>
+    <title layout:fragment="title">스포틱 | 회원가입</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/dist/css/user/join.min.css}"/>
+    </th:block>
 </head>
 <body>
 
-<header th:replace="~{fragments/header-footer :: header}"></header>
-<div id="page-body" class="body flex-align-center">
-    <div class="main-container">
+<main layout:fragment="content" class="join-page">
+    <div class="join-page__container">
+        <form th:action="@{/user/join}" method="post" class="join-form">
+            <div class="join-form__header">
+                <h1 class="join-form__title">회원가입</h1>
+                <p class="join-form__subtitle">스포틱의 회원이 되어 다양한 서비스를 이용해보세요.</p>
+            </div>
 
-        <form th:action="@{/user/join}" method="post" class="join-wrap">
-            <div class="email-box">
-                <div class="input-guide">
-                    <p>이메일</p>
-                    <img src="//s3.hourplace.co.kr/web/images/icon/invalid.svg" alt="필수입력" >
-                    <p class="email-fail invalid-msg"></p>
+            <div class="join-form__body">
+                <div class="join-form__field">
+                    <div class="join-form__label-group">
+                        <label class="join-form__label" for="email">이메일</label>
+                        <p class="join-form__error-msg" id="emailError"></p>
+                    </div>
+                    <div class="join-form__input-wrapper">
+                        <input id="email" type="email" name="email" class="join-form__input" placeholder="example@spotick.com" required>
+                    </div>
                 </div>
-                <div class="input-box">
-                    <input id="email" type="email" name="email" placeholder="이메일을 입력해주세요" onchange="isValidEmail()" required >
+
+                <div class="join-form__field">
+                    <div class="join-form__label-group">
+                        <label class="join-form__label" for="password">비밀번호</label>
+                        <p class="join-form__error-msg" id="passwordError"></p>
+                    </div>
+                    <div class="join-form__input-wrapper">
+                        <input id="password" type="password" name="password" class="join-form__input" placeholder="영문, 숫자, 특수문자 조합 8~20자" required>
+                    </div>
+                </div>
+
+                <div class="join-form__field">
+                    <div class="join-form__label-group">
+                        <label class="join-form__label" for="nick-name">닉네임</label>
+                        <p class="join-form__error-msg" id="nickNameError"></p>
+                    </div>
+                    <div class="join-form__input-wrapper">
+                        <input id="nick-name" name="nickName" type="text" class="join-form__input" placeholder="멋진 닉네임을 입력해주세요" required>
+                    </div>
+                </div>
+
+                <div class="join-form__field">
+                    <div class="join-form__label-group">
+                        <label class="join-form__label" for="tel">전화번호</label>
+                        <p class="join-form__error-msg" id="telError"></p>
+                    </div>
+                    <div class="join-form__input-wrapper">
+                        <input id="tel" name="tel" type="text" class="join-form__input" placeholder="010-0000-0000" required>
+                    </div>
+                </div>
+
+                <div class="join-form__agreement agreement">
+                    <div class="agreement__header">
+                        <div class="agreement__all-check">
+                            <div class="agreement__checkbox"></div>
+                            <span class="agreement__title">약관 전체 동의</span>
+                        </div>
+                    </div>
+                    <div class="agreement__list">
+                        <div class="agreement__item agreement__item--required">
+                            <div class="agreement__checkbox"></div>
+                            <p class="agreement__text">스포틱 서비스 이용약관 동의 (필수)</p>
+                        </div>
+                        <div class="agreement__item agreement__item--required">
+                            <div class="agreement__checkbox"></div>
+                            <p class="agreement__text">본인 확인 서비스 이용약관 동의 (필수)</p>
+                        </div>
+                        <div class="agreement__item">
+                            <div class="agreement__checkbox"></div>
+                            <p class="agreement__text">마케팅 정보 수신 동의 (선택)</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="password-box">
-                <div class="input-guide">
-                    <p>비밀번호</p>
-                    <img src="//s3.hourplace.co.kr/web/images/icon/invalid.svg" alt="필수입력">
-                    <p class="password-fail invalid-msg none">유효하지 않은 비밀번호 형식입니다</p>
-                </div>
-                <div class="input-box">
-                    <input id="password" type="password" name="password" placeholder="영문/숫자 조합8~20자로 입력해주세요" onchange="isValidPassword()" required>
-                </div>
+            <div class="join-form__footer">
+                <button type="submit" class="join-form__submit-btn" disabled>가입 완료</button>
             </div>
-
-            <div class="nick-name-box">
-                <div class="input-guide">
-                    <p>닉네임</p>
-                    <img src="//s3.hourplace.co.kr/web/images/icon/invalid.svg" alt="필수입력">
-                    <p class="nick-name-fail invalid-msg"></p>
-                </div>
-                <div class="input-box">
-                    <input id="nick-name" name="nickName" type="text"  placeholder="닉네임을 입력해주세요" onchange="isValidNickName()" required>
-                </div>
-            </div>
-
-            <div class="tel-box">
-                <div class="input-guide">
-                    <p>전화번호</p>
-                    <img src="//s3.hourplace.co.kr/web/images/icon/invalid.svg" alt="필수입력">
-                    <p class="tel-fail invalid-msg"></p>
-                </div>
-                <div class="input-box">
-                    <input id="tel" name="tel" type="text" onchange="isValidTelNumber()" placeholder="전화번호를 입력해주세요"  required>
-                </div>
-            </div>
-
-            <div class="agreement">
-                <div class="all-check">
-                    <img src="//s3.hourplace.co.kr/web/images/icon/controls_round_check.svg" alt="">
-                    <p>전체 동의하기</p>
-                </div>
-
-                <div class="check required">
-                    <img src="https://s3.hourplace.co.kr/web/images/icon/check_g.svg" alt="">
-                    <p>[필수] 스포틱 서비스 이용약관 동의</p>
-                </div>
-
-                <div class="check required">
-                    <img src="https://s3.hourplace.co.kr/web/images/icon/check_g.svg" alt="">
-                    <p>[필수] 본인 확인 서비스 이용약관 동의</p>
-                </div>
-                <div class="check">
-                    <img src="https://s3.hourplace.co.kr/web/images/icon/check_g.svg" alt="">
-                    <p>[선택] 마케팅 정보 수신 동의</p>
-                </div>
-
-            </div>
-
-            <div class="submit-box flex-align-center">
-                <div class="submit-btn flex-align-center">
-                    회원가입
-                </div>
-            </div>
-
         </form>
     </div>
+</main>
 
-
-</div>
-<footer th:replace="~{fragments/header-footer :: footer}"></footer>
-
-<script src="https://kit.fontawesome.com/c6992f5b12.js" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/loading.js}"></script>
-<script th:src="@{/js/user/join.js}"></script>
+<th:block layout:fragment="script">
+    <script type="module" th:src="@{/dist/js/user/join.min.js}"></script>
+</th:block>
 </body>
 </html>

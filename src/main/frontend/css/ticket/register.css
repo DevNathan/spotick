@@ -1,0 +1,306 @@
+@import "flatpickr/dist/flatpickr.min.css";
+
+.tk-register {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.tk-register__header {
+    margin-bottom: 32px;
+    border-bottom: 2px solid #1c1c1e;
+    padding-bottom: 24px;
+}
+
+.tk-register__title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1c1c1e;
+    margin-bottom: 8px;
+}
+
+.tk-register__subtitle {
+    font-size: 14px;
+    color: #8a8a8e;
+    line-height: 1.5;
+}
+
+.tk-section {
+    margin-bottom: 48px;
+}
+
+.tk-section__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin-bottom: 20px;
+}
+
+.tk-field {
+    margin-bottom: 24px;
+}
+
+.tk-field__row {
+    display: flex;
+    gap: 16px;
+}
+
+.tk-field--half {
+    flex: 1;
+}
+
+.tk-field__label-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.tk-field__label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #3a3a3c;
+}
+
+.tk-field__required {
+    color: #ef4444;
+    margin-left: 4px;
+}
+
+.tk-field__error {
+    font-size: 13px;
+    color: #ef4444;
+}
+
+.tk-input, .tk-textarea, .tk-select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #dfe2e7;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #1c1c1e;
+    transition: border-color 0.2s;
+    background-color: #ffffff;
+}
+
+.tk-input:focus, .tk-textarea:focus, .tk-select:focus {
+    outline: none;
+    border-color: #3c82fa;
+}
+
+.tk-input--mb {
+    margin-bottom: 8px;
+}
+
+.tk-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.tk-map-box__search {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.tk-map-box__btn {
+    padding: 0 20px;
+    background: #1c1c1e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.tk-map-box__btn:hover {
+    background: #3a3a3c;
+}
+
+.tk-map-box__view {
+    width: 100%;
+    height: 300px;
+    background: #f4f5f7;
+    border-radius: 8px;
+    border: 1px solid #dfe2e7;
+}
+
+.tk-image__label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 160px;
+    border: 2px dashed #dfe2e7;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #8a8a8e;
+    transition: 0.2s;
+    background: #f9fafb;
+}
+
+.tk-image__label:hover {
+    background: #f3f4f6;
+    border-color: #3c82fa;
+    color: #3c82fa;
+}
+
+.tk-image__label i {
+    font-size: 28px;
+}
+
+.tk-image__preview {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #dfe2e7;
+    margin-top: 12px;
+}
+
+.tk-image__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tk-image__delete {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.tk-image__delete:hover {
+    background: #ef4444;
+}
+
+.tk-grade__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.tk-grade__item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.tk-grade__name {
+    flex: 2;
+}
+
+.tk-grade__input-box {
+    flex: 1;
+    position: relative;
+}
+
+.tk-grade__unit {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8a8a8e;
+    pointer-events: none;
+}
+
+.tk-grade__price, .tk-grade__people {
+    padding-right: 36px;
+}
+
+.tk-grade__add-btn {
+    width: 100%;
+    padding: 14px;
+    border: 1px dashed #3c82fa;
+    background: #eff6ff;
+    color: #3c82fa;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.tk-grade__add-btn:hover:not(:disabled) {
+    background: #dbeafe;
+}
+
+.tk-grade__add-btn:disabled {
+    border-color: #dfe2e7;
+    background: #f9fafb;
+    color: #8a8a8e;
+    cursor: not-allowed;
+}
+
+.tk-grade__remove-btn {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: 0.2s;
+}
+
+.tk-grade__remove-btn:hover {
+    background: #fecaca;
+}
+
+.tk-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 48px;
+    border-top: 1px solid #dfe2e7;
+    padding-top: 24px;
+}
+
+.tk-actions__btn {
+    flex: 1;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.tk-actions__btn--cancel {
+    background: #f4f5f7;
+    color: #3a3a3c;
+    border: 1px solid #dfe2e7;
+}
+
+.tk-actions__btn--cancel:hover {
+    background: #e5e7eb;
+}
+
+.tk-actions__btn--submit {
+    background: #1c1c1e;
+    color: #ffffff;
+    border: none;
+}
+
+.tk-actions__btn--submit:hover {
+    background: #3a3a3c;
+}

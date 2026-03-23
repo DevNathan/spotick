@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      th:with="currentAdminPage='user'">
+<head>
+    <title layout:fragment="title">Spotick | 회원 관리</title>
+    <link rel="stylesheet" th:href="@{/dist/css/admin/user.min.css}">
+</head>
+<body>
+
+<div layout:fragment="admin-content">
+    <div class="admin-header">
+        <h2>회원 관리</h2>
+        <div class="admin-tabs">
+            <a href="#" class="active">회원 정보</a>
+        </div>
+    </div>
+
+    <form class="admin-search-form" onsubmit="return false;">
+        <div class="search-group">
+            <label>이메일 : <input type="text" id="email" placeholder="이메일" class="search-input"></label>
+            <label>닉네임 : <input type="text" id="nickName" placeholder="닉네임" class="search-input"></label>
+            <label>회원상태 :
+                <select id="status" class="search-select">
+                    <option value="">전체</option>
+                    <option th:each="status : ${enumValues}" th:value="${status.name}"
+                            th:text="${status.displayName}"></option>
+                </select>
+            </label>
+            <button type="button" class="search-btn">검색</button>
+        </div>
+    </form>
+
+    <div class="table-wrapper">
+        <table class="admin-table">
+            <thead>
+            <tr>
+                <th><input type="checkbox" id="checkAll"></th>
+                <th>이메일</th>
+                <th>닉네임</th>
+                <th>회원등급</th>
+                <th>핸드폰 번호</th>
+                <th>가입일</th>
+                <th>회원상태</th>
+                <th>상태 변경</th>
+                <th>관리자 권한</th>
+            </tr>
+            </thead>
+            <tbody id="userTableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-actions">
+        <button type="button" class="btn-change-status" id="changeStatusBtn">선택 상태 변경</button>
+    </div>
+</div>
+
+<th:block layout:fragment="admin-script">
+    <script type="module" th:src="@{/dist/js/admin/user.min.js}"></script>
+</th:block>
+
+</body>
+</html>

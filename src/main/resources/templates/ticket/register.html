@@ -1,255 +1,244 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>티켓팅 등록</title>
-    <link href="/imgs/logo/favicon.png" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/ticket/ticket-register.css" rel="stylesheet"/>
-    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
-          integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ=="
-          referrerpolicy="no-referrer" rel="stylesheet"/>
-    <link href="/css/ticket/register-datepicker.css" rel="stylesheet">
-
+    <title layout:fragment="title" th:text="${ticketEditDto != null ? 'Spotick | 티켓팅 수정' : 'Spotick | 티켓팅 등록'}"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/ticket/register.min.css}">
 </head>
 <body>
-<div th:replace="~{fragments/header-footer :: header}"></div>
 
-<div class="header-back"></div>
-<div class="body">
-    <div class="place-register-container">
-        <form class="register-form" enctype="multipart/form-data" method="post" th:action="@{/ticket/register}"
-              th:object="${ticketRegisterDto}">
-            <div class="guide-title-box">
-                <p>티켓팅 등록 신청</p>
+<main class="layout-wrapper__main" layout:fragment="content">
+    <div class="tk-register" th:with="isEdit=${ticketEditDto != null}">
+        <div class="tk-register__header">
+            <h1 class="tk-register__title" th:text="${isEdit ? '티켓팅 정보 수정' : '티켓팅 등록 신청'}"></h1>
+            <p class="tk-register__subtitle">티켓팅 신청 및 수정은 시작일로부터 최소 일주일 전까지만 가능합니다. 특정 필드는 신청 후 수정이 불가할 수 있습니다.</p>
+        </div>
+
+        <form th:if="${!isEdit}" class="tk-form" enctype="multipart/form-data" method="post"
+              th:action="@{/ticket/register}" th:object="${ticketRegisterDto}">
+            <th:block th:replace="~{::form-fields(isEdit=false)}"></th:block>
+        </form>
+
+        <form th:if="${isEdit}" class="tk-form" enctype="multipart/form-data" method="post"
+              th:action="@{/ticket/edit/{id}(id=*{ticketId})}" th:object="${ticketEditDto}">
+            <th:block th:replace="~{::form-fields(isEdit=true)}"></th:block>
+        </form>
+    </div>
+</main>
+
+<th:block th:fragment="form-fields(isEdit)">
+    <section class="tk-section">
+        <h2 class="tk-section__title">1. 기본 정보</h2>
+
+        <div class="tk-field">
+            <div class="tk-field__label-group">
+                <label class="tk-field__label">티켓팅 이름 <span class="tk-field__required">*</span></label>
+                <p class="tk-field__error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
             </div>
+            <input type="text" class="tk-input" placeholder="행사를 대표하는 이름을 입력해 주세요" required th:field="*{title}">
+        </div>
 
-            <div class="notification-box">
-                <span>티켓팅 신청 및 수정은 티켓팅 시작날짜로부터<br>최소 일주일의 시간이 있어야 가능합니다.<br>또한, 특정 필드는 신청한 뒤로부터 수정이 불가할 수 있으니 상세히 확인하시기 바랍니다.</span>
+        <div class="tk-field">
+            <div class="tk-field__label-group">
+                <label class="tk-field__label">행사 설명 <span class="tk-field__required">*</span></label>
+                <p class="tk-field__error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
             </div>
+            <textarea class="tk-textarea" placeholder="행사에 대해서 자세하게 설명해주세요" required th:field="*{content}"></textarea>
+        </div>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">티켓팅 이름</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg" th:errors="*{title}" th:if="${#fields.hasErrors()}"></p>
+        <div class="tk-field__row">
+            <div class="tk-field tk-field--half">
+                <div class="tk-field__label-group">
+                    <label class="tk-field__label">관람 연령 <span class="tk-field__required">*</span></label>
                 </div>
-                <div class="input-box">
-                    <input placeholder="행사를 대표하는 이름을 입력해 주세요" required th:field="*{title}" type="text">
-                </div>
+                <select class="tk-select" th:field="*{ticketRatingType}">
+                    <option th:each="enumValue : ${T(com.app.spotick.domain.type.ticket.TicketRatingType).values()}"
+                            th:text="${enumValue.displayName}" th:value="${enumValue}"></option>
+                </select>
             </div>
-
-            <div class="map-box">
-                <div class="input-guide flex">
-                    <p class="input-title">위치 검색</p>
-                    <p class="guide-msg">장소를 검색하신 후 클릭하여 핀을 찍어주세요</p>
+            <div class="tk-field tk-field--half">
+                <div class="tk-field__label-group">
+                    <label class="tk-field__label">행사 카테고리 <span class="tk-field__required">*</span></label>
                 </div>
-                <p class="invalid-msg" th:errors="*{placeLat}" th:if="${#fields.hasErrors()}"></p>
-                <div class="search-wrap">
-                    <div class="input-box search-box">
-                        <input id="search" placeholder="장소를 검색해주세요" type="text">
-                    </div>
+                <select class="tk-select" th:field="*{category}">
+                    <option th:each="enumValue : ${T(com.app.spotick.domain.type.ticket.TicketCategory).values()}"
+                            th:text="${enumValue.displayName}" th:value="${enumValue}"></option>
+                </select>
+            </div>
+        </div>
 
-                    <div class="flex-align-center">
-                        <button class="search-btn" type="button">
-                            <i class="fa-solid fa-magnifying-glass" style="color: #343434;"></i>
-                        </button>
-                    </div>
+        <div class="tk-field">
+            <div class="tk-field__label-group">
+                <label class="tk-field__label">행사 기간 <span class="tk-field__required">*</span></label>
+                <p class="tk-field__error" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></p>
+            </div>
+            <div class="tk-date">
+                <input type="text" class="tk-input tk-date__input" id="eventDates" placeholder="행사 시작일 ~ 종료일을 선택하세요"
+                       readonly>
+                <input type="hidden" th:field="*{startDate}" id="startDate">
+                <input type="hidden" th:field="*{endDate}" id="endDate">
+            </div>
+        </div>
+    </section>
+
+    <section class="tk-section">
+        <h2 class="tk-section__title">2. 위치 및 사진</h2>
+
+        <div class="tk-field">
+            <div class="tk-field__label-group">
+                <label class="tk-field__label">위치 검색 <span class="tk-field__required">*</span></label>
+                <p class="tk-field__error" th:if="${#fields.hasErrors('placeLat')}" th:errors="*{placeLat}"></p>
+            </div>
+            <div class="tk-map-box">
+                <div class="tk-map-box__search">
+                    <input id="search" class="tk-input" placeholder="장소를 검색해주세요" type="text">
+                    <button class="tk-map-box__btn" type="button" id="mapSearchBtn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
                 </div>
-                <div id="map"></div>
+                <div id="map" class="tk-map-box__view"></div>
                 <input id="placeLat" name="placeLat" th:field="*{placeLat}" type="hidden">
                 <input id="placeLng" name="placeLng" th:field="*{placeLng}" type="hidden">
             </div>
+        </div>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">행사 장소 주소</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg" th:errors="*{placeAddressDetail}" th:if="${#fields.hasErrors()}"></p>
-                </div>
-                <div class="input-box">
-                    <input name="placeAddress" placeholder="행사 장소 주소를 입력해 주세요" required th:field="*{placeAddress}"
-                           type="text">
-                </div>
-                <div class="input-box">
-                    <input name="placeAddressDetail" placeholder="장소의 상세 주소를 입력해 주세요" required
-                           th:field="*{placeAddressDetail}" type="text">
-                </div>
+        <div class="tk-field">
+            <div class="tk-field__label-group">
+                <label class="tk-field__label">상세 주소 <span class="tk-field__required">*</span></label>
+                <p class="tk-field__error" th:if="${#fields.hasErrors('placeAddressDetail')}"
+                   th:errors="*{placeAddressDetail}"></p>
             </div>
+            <input class="tk-input tk-input--mb" id="placeAddress" name="placeAddress"
+                   placeholder="지도에서 핀을 클릭하면 주소가 입력됩니다" readonly required th:field="*{placeAddress}" type="text">
+            <input class="tk-input" name="placeAddressDetail" placeholder="상세 주소를 입력해 주세요" required
+                   th:field="*{placeAddressDetail}" type="text">
+        </div>
 
-            <div class="img-wrap">
-                <input accept="image/*" th:field="*{ticketFile}" type="file">
-                <label class="file-label flex-align-center" th:for="ticketFile">
-                    <i class="fa-regular fa-image"></i>
-                    <p>해당 이벤트를 대표할 사진을 선택해주세요.</p>
+        <div class="tk-field">
+            <div class="tk-field__label-group">
+                <label class="tk-field__label">대표 사진 <span class="tk-field__required">*</span></label>
+                <th:block th:if="${!isEdit}">
+                    <p class="tk-field__error" th:if="${#fields.hasErrors('ticketFile')}" th:errors="*{ticketFile}"></p>
+                </th:block>
+                <th:block th:if="${isEdit}">
+                    <p class="tk-field__error" th:if="${#fields.hasErrors('newTicketFile')}" th:errors="*{newTicketFile}"></p>
+                    <input type="hidden" th:field="*{ticketFileId}">
+                    <input type="hidden" th:field="*{uploadPath}">
+                    <input type="hidden" th:field="*{uuid}">
+                    <input type="hidden" th:field="*{fileName}">
+                </th:block>
+            </div>
+            <div class="tk-image">
+                <input accept="image/*" type="file" th:id="${isEdit ? 'newTicketFile' : 'ticketFile'}"
+                       th:name="${isEdit ? 'newTicketFile' : 'ticketFile'}" hidden>
+
+                <label class="tk-image__label" th:for="${isEdit ? 'newTicketFile' : 'ticketFile'}" id="uploadLabel"
+                       th:style="${isEdit and ticketEditDto?.uploadPath != null ? 'display: none;' : ''}">
+                    <i class="fa-regular fa-image"></i> 클릭하여 대표 사진 업로드
                 </label>
-                <div class="file-container none">
-                    <ul class="file-wrap"></ul>
 
-                    <div class="img-button-box">
-                        <button class="prev" type="button">
-                            <i class="fa-solid fa-circle-chevron-left"></i>
-                        </button>
-                        <div></div>
-                        <button class="next" type="button">
-                            <i class="fa-solid fa-circle-chevron-right"></i>
-                        </button>
-                    </div>
+                <div class="tk-image__preview" id="imagePreview"
+                     th:style="${isEdit and ticketEditDto?.uploadPath != null ? 'display: block;' : 'display: none;'}">
+                    <img th:if="${isEdit and ticketEditDto?.uploadPath != null}"
+                         th:src="|/file/display?fileName=*{uploadPath}/t_*{uuid}_*{fileName}|"
+                         alt="미리보기" class="tk-image__img" id="previewImg">
+                    <img th:unless="${isEdit and ticketEditDto?.uploadPath != null}" src="" alt="미리보기" class="tk-image__img" id="previewImg">
+                    <button type="button" class="tk-image__delete" id="deleteImgBtn"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">행사 설명</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg" th:errors="*{content}" th:if="${#fields.hasErrors()}"></p>
-                </div>
-                <label class="input-box textarea-box" th:for="content">
-                    <textarea placeholder="행사에 대해서 자세하게 설명해주세요"
-                              required th:field="*{content}"></textarea>
-                </label>
-            </div>
-            <div class="space-evenly">
-                <div class="input-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title">관람 연령</p>
-                        <img alt="필수입력" src="/imgs/invalid.svg">
-                    </div>
-                    <div class="input-box category-box">
-                        <select class="select" th:field="*{ticketRatingType}">
-                            <option th:each="enumValue : ${T(com.app.spotick.domain.type.ticket.TicketRatingType).values()}"
-                                    th:text="${enumValue.displayName}" th:value="${enumValue}"></option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title">행사 카테고리</p>
-                        <img alt="필수입력" src="/imgs/invalid.svg">
-                    </div>
-                    <div class="input-box category-box">
-                        <select class="select" th:field="*{category}">
-                            <option th:each="enumValue : ${T(com.app.spotick.domain.type.ticket.TicketCategory).values()}"
-                                    th:text="${enumValue.displayName}" th:value="${enumValue}"></option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div style="position: relative">
-                <div class="input-guide flex">
-                    <p class="input-title price-title">행사 기간</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg" th:errors="*{endDate}" th:if="${#fields.hasErrors()}"></p>
-                </div>
+    <section class="tk-section">
+        <h2 class="tk-section__title">3. 등급 및 요금</h2>
 
-                <div class="date-container">
-                    <p class="date-header-text">시작 날짜 / 마지막 날짜</p>
-                    <input id="reservationDate" type="hidden">
-                    <div class="date-wrap">
-                        <div id="datepicker1"></div>
-                        <input th:field="*{startDate}" type="hidden">
-                        <div id="datepicker2"></div>
-                        <input th:field="*{endDate}" type="hidden">
-                    </div>
-                    <div class="calendar-ctr-box"></div>
-                    <p class="calendar-text">선택된 날짜 : <span id="date-info"></span></p>
-                </div>
-            </div>
+        <div class="tk-grade">
+            <div class="tk-grade__list" id="gradeList">
 
-            <div class="price-people-container no-flex" style="width: 100%">
-                <div class="input-wrap hour-price-wrap width">
-                    <div class="input-guide flex">
-                        <p class="input-title price-title">등급 별 금액</p>
-                        <img alt="필수입력" src="/imgs/invalid.svg">
+                <th:block th:if="${!isEdit or #lists.isEmpty(ticketEditDto?.ticketGrades)}">
+                    <div class="tk-grade__item">
+                        <input class="tk-input tk-grade__name" name="ticketGrades[0].gradeName" placeholder="등급명 (예: VIP)" required type="text">
+                        <div class="tk-grade__input-box">
+                            <input class="tk-input tk-grade__price" name="ticketGrades[0].price" placeholder="금액" required type="number" min="0">
+                            <span class="tk-grade__unit">원</span>
+                        </div>
+                        <div class="tk-grade__input-box">
+                            <input class="tk-input tk-grade__people" name="ticketGrades[0].maxPeople" placeholder="최대 인원" required type="number" min="1">
+                            <span class="tk-grade__unit">명</span>
+                        </div>
+                        <button type="button" class="tk-grade__remove-btn" style="display: none;"><i class="fa-solid fa-trash"></i></button>
                     </div>
-                    <div class="price-input-container">
-                        <div class="price-input-box">
-                            <div class="input-box">
-                                <input class="placeDefaultPrice ticket-class" name="ticketGrades[0].gradeName"
-                                       placeholder="등급을 입력해주세요"
-                                       required
-                                       type="text">
-                            </div>
-                            <div class="input-box">
-                                <input class="placeDefaultPrice ticket-price" name="ticketGrades[0].price"
-                                       placeholder="금액을 입력해주세요"
-                                       required
-                                       type="number">
-                                <p class="unit">원</p>
-                            </div>
-                            <div class="input-box">
-                                <input class="placeDefaultPrice ticket-headcount"
-                                       name="ticketGrades[0].maxPeople"
-                                       placeholder="최대 인원을 입력해주세요"
-                                       required
-                                       type="number">
-                                <p class="unit">명</p>
-                            </div>
+                </th:block>
+
+                <th:block th:if="${isEdit and not #lists.isEmpty(ticketEditDto?.ticketGrades)}">
+                    <div class="tk-grade__item" th:each="grade, iterStat : ${ticketEditDto.ticketGrades}">
+                        <input class="tk-input tk-grade__name" th:name="'ticketGrades[' + ${iterStat.index} + '].gradeName'"
+                               th:value="${grade.gradeName}" placeholder="등급명 (예: VIP)" required type="text" readonly>
+                        <div class="tk-grade__input-box">
+                            <input class="tk-input tk-grade__price" th:name="'ticketGrades[' + ${iterStat.index} + '].price'"
+                                   th:value="${grade.price}" placeholder="금액" required type="number" min="0" readonly>
+                            <span class="tk-grade__unit">원</span>
+                        </div>
+                        <div class="tk-grade__input-box">
+                            <input class="tk-input tk-grade__people" th:name="'ticketGrades[' + ${iterStat.index} + '].maxPeople'"
+                                   th:value="${grade.maxPeople}" placeholder="최대 인원" required type="number" min="1" readonly>
+                            <span class="tk-grade__unit">명</span>
                         </div>
                     </div>
-                    <button class="price-add-button" disabled type="button">추가</button>
-                </div>
-            </div>
+                </th:block>
 
-            <div class="guide-title-box">
-                <p>호스트 정보</p>
             </div>
+            <button th:if="${!isEdit}" class="tk-grade__add-btn" id="addGradeBtn" type="button" disabled><i class="fa-solid fa-plus"></i> 등급 추가하기</button>
+        </div>
+    </section>
 
-            <div class="price-people-container">
-                <div class="input-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title">예금주</p>
-                        <img alt="필수입력" src="/imgs/invalid.svg">
-                        <p class="invalid-msg"></p>
-                    </div>
-                    <div class="input-box">
-                        <input placeholder="예금주를 입력해주세요" required th:field="*{accountHolder}" type="text">
-                    </div>
-                </div>
-                <div class="input-wrap">
-                    <div class="input-guide flex">
-                        <p class="input-title">은행명</p>
-                        <img alt="필수입력" src="/imgs/invalid.svg">
-                        <p class="invalid-msg"></p>
-                    </div>
-                    <div class="input-box select-box">
-                        <select class="select" th:field="*{bankName}">
-                            <option value="국민">국민</option>
-                            <option value="우리">우리</option>
-                            <option value="농협">농협</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+    <section class="tk-section">
+        <h2 class="tk-section__title">4. 정산 정보</h2>
 
-            <div class="input-wrap">
-                <div class="input-guide flex">
-                    <p class="input-title">계좌번호</p>
-                    <img alt="필수입력" src="/imgs/invalid.svg">
-                    <p class="invalid-msg"></p>
+        <div class="tk-field__row">
+            <div class="tk-field tk-field--half">
+                <div class="tk-field__label-group">
+                    <label class="tk-field__label">예금주 <span class="tk-field__required">*</span></label>
+                    <p class="tk-field__error" th:if="${#fields.hasErrors('accountHolder')}" th:errors="*{accountHolder}"></p>
                 </div>
-                <div class="input-box">
-                    <input placeholder="계좌번호를 입력해주세요" required th:field="*{accountNumber}"
-                           type="text">
+                <input class="tk-input" placeholder="예금주 성명" required th:field="*{accountHolder}" type="text">
+            </div>
+            <div class="tk-field tk-field--half">
+                <div class="tk-field__label-group">
+                    <label class="tk-field__label">은행명 <span class="tk-field__required">*</span></label>
                 </div>
+                <select class="tk-select" th:field="*{bankName}">
+                    <option value="국민">국민은행</option>
+                    <option value="신한">신한은행</option>
+                    <option value="우리">우리은행</option>
+                    <option value="농협">농협은행</option>
+                    <option value="카카오뱅크">카카오뱅크</option>
+                </select>
             </div>
-            <div class="flex-center start">
-                <button class="cancel" type="button">취소</button>
-                <button class="submit-btn on flex-align-center">신청하기</button>
+        </div>
+
+        <div class="tk-field">
+            <div class="tk-field__label-group">
+                <label class="tk-field__label">계좌번호 <span class="tk-field__required">*</span></label>
+                <p class="tk-field__error" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}"></p>
             </div>
-        </form>
+            <input class="tk-input" placeholder="'-' 제외 입력" required th:field="*{accountNumber}" type="text">
+        </div>
+    </section>
+
+    <div class="tk-actions">
+        <a th:href="@{/mypage/tickets}" class="tk-actions__btn tk-actions__btn--cancel">취소</a>
+        <button type="submit" class="tk-actions__btn tk-actions__btn--submit"
+                th:text="${isEdit ? '수정 완료' : '신청하기'}"></button>
     </div>
-</div>
-<div th:replace="~{fragments/header-footer :: footer}"></div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript"
+            th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsKey}&libraries=services&autoload=false|"></script>
+    <script type="module" th:src="@{/dist/js/ticket/register.min.js}"></script>
+</th:block>
 </body>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3dc12d7c2624483dc7c019a0a91b727f&libraries=services"
-        type="text/javascript"></script>
-<!-- datepicker js-->
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script src="/js/ticket/register/calendar.js"></script>
-<script src="/js/ticket/register/register.js"></script>
-<script src="/js/ticket/register/kakaoMapApi.js"></script>
 </html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      th:with="currentAdminPage='reply'">
+<head>
+  <title layout:fragment="title">Spotick | 댓글 관리</title>
+  <link rel="stylesheet" th:href="@{/dist/css/admin/reply.min.css}">
+</head>
+<body>
+
+<div layout:fragment="admin-content">
+  <div class="admin-header">
+    <h2>댓글 관리</h2>
+    <div class="admin-tabs">
+      <a href="#" class="active">전체 댓글</a>
+    </div>
+  </div>
+
+  <form class="admin-search-form" onsubmit="return false;">
+    <div class="search-group">
+      <label>작성자 : <input type="text" id="writer" placeholder="작성자 닉네임" class="search-input"></label>
+      <label>내용 : <input type="text" id="content" placeholder="댓글 내용" class="search-input"></label>
+      <label>게시판 :
+        <select id="boardType" class="search-select">
+          <option value="">전체</option>
+          <option value="PLACE">장소</option>
+          <option value="TICKET">티켓</option>
+        </select>
+      </label>
+      <button type="button" class="search-btn">검색</button>
+    </div>
+  </form>
+
+  <div class="table-wrapper">
+    <table class="admin-table">
+      <thead>
+      <tr>
+        <th><input type="checkbox" id="checkAll"></th>
+        <th>작성자</th>
+        <th>게시판</th>
+        <th>댓글 내용</th>
+        <th>작성일</th>
+        <th>상태 변경</th>
+        <th>상태</th>
+      </tr>
+      </thead>
+      <tbody id="replyTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="admin-actions">
+    <button type="button" class="btn-change-status" id="changeReplyBtn">선택 상태 변경</button>
+  </div>
+</div>
+
+<th:block layout:fragment="admin-script">
+  <script type="module" th:src="@{/dist/js/admin/reply.min.js}"></script>
+</th:block>
+
+</body>
+</html>

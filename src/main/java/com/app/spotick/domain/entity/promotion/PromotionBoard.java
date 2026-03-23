@@ -26,7 +26,7 @@ public class PromotionBoard extends ImageBase {
     private Long id;
     private String title;
     private String subTitle;
-    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
     @Enumerated(EnumType.STRING)
     private PromotionCategory promotionCategory;

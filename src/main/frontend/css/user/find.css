@@ -1,0 +1,231 @@
+.find-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+    background-color: #fcfcfc;
+}
+
+.find-page__container {
+    width: 100%;
+    max-width: 520px;
+}
+
+.find-card {
+    background-color: #fff;
+    border-radius: 20px;
+    border: 1px solid #eef0f2;
+    padding: 50px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+.find-card__header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.find-card__title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #1a1a1b;
+}
+
+.find-card__tabs {
+    display: flex;
+    border-bottom: 2px solid #eef0f2;
+    margin-bottom: 30px;
+}
+
+.find-card__tab {
+    flex: 1;
+    padding: 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #8a8a8e;
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+    top: 2px;
+}
+
+.find-card__tab--active {
+    color: #1c1c1e;
+    font-weight: 800;
+    border-bottom: 2px solid #1c1c1e;
+}
+
+.find-section {
+    display: none;
+    flex-direction: column;
+}
+
+.find-section--active {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.find-section__guide {
+    font-size: 15px;
+    color: #636366;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.find-card__field {
+    margin-bottom: 16px;
+}
+
+.find-card__input-wrapper {
+    position: relative;
+    height: 56px;
+    border-radius: 12px;
+    background-color: #f4f4f7;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    transition: all 0.3s;
+}
+
+.find-card__input-wrapper:focus-within {
+    background-color: #fff;
+    border-color: #3c82fa;
+    box-shadow: 0 0 0 4px rgba(60, 130, 250, 0.1);
+}
+
+.find-card__input {
+    width: 100%;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1c1c1e;
+    background: transparent;
+}
+
+.find-card__input::placeholder {
+    color: #aeaeb2;
+}
+
+.find-card__input-wrapper--with-btn {
+    padding-right: 8px;
+}
+
+.find-card__cert-btn {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 8px;
+    background-color: #e5e5ea;
+    color: #8a8a8e;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.find-card__cert-btn--active {
+    background-color: #fff;
+    color: #3c82fa;
+    border: 1px solid #3c82fa;
+    cursor: pointer;
+}
+
+.find-card__error-msg {
+    color: #ff3b30;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+    min-height: 16px;
+}
+
+.find-card__submit-btn {
+    width: 100%;
+    height: 60px;
+    margin-top: 24px;
+    background-color: #1c1c1e;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 800;
+    border-radius: 16px;
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.find-card__submit-btn:hover {
+    transform: translateY(-2px);
+    background-color: #3c82fa;
+}
+
+.find-card__submit-btn:disabled {
+    background-color: #e5e5ea;
+    color: #aeaeb2;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.find-result {
+    background-color: #f4f4f7;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.find-result__email {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1c1c1e;
+    margin-bottom: 8px;
+}
+
+.find-result__date {
+    font-size: 14px;
+    color: #8a8a8e;
+}
+
+.find-result__info {
+    text-align: center;
+    font-size: 13px;
+    color: #8a8a8e;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .find-page {
+        padding: 40px 16px;
+    }
+
+    .find-card {
+        padding: 40px 24px;
+        border-radius: 16px;
+    }
+
+    .find-card__title {
+        font-size: 24px;
+    }
+
+    .find-card__input-wrapper {
+        height: 52px;
+    }
+
+    .find-card__submit-btn {
+        height: 56px;
+        font-size: 16px;
+    }
+}

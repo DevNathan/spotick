@@ -1,0 +1,157 @@
+.pl-res {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.pl-res__header {
+    border-bottom: 2px solid #1c1c1e;
+    padding-bottom: 16px;
+}
+
+.pl-res__title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1c1c1e;
+}
+
+.pl-res__place-info {
+    padding: 16px;
+    background: #f4f5f7;
+    border-radius: 8px;
+    border: 1px solid #eef0f2;
+}
+
+.pl-res__place-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1c1c1e;
+}
+
+.pl-res__calendar-box {
+    margin-bottom: 16px;
+}
+
+.pl-res__calendar-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.pl-res__calendar-input:focus {
+    outline: none;
+    border-color: #3c82fa;
+}
+
+.pl-res__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pl-res__empty {
+    text-align: center;
+    padding: 40px 0;
+    color: #8a8a8e;
+    font-weight: 600;
+    border: 1px dashed #eef0f2;
+    border-radius: 8px;
+}
+
+.pl-res__card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #eef0f2;
+    border-radius: 8px;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.pl-res__card-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pl-res__card-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #eef0f2;
+}
+
+.pl-res__card-nickname {
+    font-weight: 700;
+    font-size: 15px;
+    color: #1c1c1e;
+}
+
+.pl-res__card-date {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #3a3a3c;
+    font-weight: 500;
+}
+
+.pl-res__card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.pl-res__btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+.pl-res__btn--approve {
+    background-color: #3c82fa;
+    color: white;
+}
+
+.pl-res__btn--approve:hover {
+    background-color: #2b6ce6;
+}
+
+.pl-res__btn--reject {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.pl-res__btn--reject:hover {
+    background-color: #fecaca;
+}
+
+.pl-res__more-box {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.pl-res__more-btn {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    padding: 10px 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #374151;
+    transition: background 0.2s;
+}
+
+.pl-res__more-btn:hover {
+    background: #f3f4f6;
+}

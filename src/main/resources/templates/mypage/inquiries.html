@@ -1,70 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mypage/layout}"
+      th:with="currentPage='inquiries'">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Spotick | 문의내역</title>
-    <link href="/imgs/logo/favicon.png" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/mypage/mypage.css" rel="stylesheet">
-    <link href="/css/mypage/mypage-modal.css" rel="stylesheet">
-    <link href="/css/global-css/post-list-card-item.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/2364e2b536.js"></script>
+    <title layout:fragment="title">Spotick | 문의내역</title>
+    <link rel="stylesheet" th:href="@{/dist/css/mypage/inquiries.min.css}">
 </head>
-
 <body>
-<div>
-    <div th:replace="~{fragments/chat :: chat}"></div>
 
-    <div class="modal-bg" id="modal">
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
-        <div class="modal-inquiry" id="inquiryModal"></div>
+<div layout:fragment="mypage-content">
+    <div class="inq-header">
+        <h2 class="inq-header__title">문의 내역</h2>
     </div>
 
-    <header th:replace="~{fragments/header-footer :: header}"></header>
+    <nav class="inq-tab">
+        <button class="inq-tab__btn active" id="placeTab" type="button">장소 문의</button>
+        <button class="inq-tab__btn" id="ticketTab" type="button">티켓 문의</button>
+    </nav>
 
-    <main class="my-page-main" id="page-body">
-        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
-        <div class="mp-content">
-            <article>
-                <div class="mpc-title not-with-line">
-                    <h2>문의 내역</h2>
-                </div>
-                <nav class="mpc-top-nav">
-                    <button class="mpc-top-nav-button" id="place" type="button">
-                        장소 문의<span id="placeCount"></span>
-                    </button>
-                    <button class="mpc-top-nav-button" id="ticket" type="button">
-                        티켓 문의<span id="ticketCount"></span>
-                    </button>
-                </nav>
-                <div th:replace="~{fragments/loading :: loading}"></div>
-                <div class="mpcr-container" id="inquiryContainer">
-                    <div>확인하고 싶은 내역을 상단 바에서 클릭해주세요.</div>
-                </div>
-                <div class="loading-wrap" id="loadingMark">
-                    <img alt="" src="/imgs/loading.svg">
-                </div>
+    <div class="inq-list" id="inquiryContainer">
+        <div class="inq-empty">확인하고 싶은 내역을 상단 바에서 클릭해주세요.</div>
+    </div>
 
-                <section class="pagination-container" id="paginationContainer"></section>
+    <div class="loading-wrap" id="loadingMark">
+        <img alt="로딩" src="/imgs/loading.svg">
+    </div>
 
-            </article>
+    <section class="pagination-container" id="paginationContainer"></section>
+
+    <div class="inq-modal-overlay" id="inqDetailModal">
+        <div class="inq-modal">
+            <button class="inq-modal__close" id="inqModalClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="inq-modal__title">문의 상세 정보</h3>
+            <div class="inq-modal__content" id="inqModalContent">
+            </div>
         </div>
-    </main>
-
-    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
+    </div>
 </div>
-</body>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/mypage/mypage.js}"></script>
-<script th:src="@{/js/mypage/inquiry.js}" type="module"></script>
-<script>
-    document.getElementById('inquiries').classList.add('active');
-</script>
 
+<th:block layout:fragment="mypage-script">
+    <script type="module" th:src="@{/dist/js/mypage/inquiries.min.js}"></script>
+</th:block>
+
+</body>
 </html>

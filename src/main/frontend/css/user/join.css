@@ -1,0 +1,249 @@
+.join-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+    background-color: #fcfcfc;
+}
+
+.join-page__container {
+    width: 100%;
+    max-width: 520px;
+}
+
+.join-form {
+    background-color: #fff;
+    border-radius: 20px;
+    border: 1px solid #eef0f2;
+    padding: 60px 50px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+.join-form__header {
+    margin-bottom: 45px;
+    text-align: center;
+}
+
+.join-form__title {
+    font-size: 32px;
+    font-weight: 900;
+    color: #1a1a1b;
+    margin-bottom: 12px;
+}
+
+.join-form__subtitle {
+    font-size: 15px;
+    color: #8a8a8e;
+    font-weight: 500;
+}
+
+.join-form__field {
+    margin-bottom: 28px;
+}
+
+.join-form__label-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 10px;
+}
+
+.join-form__label {
+    font-weight: 700;
+    font-size: 14px;
+    color: #3a3a3c;
+}
+
+.join-form__error-msg {
+    color: #ff3b30;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.join-form__input-wrapper {
+    position: relative;
+    height: 56px;
+    border-radius: 12px;
+    background-color: #f4f4f7;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.join-form__input-wrapper:focus-within {
+    background-color: #fff;
+    border-color: #3c82fa;
+    box-shadow: 0 0 0 4px rgba(60, 130, 250, 0.1);
+}
+
+.join-form__input {
+    width: 100%;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1c1c1e;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.join-form__input::placeholder {
+    color: #aeaeb2;
+}
+
+.agreement {
+    margin-top: 40px;
+    padding: 24px;
+    background-color: #f9f9fb;
+    border-radius: 16px;
+    border: 1px solid #f1f1f5;
+}
+
+.agreement__header {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #eeeef2;
+}
+
+.agreement__all-check {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.agreement__title {
+    font-weight: 800;
+    font-size: 16px;
+    color: #1c1c1e;
+}
+
+.agreement__list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.agreement__item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.agreement__text {
+    font-size: 14px;
+    color: #636366;
+    font-weight: 500;
+}
+
+.agreement__checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background-color: #e5e5ea;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.agreement__checkbox::after {
+    content: '';
+    width: 6px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-bottom: 2px;
+}
+
+.agreement__item--active .agreement__checkbox,
+.agreement__all-check--active .agreement__checkbox {
+    background-color: #3c82fa;
+}
+
+.join-form__submit-btn {
+    width: 100%;
+    height: 60px;
+    border-radius: 16px;
+    background-color: #e5e5ea;
+    color: #aeaeb2;
+    font-weight: 800;
+    font-size: 18px;
+    border: none;
+    margin-top: 20px;
+    transition: all 0.3s;
+}
+
+.join-form__submit-btn--active {
+    background-color: #1c1c1e;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.join-form__submit-btn--active:hover {
+    transform: translateY(-2px);
+    background-color: #3c82fa;
+}
+
+@media screen and (max-width: 768px) {
+    .join-page {
+        padding: 40px 16px;
+    }
+
+    .join-page__container {
+        max-width: 100%;
+    }
+
+    .join-form {
+        padding: 40px 24px;
+        border-radius: 16px;
+    }
+
+    .join-form__header {
+        margin-bottom: 30px;
+    }
+
+    .join-form__title {
+        font-size: 26px;
+    }
+
+    .join-form__subtitle {
+        font-size: 13px;
+        word-break: keep-all;
+    }
+
+    .join-form__field {
+        margin-bottom: 24px;
+    }
+
+    .join-form__input-wrapper {
+        height: 52px;
+        padding: 0 16px;
+    }
+
+    .join-form__input {
+        font-size: 15px;
+    }
+
+    .agreement {
+        padding: 20px 16px;
+        margin-top: 30px;
+    }
+
+    .agreement__title {
+        font-size: 15px;
+    }
+
+    .agreement__text {
+        font-size: 13px;
+    }
+
+    .join-form__submit-btn {
+        height: 56px;
+        font-size: 16px;
+        margin-top: 16px;
+    }
+}

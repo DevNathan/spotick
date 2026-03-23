@@ -1,100 +1,83 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아이디/비밀번호 찾기</title>
-    <link th:href="@{/imgs/logo/favicon.png}" rel="icon">
-    <link rel="stylesheet" th:href="@{/css/global-css/root.css}">
-    <link rel="stylesheet" th:href="@{/css/user/find.css}"/>
+    <title layout:fragment="title">Spotick | 아이디/비밀번호 찾기</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/dist/css/user/find.min.css}"/>
+    </th:block>
 </head>
-
 <body>
-<div class="global-container">
-    <div class="main-container">
-        <div class="find-container">
-            <div class="id-pw-title-box flex-align-center">
-                <h2>아이디/비밀번호 찾기</h2>
+<main layout:fragment="content" class="find-page">
+    <div class="find-page__container">
+        <div class="find-card">
+            <div class="find-card__header">
+                <h1 class="find-card__title">아이디/비밀번호 찾기</h1>
             </div>
-            <div class="find-wrap">
 
+            <div class="find-card__tabs">
+                <button type="button" class="find-card__tab find-card__tab--active" data-target="id">아이디 찾기</button>
+                <button type="button" class="find-card__tab" data-target="password">비밀번호 찾기</button>
+            </div>
 
-                <div class="title-container">
-                    <button type="button" class="title-box find-focus">
-                        아이디
-                    </button>
-                    <button type="button" class="title-box ">
-                        비밀번호
-                    </button>
-                </div>
-                <!-- 아이디 찾기 부분 -->
-                <div class="find-section">
-                    <section class="id-section flex-center">
-                        <p class="guide-msg">회원가입 시 등록하신<br>닉네임과 휴대폰 번호를 입력해주세요</p>
-                        <div class="input-box">
-                            <label for="nickname">
-                                <input id="nickname" type="text" class="name required" name="nickname" placeholder="닉네임">
-                            </label>
-                            <p class="warning-msg none">닉네임을 정확히 입력해 주세요</p>
+            <div class="find-card__body" id="find-body">
+                <section class="find-section find-section--id find-section--active">
+                    <p class="find-section__guide">회원가입 시 등록하신<br>닉네임과 휴대폰 번호를 입력해주세요</p>
+
+                    <div class="find-card__field">
+                        <div class="find-card__input-wrapper">
+                            <input id="nickname" type="text" class="find-card__input" placeholder="닉네임">
                         </div>
-                        <div class="input-box">
-                            <label for="tel">
-                                <input id="tel" type="number" class="tel required" name="tel"
-                                       placeholder="휴대전화(-제외 하고 입력)">
-                            </label>
-                            <p class="warning-msg none">전화번호를 정확히 입력해 주세요</p>
-                        </div>
-                        <div class="input-box">
-                            <label for="certNumber" class="cert-number-label">
-                                <input id="certNumber" type="number" class="certNumber" name="tel" placeholder="인증번호"
-                                       readonly>
-                                <button class="cert-btn flex-align-center">인증번호</button>
-                            </label>
-                            <p class="id-cert-msg"></p>
-                        </div>
-
-                        <button type="button" class="find-id-btn find-btn flex">아이디 찾기</button>
-
-                    </section>
-                    <div class="password-wrap">
-
-                        <section class="flex-center password-section none">
-                            <p class="guide-msg">회원정보에 등록한 아이디를 입력해주세요</p>
-                            <div class="input-box">
-                                <label for="name">
-                                    <input id="email" type="text" class="email" name="email" placeholder="아이디(이메일)">
-                                </label>
-                                <p class="warning-msg none">아이디(이메일) 정확히 입력해 주세요</p>
-                            </div>
-                            <div class="input-box">
-                                <label for="passwordCertNumber" class="cert-number-label">
-                                    <input id="passwordCertNumber" type="number" class="password-cert-number"
-                                           name="passwordCertNumber"
-                                           placeholder="인증번호" readonly>
-                                    <button class="cert-btn flex-align-center">인증번호</button>
-                                </label>
-                                <p class="pw-cert-msg"></p>
-                            </div>
-
-                            <button type="button" class="find-password-btn find-btn flex">비밀번호 찾기</button>
-
-                        </section>
-
-
+                        <p class="find-card__error-msg" id="nickname-error"></p>
                     </div>
-                </div>
 
+                    <div class="find-card__field">
+                        <div class="find-card__input-wrapper">
+                            <input id="tel" type="text" class="find-card__input" placeholder="휴대전화 (- 제외)">
+                        </div>
+                        <p class="find-card__error-msg" id="tel-error"></p>
+                    </div>
 
+                    <div class="find-card__field">
+                        <div class="find-card__input-wrapper find-card__input-wrapper--with-btn">
+                            <input id="certNumber" type="text" class="find-card__input" placeholder="인증번호" readonly>
+                            <button type="button" class="find-card__cert-btn" id="id-cert-btn" disabled>인증번호</button>
+                        </div>
+                        <p class="find-card__error-msg" id="id-cert-msg"></p>
+                    </div>
+
+                    <button type="button" class="find-card__submit-btn" id="find-id-btn" disabled>아이디 찾기</button>
+                </section>
+
+                <section class="find-section find-section--password">
+                    <p class="find-section__guide">회원정보에 등록한 이메일(아이디)을 입력해주세요</p>
+
+                    <div class="find-card__field">
+                        <div class="find-card__input-wrapper">
+                            <input id="email" type="text" class="find-card__input" placeholder="이메일">
+                        </div>
+                        <p class="find-card__error-msg" id="email-error"></p>
+                    </div>
+
+                    <div class="find-card__field">
+                        <div class="find-card__input-wrapper find-card__input-wrapper--with-btn">
+                            <input id="passwordCertNumber" type="text" class="find-card__input" placeholder="인증번호"
+                                   readonly>
+                            <button type="button" class="find-card__cert-btn" id="pw-cert-btn" disabled>인증번호</button>
+                        </div>
+                        <p class="find-card__error-msg" id="pw-cert-msg"></p>
+                    </div>
+
+                    <button type="button" class="find-card__submit-btn" id="find-pw-btn" disabled>비밀번호 찾기</button>
+                </section>
             </div>
-
         </div>
     </div>
-</div>
-
-
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/user/find.js}"></script>
+</main>
+<th:block layout:fragment="script">
+    <script type="module" th:src="@{/dist/js/user/find.min.js}"></script>
+</th:block>
 </body>
-
 </html>

@@ -6,10 +6,12 @@ import com.app.spotick.api.dto.user.UserFindEmailDto;
 import com.app.spotick.api.dto.user.UserFindPwDto;
 import com.app.spotick.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/users/api")
 @RequiredArgsConstructor
@@ -87,6 +89,10 @@ public class UserRestController {
             response.setSuccess(false);
             response.setData(false);
             response.setMessage("서비스에 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+
+            log.error("Exception [Err_Msg]: {}", e.getMessage());
+            e.printStackTrace();
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(response);
         }

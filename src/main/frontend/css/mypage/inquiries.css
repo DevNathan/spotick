@@ -1,0 +1,249 @@
+@import "../global/pagination.css";
+
+.inq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #1c1c1e;
+}
+
+.inq-header__title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1c1c1e;
+}
+
+.inq-tab {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.inq-tab__btn {
+    flex: 1;
+    height: 52px;
+    background: #ffffff;
+    border: 1px solid #eef0f2;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #8a8a8e;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inq-tab__btn.active {
+    background: #1c1c1e;
+    color: #ffffff;
+    border-color: #1c1c1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.inq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 300px;
+    margin-bottom: 40px;
+}
+
+.inq-card {
+    background: #ffffff;
+    border: 1px solid #eef0f2;
+    border-radius: 12px;
+    padding: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.inq-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.inq-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.inq-card__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin-bottom: 8px;
+}
+
+.inq-card__date {
+    font-size: 13px;
+    color: #8a8a8e;
+    font-weight: 500;
+}
+
+.inq-card__status {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.inq-card__status--done {
+    background: rgba(60, 130, 250, 0.1);
+    color: #3c82fa;
+}
+
+.inq-card__status--wait {
+    background: rgba(255, 149, 0, 0.1);
+    color: #ff9500;
+}
+
+.inq-card__body {
+    font-size: 15px;
+    color: #636366;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.inq-card__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #eef0f2;
+    padding-top: 16px;
+}
+
+.inq-btn {
+    padding: 0 16px;
+    height: 36px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: none;
+}
+
+.inq-btn--outline {
+    background: #ffffff;
+    border: 1px solid #eef0f2;
+    color: #1c1c1e;
+}
+
+.inq-btn--outline:hover {
+    background: #f4f5f7;
+}
+
+.inq-btn--danger {
+    background: #ffffff;
+    border: 1px solid #ff3b30;
+    color: #ff3b30;
+}
+
+.inq-btn--danger:hover {
+    background: #ff3b30;
+    color: #ffffff;
+}
+
+.inq-empty {
+    text-align: center;
+    padding: 80px 0;
+    color: #8a8a8e;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.inq-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.inq-modal-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.inq-modal {
+    background: #ffffff;
+    width: 500px;
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(-20px);
+    transition: 0.3s;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.inq-modal-overlay.is-active .inq-modal {
+    transform: translateY(0);
+}
+
+.inq-modal__close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 24px;
+    color: #8a8a8e;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.inq-modal__close:hover {
+    color: #1c1c1e;
+}
+
+.inq-modal__title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1c1c1e;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #1c1c1e;
+    padding-bottom: 12px;
+}
+
+.inq-detail-box {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.inq-detail-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #3c82fa;
+    margin-bottom: 8px;
+}
+
+.inq-detail-label.host {
+    color: #ff9500;
+}
+
+.inq-detail-text {
+    font-size: 15px;
+    color: #3a3a3c;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}

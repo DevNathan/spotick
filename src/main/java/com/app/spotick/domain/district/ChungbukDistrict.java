@@ -3,17 +3,14 @@ package com.app.spotick.domain.district;
 import lombok.Getter;
 
 @Getter
-public enum ChungbukDistrict {
-    괴산,
-    단양,
-    보은,
-    영동,
-    옥천,
-    음성,
-    제천,
-    증평,
-    진천,
-    청주,
-    충주;
-}
+public enum ChungbukDistrict implements District {
+    GOESAN("괴산"), DANYANG("단양"), BOEUN("보은"), YEONGDONG("영동"),
+    OKCHEON("옥천"), EUMSEONG("음성"), JECHEON("제천"), JEUNGPYEONG("증평"),
+    JINCHEON("진천"), CHEONGJU("청주"), CHUNGJU("충주");
 
+    private final String displayName;
+
+    ChungbukDistrict(String displayName) {
+        this.displayName = displayName;
+    }
+}

@@ -2,12 +2,18 @@ package com.app.spotick.api.controller.reservation;
 
 import com.app.spotick.api.response.DataResponse;
 import com.app.spotick.api.response.MessageResponse;
+import com.app.spotick.api.response.PageResponse;
+import com.app.spotick.domain.dto.place.PlaceReservationListDto;
 import com.app.spotick.domain.dto.place.reservation.ReservationRequestListDto;
 import com.app.spotick.domain.dto.user.UserDetailsDto;
+import com.app.spotick.domain.pagination.Pagination;
 import com.app.spotick.domain.type.place.PlaceReservationStatus;
+import com.app.spotick.global.util.type.PlaceReservationSortType;
 import com.app.spotick.service.place.reservation.PlaceReservationService;
+import com.app.spotick.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,6 +28,30 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ReservationRestController {
     private final PlaceReservationService placeReservationService;
+    private final UserService userService;
+
+    @GetMapping("/places")
+    public ResponseEntity<PageResponse<PlaceReservationListDto>> getUserReservations(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "sort", defaultValue = "UPCOMING") PlaceReservationSortType sortType,
+            @AuthenticationPrincipal UserDetailsDto userDetailsDto) {
+
+        try {
+            Pageable pageable = PageRequest.of(page - 1, 6);
+
+            Page<PlaceReservationListDto> reservations = userService.findReservationsByUserId(userDetailsDto.getId(), pageable, sortType);
+            Pagination<PlaceReservationListDto> pagination = new Pagination<>(5, pageable, reservations);
+
+            PageResponse<PlaceReservationListDto> response = new PageResponse<>(reservations, pagination);
+
+            System.out.println("response = " + response);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("유저 예약내역 조회 [Err_Msg]: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping("/getList/{placeId}")
     public ResponseEntity<Slice<ReservationRequestListDto>> getReservationsOfPlace(@PathVariable("placeId") Long placeId,

@@ -1,0 +1,269 @@
+.ti-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1c1c1e;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+}
+
+.ti-header__title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1c1c1e;
+}
+
+.ti-header__back {
+    font-size: 14px;
+    font-weight: 600;
+    color: #8a8a8e;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.ti-header__back:hover {
+    color: #1c1c1e;
+}
+
+.ti-container {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.ti-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.ti-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin-bottom: 16px;
+}
+
+.ti-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ti-card {
+    border: 1px solid #eef0f2;
+    border-radius: 8px;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.ti-card__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.ti-card__writer {
+    font-weight: 700;
+    color: #1c1c1e;
+}
+
+.ti-card__date {
+    font-size: 13px;
+    color: #8a8a8e;
+}
+
+.ti-card__title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1c1c1e;
+}
+
+.ti-card__content {
+    font-size: 14px;
+    color: #3a3a3c;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.ti-card__actions {
+    text-align: right;
+}
+
+.ti-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.ti-btn--reply {
+    background-color: #3c82fa;
+    color: #ffffff;
+}
+
+.ti-btn--reply:hover {
+    background-color: #2b6ce6;
+}
+
+.ti-sidebar {
+    width: 360px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 24px;
+}
+
+.ti-sales-box {
+    background: #f9fafb;
+    border: 1px solid #eef0f2;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.ti-calendar-wrap {
+    margin-bottom: 24px;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #eef0f2;
+}
+
+.ti-grade-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #eef0f2;
+}
+
+.ti-grade-table th {
+    background: #f4f5f7;
+    font-size: 13px;
+    color: #636366;
+    font-weight: 600;
+    padding: 12px 8px;
+    text-align: center;
+    border-bottom: 1px solid #eef0f2;
+}
+
+.ti-grade-table td {
+    padding: 12px 8px;
+    font-size: 14px;
+    color: #1c1c1e;
+    text-align: center;
+    border-bottom: 1px solid #eef0f2;
+}
+
+.ti-grade-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ti-empty {
+    text-align: center;
+    padding: 40px 0;
+    color: #8a8a8e;
+    font-weight: 600;
+}
+
+/* 모달 CSS */
+.ti-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.ti-modal-overlay.is-active {
+    display: flex;
+}
+
+.ti-modal {
+    background: #ffffff;
+    width: 440px;
+    padding: 32px;
+    border-radius: 12px;
+    position: relative;
+}
+
+.ti-modal__close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #8a8a8e;
+    cursor: pointer;
+}
+
+.ti-modal__title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: #1c1c1e;
+    text-align: center;
+}
+
+.ti-modal__textarea-box {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.ti-modal__textarea {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #eef0f2;
+    border-radius: 8px;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.ti-modal__textarea:focus {
+    outline: none;
+    border-color: #3c82fa;
+}
+
+.ti-modal__counter {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    font-size: 12px;
+    color: #8a8a8e;
+}
+
+.ti-btn--submit {
+    width: 100%;
+    background-color: #1c1c1e;
+    color: #ffffff;
+    padding: 14px;
+    font-size: 16px;
+}
+
+.ti-btn--submit:disabled {
+    background-color: #d1d1d6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 992px) {
+    .ti-container {
+        flex-direction: column;
+    }
+
+    .ti-sidebar {
+        width: 100%;
+        position: relative;
+        top: auto;
+    }
+}

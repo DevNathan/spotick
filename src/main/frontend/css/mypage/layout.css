@@ -1,0 +1,147 @@
+.mypage-layout {
+    display: flex;
+    justify-content: center;
+    padding: 80px 20px 100px;
+}
+
+.mypage-layout__container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    gap: 50px;
+}
+
+/* 좌측 사이드바 */
+.mypage-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.mypage-sidebar__sticky {
+    position: sticky;
+    top: 140px;
+}
+
+.mypage-sidebar__section {
+    margin-bottom: 45px;
+}
+
+.mypage-sidebar__title {
+    color: #8a8a8e;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.mypage-sidebar__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mypage-sidebar__item {
+    position: relative;
+}
+
+.mypage-sidebar__link {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #aeaeb2;
+    transition: color 0.2s ease;
+    padding: 4px 0;
+}
+
+.mypage-sidebar__item:hover .mypage-sidebar__link {
+    color: #1c1c1e;
+}
+
+.mypage-sidebar__item--active .mypage-sidebar__link {
+    color: #1c1c1e;
+    font-weight: 800;
+}
+
+/* Active 상태 파란색 지시선 */
+.mypage-sidebar__item--active::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 18px;
+    background-color: #3c82fa;
+    border-radius: 4px;
+}
+
+/* 우측 컨텐츠 영역 */
+.mypage-content {
+    flex: 1;
+    min-width: 0;
+    border-left: 1px solid #eef0f2;
+    padding-left: 50px;
+}
+
+/* 모바일/태블릿 반응형 통제 (가로 스크롤 네비게이션으로 변환) */
+@media screen and (max-width: 992px) {
+    .mypage-layout {
+        padding: 30px 16px 80px;
+    }
+
+    .mypage-layout__container {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .mypage-sidebar {
+        width: 100%;
+        border-bottom: 1px solid #eef0f2;
+        padding-bottom: 16px;
+    }
+
+    .mypage-sidebar__sticky {
+        position: static;
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .mypage-sidebar__sticky::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mypage-sidebar__section {
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .mypage-sidebar__title {
+        display: none;
+    }
+
+    .mypage-sidebar__list {
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .mypage-sidebar__item--active::before {
+        display: none;
+    }
+
+    .mypage-sidebar__item--active .mypage-sidebar__link {
+        color: #3c82fa;
+        border-bottom: 2px solid #3c82fa;
+    }
+
+    .mypage-content {
+        border-left: none;
+        padding-left: 0;
+    }
+}

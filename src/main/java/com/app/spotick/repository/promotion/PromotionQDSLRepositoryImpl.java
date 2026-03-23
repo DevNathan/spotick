@@ -4,6 +4,7 @@ import com.app.spotick.domain.dto.promotion.*;
 import com.app.spotick.domain.type.post.PostStatus;
 import com.app.spotick.domain.type.promotion.PromotionCategory;
 import com.app.spotick.global.util.type.PromotionSortType;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -11,6 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.JPQLSubQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -34,12 +36,6 @@ public class PromotionQDSLRepositoryImpl implements PromotionQDSLRepository {
     public Optional<PromotionDetailDto> findPromotionById(Long promotionId, Long userId) {
 
         return Optional.ofNullable(queryFactory
-                .from(promotionBoard)
-                .where(
-                        promotionBoard.id.eq(promotionId),
-                        promotionBoard.status.eq(PostStatus.APPROVED)
-                )
-                .join(user.userProfileFile, userProfileFile)
                 .select(Projections.constructor(PromotionDetailDto.class,
                         promotionBoard.id,
                         user.id,
@@ -62,6 +58,13 @@ public class PromotionQDSLRepositoryImpl implements PromotionQDSLRepository {
                         likeCount(),
                         isLiked(userId)
                 ))
+                .from(promotionBoard)
+                .join(promotionBoard.user, user)
+                .leftJoin(user.userProfileFile, userProfileFile)
+                .where(
+                        promotionBoard.id.eq(promotionId),
+                        promotionBoard.status.eq(PostStatus.APPROVED)
+                )
                 .fetchOne());
     }
 
@@ -81,7 +84,6 @@ public class PromotionQDSLRepositoryImpl implements PromotionQDSLRepository {
         }
 
         OrderSpecifier<?>[] orderByClause = createOrderByClause(sortType);
-
 
         List<PromotionListDto> contents = queryFactory
                 .select(Projections.constructor(PromotionListDto.class,
@@ -199,22 +201,26 @@ public class PromotionQDSLRepositoryImpl implements PromotionQDSLRepository {
                 .fetchOne());
     }
 
-
-    //// private
-    private JPQLQuery<Long> likeCount() {
-        return (JPQLQuery<Long>) JPAExpressions
+    private Expression<Long> likeCount() {
+        JPQLSubQuery<Long> countQuery = JPAExpressions
                 .select(promotionLike.count())
                 .from(promotionLike)
                 .where(promotionLike.promotionBoard.eq(promotionBoard));
+
+        return Expressions.numberTemplate(Long.class, "({0})", countQuery);
     }
 
-    private BooleanExpression isLiked(Long userId) {
-        return userId == null ?
-                Expressions.asBoolean(false)
-                : JPAExpressions.select(promotionLike.id.isNotNull())
+    private Expression<Boolean> isLiked(Long userId) {
+        if (userId == null) {
+            return Expressions.booleanTemplate("false");
+        }
+
+        JPQLSubQuery<Integer> existsQuery = JPAExpressions.selectOne()
                 .from(promotionLike)
-                .where(promotionLike.promotionBoard.eq(promotionBoard).and(promotionLike.user.id.eq(userId)))
-                .exists();
+                .where(promotionLike.promotionBoard.eq(promotionBoard)
+                        .and(promotionLike.user.id.eq(userId)));
+
+        return Expressions.booleanTemplate("exists ({0})", existsQuery);
     }
 
     private OrderSpecifier<?> promotionLikeCountDESC() {
@@ -228,6 +234,10 @@ public class PromotionQDSLRepositoryImpl implements PromotionQDSLRepository {
     }
 
     private OrderSpecifier<?>[] createOrderByClause(PromotionSortType sortType) {
+        if (sortType == null) {
+            sortType = PromotionSortType.NEWEST;
+        }
+
         return switch (sortType) {
             case NEWEST -> buildOrderSpecifiers(
                     promotionBoard.createdDate.desc()

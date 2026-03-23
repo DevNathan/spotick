@@ -14,8 +14,8 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/user/*")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
+
     @GetMapping("/login")
     public String userLogin(@RequestParam(name = "gm", required = false) String guideMsg,
                             @RequestParam(name = "errorType", required = false) LoginErrorType errorType,
@@ -39,7 +39,7 @@ public class UserController {
     @PostMapping("/join")
     public RedirectView userJoin(UserJoinDto userJoinDto){
         userService.join(userJoinDto);
-        return new RedirectView("/user/login");
+        return new RedirectView("/user/login?join=true");
     }
 
     @GetMapping("/find")

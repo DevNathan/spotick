@@ -1,137 +1,88 @@
-<!doctype html>
-<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
-      xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title th:text="'Spotick | ' + ${promotion.title}"/>
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <link rel="icon" th:href="@{/imgs/logo/favicon.png}">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/promotion/promotion-detail-swiper.css" rel="stylesheet">
-    <link href="/css/promotion/promotion-detail.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
+    <title layout:fragment="title" th:text="'Spotick | ' + ${promotion.title}"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/promotion/detail.min.css}">
 </head>
 <body>
-<div>
-    <div class="modal-bg" id="modal">
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
-    </div>
 
-    <div th:replace="~{fragments/chat :: chat}"></div>
+<main layout:fragment="content" class="pd-page">
+    <input type="hidden" id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}">
+    <input type="hidden" id="promotionId" th:value="${promotion.promotionId}">
+    <input type="hidden" id="userId" th:value="${promotion.userId}">
 
-    <div th:replace="~{/fragments/header-footer :: header}"></div>
-
-    <input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
-
-    <div class="ReferenceHallDetailContainer" th:object="${promotion}">
-        <div class="ReferenceHallDetailTitleImgContainer">
-            <img class="TitleImg"
-                 th:alt="*{thumbnailImage.fileName}"
+    <article class="pd-detail" th:object="${promotion}">
+        <div class="pd-hero">
+            <img class="pd-hero__img" th:alt="*{thumbnailImage.fileName}"
                  th:src="|/file/display?fileName=*{thumbnailImage.uploadPath}/*{thumbnailImage.uuid}_*{thumbnailImage.fileName}|">
         </div>
-        <div class="ContentContainer">
-            <!-- 사이드 메뉴 -->
-            <div class="SideMenuContainer">
-                <div class="SideMenuBookMarkContainer">
-                    <div class="SideMenuBtn SideBookMark" id="likeBtn" th:data-status="*{isLiked}">
-                        <span th:class="*{!isLiked} ? '' : 'none'">
-                            <img alt="좋아요" src="/imgs/heart_line_white_shadow.d5d214d0.png">
-                        </span>
-                        <span th:class="*{isLiked} ? '' : 'none'">
-                            <img alt="좋아요" src="/imgs/heart_filled_white_shadow.708fbebd.png">
-                        </span>
+
+        <div class="pd-layout">
+            <aside class="pd-sidebar">
+                <div class="pd-action">
+                    <button type="button" class="pd-action__btn pd-action__btn--like" id="likeBtn" th:data-status="*{isLiked}">
+                        <i th:class="*{isLiked ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}"></i>
+                    </button>
+                    <span class="pd-action__count" id="likeCount" th:text="*{likeCount}">0</span>
+                </div>
+                <div class="pd-action">
+                    <button type="button" class="pd-action__btn pd-action__btn--share" id="shareBtn">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </button>
+                </div>
+            </aside>
+
+            <div class="pd-main">
+                <header class="pd-header">
+                    <h1 class="pd-header__title" th:text="*{title}"></h1>
+                    <div class="pd-header__meta">
+                        <span class="pd-badge" th:text="*{category.displayName}"></span>
+                        <span class="pd-date" th:text="*{#temporals.format(createdDate, 'yyyy.MM.dd HH:mm')}"></span>
                     </div>
-                    <div class="BookMarkCount" id="count" th:text="*{likeCount}"></div>
-                </div>
-                <div class="SideMenuBtn SideMenuLink">
-                    <img alt="공유하기" class="SideMenuBtnImg" src="/imgs/share_gray014_24.svg">
-                </div>
-            </div>
-            <!-- 매인 컨텐트 -->
-            <div class="MainContentContainer">
-                <div class="MainContentContainerHeader">
-                    <div class="MainContentContainerHeaderTitle" th:text="*{title}"></div>
-                    <div class="MainContentContainerHeaderSubTitle" th:text="*{category.displayName}"></div>
-                    <div class="MainContentContainerHeaderDate"
-                         th:text="*{#temporals.format(createdDate, 'yyyy-MM-dd HH-mm-ss')}"></div>
-                    <div class="space-between">
-                        <div class="MainContentContainerHeaderWriterContainer">
-                            <img class="WriterImg"
-                                 th:alt="*{nickName}"
-                                 th:if="*{userProfileImage.uuid != null}"
-                                 th:src="|/file/display?fileName=*{userProfileImage.uploadPath}/*{userProfileImage.uuid}_*{userProfileImage.fileName}|">
-                            <img class="WriterImg"
-                                 th:alt="*{nickName}"
-                                 th:src="@{/imgs/default/{fileName}(fileName=*{userProfileImage.fileName})}"
-                                 th:unless="*{userProfileImage.uuid != null}">
-                            <div class="WriterNickName" th:text="*{nickName}"></div>
-                            <input id="promo" th:value="*{promotionId}" type="hidden">
-                            <input id="user" th:value="*{userId}" type="hidden">
+
+                    <div class="pd-header__author-row">
+                        <div class="pd-author">
+                            <img class="pd-author__img" th:if="*{userProfileImage.uuid != null}"
+                                 th:src="|/file/display?fileName=*{userProfileImage.uploadPath}/*{userProfileImage.uuid}_*{userProfileImage.fileName}|" th:alt="*{nickName}">
+                            <img class="pd-author__img" th:unless="*{userProfileImage.uuid != null}"
+                                 th:src="@{/imgs/default/{fileName}(fileName=*{userProfileImage.fileName})}" th:alt="*{nickName}">
+                            <span class="pd-author__name" th:text="*{nickName}"></span>
                         </div>
-                        <div class="flex" sec:authorize="isAuthenticated()">
-                            <a class="master-action-btn blue"
-                               th:href="@{/promotion/{promotionId}/edit(promotionId=*{promotionId})}"
-                               th:if="${#authentication.principal != null and #authentication.principal.id == promotion.userId}">
-                                수정하기
-                            </a>
-                            <button class="master-action-btn grey" id="delete"
-                                    th:if="${#authentication.principal != null and #authentication.principal.id == promotion.userId}">
-                                삭제하기
-                            </button>
+
+                        <div class="pd-controls" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.id == promotion.userId}">
+                            <a class="pd-btn pd-btn--edit" th:href="@{/promotion/{id}/edit(id=*{promotionId})}">수정하기</a>
+                            <button type="button" class="pd-btn pd-btn--delete" id="deleteBtn">삭제하기</button>
                         </div>
                     </div>
-                    <div class="MainContentContainerHeaderText" th:if="*{subTitle != null}" th:text="*{subTitle}"></div>
-                </div>
-                <div class="HeaderHrLine"></div>
 
-                <div class="TemplateContainer" th:utext="*{content}"></div>
+                    <p class="pd-header__sub" th:if="*{subTitle != null}" th:text="*{subTitle}"></p>
+                </header>
 
+                <hr class="pd-divider">
+
+                <div class="pd-content ql-editor" th:utext="*{content}"></div>
             </div>
         </div>
-        <div class="CategoryContentsContainer">
-            <p class="CategoryContentsText">해당 유저의 다른 컨텐츠도 확인해보세요.</p>
-            <div id="moreContentsBlock"></div>
-            <div class="loading-wrap" id="loadingMark">
-                <img alt="" src="/imgs/loading.svg">
+    </article>
+
+    <section class="pd-more">
+        <h3 class="pd-more__title">이 호스트의 다른 컨텐츠</h3>
+        <div class="pd-slider">
+            <div class="pd-slider__track" id="moreContentsTrack">
             </div>
         </div>
-
-        <!--      공유하기 모달창-->
-        <div class="ModalBackground">
-            <div class="ShareModalContainer">
-                <div class="ShareModalHeader">
-                    <span class="ShareModalHeaderTitle">공유하기</span>
-                    <button class="ShareModalCloseBtn" type="button">
-                        <img alt="닫기" class="ShareModalCloseImg" src="/imgs/cross_gray034.69d9d880.svg">
-                    </button>
-                </div>
-                <div class="ShareModalBottomContainer">
-                    <button class="ModalShareBtn" type="button">
-                        <div class="ShareModalShareImgContainer">
-                            <img alt="URL 복사" class="ModalShareImg" src="/imgs/link_line_white.9dfe61a7.svg">
-                        </div>
-                        <span class="ModalShareBtnText">URL 복사</span>
-                    </button>
-                    <button class="ModalKakaoShareBtn" type="button">
-                        <img alt="카카오톡" class="ShareModalKakaoImg" src="/imgs/kakaoTalk_text.e3631db4.svg">
-                        <span class="ModalKakaoShareBtnText">카카오톡</span>
-                    </button>
-                </div>
-            </div>
+        <div id="loadingSpinner" class="pd-loading" style="display: none;">
+            <img src="/imgs/loading.svg" alt="로딩 중">
         </div>
-    </div>
+        <div id="scrollTarget" style="height: 20px; width: 100%;"></div>
+    </section>
+</main>
 
-    <div th:replace="~{/fragments/header-footer :: footer}"></div>
-
-</div>
+<th:block layout:fragment="script">
+    <script type="module" th:src="@{/dist/js/promotion/detail.min.js}"></script>
+</th:block>
 </body>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script src="/js/promotion/promotion-detail.js" type="module"></script>
-
 </html>

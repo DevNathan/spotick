@@ -121,6 +121,8 @@ public class InquiryRestController {
 
         Slice<UnansweredInquiryDto> contentsSlice = placeInquiryService.findUnanswerdInquiriesSlice(placeId, userDetailsDto.getId(), pageable);
 
+        System.out.println("contentsSlice = " + contentsSlice.getContent());
+
         return ResponseEntity.ok(contentsSlice);
     }
 
@@ -135,7 +137,7 @@ public class InquiryRestController {
         return ResponseEntity.ok(contentsSlice);
     }
 
-    @PatchMapping("/responsePlaceInquiry")
+    @PatchMapping("/response-plin")
     public ResponseEntity<MessageResponse> updatePlaceResponse(@Valid @RequestBody InquiryResponseDto inquiryResponseDto,
                                                                BindingResult result) {
         if (result.hasErrors()) {
@@ -169,7 +171,7 @@ public class InquiryRestController {
         }
     }
 
-    @PatchMapping("/responseTicketInquiry")
+    @PatchMapping("/response-tiin")
     public ResponseEntity<MessageResponse> updateTicketResponse(@Valid @RequestBody InquiryResponseDto inquiryResponseDto,
                                                                 BindingResult result) {
         if (result.hasErrors()) {

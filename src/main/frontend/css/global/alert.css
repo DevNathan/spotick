@@ -1,0 +1,94 @@
+.spotick-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    backdrop-filter: blur(2px);
+}
+
+.spotick-alert-overlay--active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.spotick-alert-box {
+    width: 360px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px 24px 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.spotick-alert-overlay--active .spotick-alert-box {
+    transform: scale(1) translateY(0);
+}
+
+.spotick-alert-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1c1c1e;
+    margin-bottom: 12px;
+}
+
+.spotick-alert-msg {
+    font-size: 15px;
+    color: #636366;
+    line-height: 1.5;
+    margin-bottom: 28px;
+    word-break: keep-all;
+}
+
+.spotick-alert-actions {
+    display: flex;
+    width: 100%;
+}
+
+.spotick-alert-btn {
+    flex: 1;
+    height: 48px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.spotick-alert-btn:active {
+    transform: scale(0.97);
+}
+
+/* Point 타입: 일반적인 알림 */
+.spotick-alert-btn--point {
+    background-color: #3c82fa;
+    color: #ffffff;
+}
+
+.spotick-alert-btn--point:hover {
+    background-color: #2a6df0;
+}
+
+/* Error 타입: 경고, 실패 알림 */
+.spotick-alert-btn--error {
+    background-color: #ff3b30;
+    color: #ffffff;
+}
+
+.spotick-alert-btn--error:hover {
+    background-color: #e02a20;
+}

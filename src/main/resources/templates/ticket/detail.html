@@ -1,384 +1,124 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<!doctype html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <link rel="icon" th:href="@{/imgs/logo/favicon.png}">
-    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
-          integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ=="
-          referrerpolicy="no-referrer" rel="stylesheet"/>
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/global-css/datepicker.css" rel="stylesheet">
-    <link href="/css/ticket/ticket-detail.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-
-    <title th:text="${ticketDetail.title}"></title>
+    <title layout:fragment="title" th:text="${ticketDetail.title} + ' | Spotick'"></title>
+    <link rel="stylesheet" th:href="@{/dist/css/ticket/detail.min.css}">
 </head>
-<body>
 
-<div th:replace="~{fragments/chat :: chat}"></div>
+<div layout:fragment="content">
+    <input type="hidden" id="ticketId" th:value="${ticketDetail.ticketId}">
+    <input type="hidden" id="ticketLat" th:value="${ticketDetail.lat}">
+    <input type="hidden" id="ticketLng" th:value="${ticketDetail.lng}">
+    <input type="hidden" id="startDate" th:value="${ticketDetail.startDate}">
+    <input type="hidden" id="endDate" th:value="${ticketDetail.endDate}">
 
-<div th:replace="~{fragments/header-footer :: header}"></div>
+    <main class="td-container">
+        <div class="td-main">
+            <section class="td-gallery">
+                <img class="td-gallery__img"
+                     th:src="|/file/display?fileName=${ticketDetail.uploadPath}/t_${ticketDetail.uuid}_${ticketDetail.fileName}|"
+                     th:alt="${ticketDetail.title}">
+            </section>
 
-<input id="isLoggedIn" th:value="${#authorization.expression('isAuthenticated()')}" type="hidden"/>
+            <nav class="td-nav">
+                <button type="button" class="td-nav__item active" data-target="sectionInfo">상세정보</button>
+                <button type="button" class="td-nav__item" data-target="sectionMap">위치</button>
+                <button type="button" class="td-nav__item" data-target="sectionQna">문의 (<span
+                        th:text="${ticketDetail.inquiryCount}"></span>)
+                </button>
+            </nav>
 
-<div id="page-body">
-    <div class="SpaceDetailPageContainer">
-        <div class="SpaceDetailContentContainer" th:object="${ticketDetail}">
-            <input id="id" th:value="*{ticketId}" type="hidden">
-            <div class="SpaceDetailLeftContainer">
-                <div class="productMainTop">
-                    <div class="summary">
-                        <div class="summaryTop">
-                            <h2 class="prdTitle">
-                                <div class="category" th:text="*{ticketCategory.displayName}"></div>
-                                <hr class="title-divider">
-                                <div th:text="*{title}"></div>
-                            </h2>
-                            <div class="prdTitleBottom">
-                                <div class="BasicInformationReviewsContainer">
-                                    <th:block sec:authorize="isAuthenticated()">
-                                        <a class="place-modify-btn"
-                                           th:href="@{/ticket/edit/{ticketId}(ticketId=*{ticketId})}"
-                                           th:if="${#authentication.principal != null and #authentication.principal.id == ticketDetail.hostId}">수정하기</a>
-                                    </th:block>
-                                    <button class="BasicInformationShareBtn" type="button">
-                                        <img alt="공유하기" class="BasicInformationShareImg"
-                                             src="/imgs/share_line_gray034.d1513b9a.svg">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="summaryBody">
-                            <div class="posterBox">
-                                <div class="posterBoxTop">
-                                    <img class="posterBoxImage"
-                                         th:alt="*{title}"
-                                         th:src="|/file/display?fileName=*{uploadPath}/*{uuid}_*{fileName}|">
-                                </div>
-                                <div class="posterBoxBottom">
+            <section class="td-section" id="sectionInfo">
+                <div class="td-header">
+                    <div class="td-header__badges">
+                        <span class="td-badge" th:text="${ticketDetail.ticketCategory.displayName}">카테고리</span>
+                        <span class="td-badge td-badge--outline" th:text="${ticketDetail.ticketRatingType.displayName}">관람연령</span>
+                    </div>
+                    <h1 class="td-header__title" th:text="${ticketDetail.title}">티켓팅 제목</h1>
+                    <p class="td-header__address"><i class="fa-solid fa-location-dot"></i> <span
+                            th:text="${ticketDetail.ticketEventAddress.address} + ' ' + ${ticketDetail.ticketEventAddress.addressDetail}"></span>
+                    </p>
+                </div>
 
-                                </div>
-                            </div>
-                            <ul class="info">
-                                <li class="infoItem">
-                                    <strong class="infoLabel">장소</strong>
-                                    <div class="infoDesc">
-                                        <span class="infoBtn"
-                                              th:text="*{ticketEventAddress.address + ' ' + ticketEventAddress.addressDetail}"></span>
-                                    </div>
-                                </li>
-                                <li class="infoItem">
-                                    <strong class="infoLabel">공연기간</strong>
-                                    <div class="infoDesc">
-                                        <p class="infoText"
-                                           th:text="*{#temporals.format(startDate, 'yyyy.MM.dd') + ' ~ ' + #temporals.format(endDate, 'yyyy.MM.dd')}"></p>
-                                    </div>
-                                </li>
-                                <li class="infoItem">
-                                    <strong class="infoLabel">관람연령</strong>
-                                    <div class="infoDesc">
-                                        <p class="infoText" th:text="*{ticketRatingType.displayName}"></p>
-                                    </div>
-                                </li>
-                                <li class="infoItem infoPrice">
-                                    <strong class="infoLabel">가격</strong>
-                                    <div class="infoDesc">
-                                        <ul class="infoPriceList">
-                                            <li class="infoPriceItem" th:each="grade : *{ticketGradeDtos}"
-                                                th:object="${grade}">
-                                                <span class="name" th:text="*{gradeName}"></span>
-                                                <span class="price"
-                                                      th:text="*{#numbers.formatInteger(price, 3, 'COMMA') + '원'}"></span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
+                <div class="td-content" th:utext="${ticketDetail.content}">
+                    상세 내용
+                </div>
+            </section>
+
+            <section class="td-section" id="sectionMap">
+                <h2 class="td-section__title">장소 위치</h2>
+                <div class="td-map" id="map"></div>
+                <p class="td-map__desc"
+                   th:text="${ticketDetail.ticketEventAddress.address} + ' ' + ${ticketDetail.ticketEventAddress.addressDetail}"></p>
+            </section>
+
+            <section class="td-section" id="sectionQna">
+                <div class="td-section__header">
+                    <h2 class="td-section__title">문의 (<span id="inquiryCountText"
+                                                            th:text="${ticketDetail.inquiryCount}"></span>)</h2>
+                    <button type="button" class="td-btn td-btn--outline" id="inquiryOpenBtn">문의 작성</button>
+                </div>
+                <div class="td-qna" id="inquiryList">
+                </div>
+            </section>
+        </div>
+
+        <aside class="td-sidebar">
+            <div class="td-sidebar__box">
+                <div class="td-sidebar__top">
+                    <button type="button" class="td-like-btn" id="likeBtn" th:data-status="${ticketDetail.isLiked}">
+                        <i class="fa-heart"
+                           th:classappend="${ticketDetail.isLiked ? 'fa-solid td-like-btn--active' : 'fa-regular'}"></i>
+                    </button>
+                    <span class="td-like-count" id="likeCount" th:text="${ticketDetail.likeCount}">0</span>
+                </div>
+
+                <div class="td-reserve">
+                    <h3 class="td-reserve__title">날짜 선택</h3>
+                    <div class="td-reserve__calendar" id="datePickerWrapper">
+                        <input type="hidden" id="selectedDate">
+                    </div>
+
+                    <div class="td-reserve__grades" id="gradeContainer" style="display: none;">
+                        <h4 class="td-reserve__subtitle">등급 및 인원 선택</h4>
+                        <div id="gradeList">
                         </div>
                     </div>
-                </div>
-                <!-- 네비게이션 -->
-                <div class="InfoTabs">
-                    <button class="InfoTabBtn InfoTabBtnOn" onclick="changeTab(this)" type="button">공연정보</button>
-                    <button class="InfoTabBtn InfoTabBtnOff" onclick="changeTab(this)" type="button">주의사항</button>
-                    <!--                    <button type="button" class="InfoTabBtn InfoTabBtnOff" onclick="changeTab(this)">후기<span class="InfoTabCount">20</span></button>-->
-                    <button class="InfoTabBtn InfoTabBtnOff" onclick="changeTab(this)" type="button">문의<span
-                            class="InfoTabCount" th:text="*{inquiryCount}"></span></button>
-                    <button class="InfoTabBtn InfoTabBtnOff" onclick="changeTab(this)" type="button">환불규정</button>
-                </div>
-                <!-- 직거래 유도 주의 안내 -->
-                <div class="TransactionGuideContainer">
-                    <div class="TransactionGuide">
-                        <p class="TransactionGuideTitle">
-                            <img alt="안내" src="/imgs/caution_filled_red066.539a3741.svg">직거래 유도 주의 안내
-                        </p>
-                        <p class="TransactionGuideDescription">호스트 현금 결제 유도 시, 신고바랍니다.<br>Spotick은 현금 직거래로 발생하는 사고를 책임지지
-                            않습니다.
-                        </p>
-                    </div>
-                </div>
-                <!-- 공간정보 -->
-                <div class="SpaceInformationContainer">
-                    <div class="SpaceDescription">
-                        <p class="TitleText">공연 정보</p>
-                        <p class="DescriptionText" th:text="*{content}"></p>
-                    </div>
-                </div>
-                <!-- 지도 -->
-                <div class="LocationContainer">
-                    <p class="TitleText">위치</p>
-                    <input id="lat" th:value="*{lat}" type="hidden">
-                    <input id="lng" th:value="*{lng}" type="hidden">
-                    <div id="map"></div>
-                    <figure class="LocationFigure">
-                        <img alt="위치핀" class="LocationImg" src="/imgs/location_filled_sweetBlue046.de36d6ce.svg">
-                        <figure class="LocationFigureCaption"
-                                th:text="*{ticketEventAddress.address + ' ' + ticketEventAddress.addressDetail}"></figure>
-                    </figure>
-                </div>
-                <!-- 주의사항 -->
-                <div class="PrecautionContainer">
-                    <p class="TitleText">주의사항</p>
-                    <div class="PrecautionTextContainer">
-                        <p class="PrecautionText">- 대관 중 시설 훼손이 발생한 경우 손해액을 호스트에게 배상해야합니다.</p>
-                        <p class="PrecautionText">- 사용자 인원수가 초과될 경우, 초과 결제를 요청합니다.</p>
-                        <p class="PrecautionText">- 대여 시간 보다 적게 사용 하시더라도 환불되지 않습니다.</p>
-                        <p class="PrecautionText">- 생활체육 상품의 경우, 동호인 체육 활동 목적으로만 사용이 가능하십니다. 동문회, 친목 행사 등은 생활 체육에 해당하지
-                            않으며, 목적과 달리 시설물을 사용하실 경우 이용이 제한됩니다.</p>
-                    </div>
-                </div>
-                <!-- Qna -->
-                <div class="QnaContainer">
-                    <div class="QnaTitleContainer">
-                        <p class="TitleText">문의
-                            <span class="QnaTitleCount" th:text="*{inquiryCount}"></span>
-                        </p>
-                        <button class="QnaMainBtn" type="button">문의하기</button>
+
+                    <div class="td-reserve__total">
+                        <span>총 결제 금액</span>
+                        <strong id="totalPriceText">0원</strong>
                     </div>
 
-                    <div class="QnaListContainer" id="inquiryContainer"></div>
-
-                    <div class="QnaPaginationContainer">
-                        <div class="QnaPagination" id="inquiryPagination"></div>
-                    </div>
-                </div>
-                <!-- Qna 페이징 -->
-                <!-- Qna Modal창 -->
-                <div class="inquiry-modal-container flex-align-center none">
-                    <div class="inquiry-modal-wrap flex-align">
-                        <button class="inquiry-cancel" type="button">
-                            <img alt="" src="https://s3.hourplace.co.kr/web/images/icon/close_v4.svg">
-                        </button>
-                        <p class="small-title">궁금한 내용을 적어주세요</p>
-                        <p class="sub-title">호스트가 확인 후 답변을 드릴 거예요!</p>
-                        <div class="inquiry-content-box flex-between-align">
-                            <p class="inquiry-guide">문의 제목</p>
-                        </div>
-                        <input id="inquiryTitle" name="inquiryTitle" placeholder="문의 제목을 입력해주세요" type="text">
-
-                        <div class="inquiry-content-box flex-between-align">
-                            <p class="inquiry-guide">내용</p>
-                            <p class="letter-count"><span>0</span>/200자</p>
-                        </div>
-                        <textarea cols="30" id="inquiryContent" name="inquiryContent"
-                                  placeholder="장소에 대해서 궁금한 점을 문의해주세요"
-                                  rows="10"></textarea>
-                        <div class="flex-align-center">
-                            <button class="inquiry-submit" id="inquiryRegisterBtn" type="button">문의등록</button>
-                        </div>
-
-                    </div>
-                </div>
-                <!--                <div class="PostQnaModalContainer none">-->
-                <!--                    <div class="ScrollModalBackground">-->
-                <!--                        <div style="position: relative; transform: translateY(0px) translateZ(0px);">-->
-                <!--                            <div class="PostQnaModal">-->
-                <!--                                <div class="PostQnaModalHeader">-->
-                <!--                                    <span class="PostQnaModalTitle">문의하기</span>-->
-                <!--                                    <button type="button" class="PostQnaModalCloseBtn">-->
-                <!--                                        <img src="/imgs/cross_gray024.c8b03031.svg" alt="닫기" class="PostQnaModalCrossImg">-->
-                <!--                                    </button>-->
-                <!--                                </div>-->
-                <!--                                <div class="PostQnaModalSpaceInfo">-->
-                <!--                                    <img src="https://img.shareit.kr/prod/img/2022-07-18/b9c77882-e895-42e5-988a-85a7d5c4f0e0.jpg" alt="공간" class="PostQnaModalSpaceImg">-->
-                <!--                                    <div>-->
-                <!--                                        <p class="PostQnaModalHostName">한성대학교</p>-->
-                <!--                                        <p class="PostQnaModalSpaceName">실내체육관(낙산관)</p>-->
-                <!--                                    </div>-->
-                <!--                                </div>-->
-                <!--                                <div class="PostQnaModalContentContainer">-->
-                <!--                                    <div>-->
-                <!--                                        <p class="PostQnaModalContentSubTitle">문의유형</p>-->
-                <!--                                        <div class="PostQnaModalContentInputContainer">-->
-                <!--                                            <div class="PostQnaModalDropdown">-->
-                <!--                                                <button type="button" class="PostQnaModalDropdownSelectedBox">-->
-                <!--                                                    <p>문의 유형을 선택하세요</p>-->
-                <!--                                                    <img src="/imgs/arrow_down_gray074.3a483a93.svg" alt="항목 열기" class="PostQnaModalDropdownImg">-->
-                <!--                                                    &lt;!&ndash; <img src="/imgs/promotion-ticket/arrow_up_gray074.f2ebf2a9.svg" alt="항목 열기" class="PostQnaModalDropdownImg"> &ndash;&gt;-->
-                <!--                                                </button>-->
-                <!--                                                <div length="7" class="PostQnaModalDropdownSpaceList none" style="transform: scaleY(1);">-->
-                <!--&lt;!&ndash;                                                    <button type="button">문의 유형을 선택하세요</button>&ndash;&gt;-->
-                <!--                                                    <button type="button">일정 문의</button>-->
-                <!--                                                    <button type="button">가격 문의</button>-->
-                <!--                                                    <button type="button">공간 정보 문의</button>-->
-                <!--                                                    <button type="button">물품 이용 문의</button>-->
-                <!--                                                    <button type="button">기타</button>-->
-                <!--                                                </div>-->
-                <!--                                            </div>-->
-                <!--                                        </div>-->
-                <!--                                    </div>-->
-                <!--                                    <div>-->
-                <!--                                        <p class="PostQnaModalContentSubTitle">문의내용</p>-->
-                <!--                                        <div class="PostQnaModalTextBox">-->
-                <!--                                            <span class="PostQnaModalTextLength">0/1,000</span>-->
-                <!--                                            <div class="PostQnaModalTextAreaContainer">-->
-                <!--                                                <div height="180" class="PostQnaModalTextArea">-->
-                <!--                                                    <textarea class="TextArea" placeholder="개인 정보 유출이 우려되니, 개인 연락처를 남기지 말아주세요." maxlength="1000" oninput="updateTextLength()"></textarea>-->
-                <!--                                                </div>-->
-                <!--                                            </div>-->
-                <!--                                        </div>-->
-                <!--                                        <p class="PostQnaModalTextBoxComment">문의 내용은 <span>My-문의내역</span>에서 확인하실 수 있습니다.</p>-->
-                <!--                                    </div>-->
-                <!--                                    <div>-->
-                <!--                                        <p class="PostQnaModalContentSubTitle">이름</p>-->
-                <!--                                        <div class="PostQnaModalContentInputContainer">-->
-                <!--                                            <div class="PostQnaModalInputBoxContainer">-->
-                <!--                                                <label for="space-qna-writer" class="PostQnaModalInputBoxLabel">-->
-                <!--                                                    <input type="text" id="space-qna-writer" placeholder="문의하시는 분의 이름을 적어주세요." sizes="medium" autocomplete="off" class="PostQnaModalInput" value="">-->
-                <!--                                                </label>-->
-                <!--                                            </div>-->
-                <!--                                        </div>-->
-                <!--                                    </div>-->
-                <!--                                    <div>-->
-                <!--                                        <p class="PostQnaModalContentSubTitle">휴대전화 번호</p>-->
-                <!--                                        <div class="PostQnaModalContentInputContainer">-->
-                <!--                                            <div class="PostQnaModalInputBoxContainer">-->
-                <!--                                                <label for="space-qna-phone-number" class="PostQnaModalInputBoxLabel">-->
-                <!--                                                    <input type="number" id="space-qna-phone-number" placeholder="답변 알림을 받으신 전화번호를 적어주세요." sizes="medium" autocomplete="off" class="PostQnaModalInput" value="" >-->
-                <!--                                                </label>-->
-                <!--                                            </div>-->
-                <!--                                        </div>-->
-                <!--                                        <p class="PostQnaModalPhoneNoComment">해당 정보는 타인에게 노출되지 않으며,호스트 답변 시, 고객 알림 목적을 위해 사용됩니다.</p>-->
-                <!--                                    </div>-->
-                <!--                                    <div class="PostQnaModalBtnContainer">-->
-                <!--                                        <button type="button" class="PostQnaModalFooterBtn PostQnaModalFooterBtnCancel">취소</button>-->
-                <!--                                        <button type="button" class="PostQnaModalFooterBtn PostQnaModalFooterBtnSubmit">문의등록</button>-->
-                <!--                                    </div>-->
-                <!--                                </div>-->
-                <!--                            </div>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!-- 환불규정 -->
-                <div class="RefundPoliciesContainer">
-                    <p class="TitleText">환불규정</p>
-                    <div class="RefundPoliciesInnerContainer">
-                        <div>
-                            <div class="RefundPoliciesResponsibilities">
-                                <div>
-                                    <p class="ResponsibilitySubTitle">회원</p>
-                                    <div class="ResponsibilityDescriptionContainer">
-                                        <p class="ResponsibilityDescription">- 행사 날짜 기준 7일 전 : 90% 환불</p>
-                                        <p class="ResponsibilityDescription">- 행사 날짜 기준 6일 ~ 4일 전 : 50% 환불</p>
-                                        <p class="ResponsibilityDescription">- 행사 날짜 기준 3일 ~ 당일 취소 시 : 환불 불가</p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="ResponsibilitySubTitle">천재지변 및 불가항력</p>
-                                    <div class="ResponsibilityDescriptionContainer">
-                                        <p class="ResponsibilityDescription">- 행사 날짜 기준 당일 취소 시 : 100% 환불</p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="ResponsibilitySubTitle">회사 및 호스트</p>
-                                    <div class="ResponsibilityDescriptionContainer">
-                                        <p class="ResponsibilityDescription">- 행사 날짜 기준 당일 취소 시 : 100% 환불</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
+                    <button type="button" class="td-btn td-btn--primary td-btn--full" id="purchaseBtn" disabled>구매하기
+                    </button>
                 </div>
             </div>
-            <div class="ModalBackground">
-                <div class="ShareModalContainer">
-                    <div class="ShareModalHeader">
-                        <span class="ShareModalHeaderTitle">공유하기</span>
-                        <button class="ShareModalCloseBtn" type="button">
-                            <img alt="닫기" class="ShareModalCloseImg" src="/imgs/cross_gray034.69d9d880.svg">
-                        </button>
-                    </div>
-                    <div class="ShareModalBottomContainer">
-                        <button class="ModalShareBtn" type="button">
-                            <div class="ShareModalShareImgContainer">
-                                <img alt="URL 복사" class="ModalShareImg" src="/imgs/link_line_white.9dfe61a7.svg">
-                            </div>
-                            <span class="ModalShareBtnText">URL 복사</span>
-                        </button>
-                        <button class="ModalKakaoShareBtn" type="button">
-                            <img alt="카카오톡" class="ShareModalKakaoImg" src="/imgs/kakaoTalk_text.e3631db4.svg">
-                            <span class="ModalKakaoShareBtnText">카카오톡</span>
-                        </button>
-                    </div>
-                </div>
+        </aside>
+    </main>
+
+    <div class="td-modal" id="inquiryModal">
+        <div class="td-modal__box">
+            <button class="td-modal__close" id="inquiryCloseBtn" type="button"><i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="td-modal__title">호스트에게 문의하기</h3>
+            <input type="text" class="td-modal__input" id="inquiryTitle" placeholder="문의 제목">
+            <div style="position:relative; margin-bottom: 24px;">
+                <textarea class="td-modal__textarea" id="inquiryContent" rows="6" placeholder="문의 내용"></textarea>
+                <div class="td-modal__counter"><span id="inquiryLength">0</span>/200자</div>
             </div>
-            <!-- 우측 메뉴 -->
-            <div class="RightReservationContainer">
-                <div class="RightReservationBox">
-                    <div class="GoodsListContainer">
-                        <div class="calendar-wrap">
-                            <div class="choice-box">
-                                <div class="calendar-box">
-                                    <input id="startDate" th:value="*{startDate}" type="hidden">
-                                    <input id="endDate" th:value="*{endDate}" type="hidden">
-                                    <input id="selectedDate" th:value="*{startDate}" type="hidden">
-                                    <div id="datepicker"></div>
-                                </div>
-                                <div class="time-choice-wrap"></div>
-                            </div>
-                            <div class="calendar-ctr-box"></div>
-                        </div>
-                        <div id="gradeSelectContainer"></div>
-                    </div>
-                    <div class="GoodsListBtnContainer">
-                        <button class="LikeWithReservationButton" id="likeBtn" th:data-status="*{isLiked}"
-                                type="button">
-                            <span th:class="*{!isLiked} ? '' : 'none'">
-                                <img alt="좋아요" class="LikeWithReservationButtonImg"
-                                     src="/imgs/heart_2line_gray064.40cc6c61.svg">
-                            </span>
-                            <span th:class="*{isLiked} ? '' : 'none'">
-                               <img alt="좋아요" class="LikeWithReservationButtonImg"
-                                    src="/imgs/heart_filled_sweetBlue046.76e646e1.svg">
-                            </span>
-                        </button>
-                        <button id="purchase" class="GoodsListReservationBtn" type="button">구매하기</button>
-                    </div>
-                </div>
-            </div>
+            <button class="td-btn td-btn--primary td-btn--full" id="inquirySubmitBtn" type="button" disabled>등록하기
+            </button>
         </div>
     </div>
 </div>
 
-<div th:replace="~{fragments/header-footer :: footer}"></div>
-
-</body>
-
-<script src="/js/global-js/global.js" type="module"></script>
-<script src="https://js.bootpay.co.kr/bootpay-4.3.4.min.js" type="application/javascript"></script>
-<script crossorigin="anonymous" src="https://kit.fontawesome.com/c6992f5b12.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3dc12d7c2624483dc7c019a0a91b727f&libraries=services"
-        type="text/javascript"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script src="/js/ticket/calendar.js" type="module"></script>
-<script src="/js/ticket/detail/ticket-detail-map.js"></script>
-<script src="/js/ticket/detail/ticket-detail.js" type="module"></script>
-
+<th:block layout:fragment="script">
+    <script type="text/javascript"
+            th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoJsKey}&libraries=services&autoload=false|"></script>
+    <script type="module" th:src="@{/dist/js/ticket/detail.min.js}"></script>
+</th:block>
 </html>

@@ -58,16 +58,35 @@ public class PlaceReservationServiceImpl implements PlaceReservationService {
     @Override
     public void registerPlaceReservation(PlaceReserveRegisterDto placeReserveRegisterDto, Long userId) {
         User userProxy = userRepository.getReferenceById(userId);
-        Place placeProxy = placeRepository.getReferenceById(placeReserveRegisterDto.getPlaceId());
+
+        // 금액 계산을 위해 프록시가 아닌 실제 Place 엔티티를 조회한다.
+        Place place = placeRepository.findById(placeReserveRegisterDto.getPlaceId())
+                .orElseThrow(() -> new NoSuchElementException("장소 정보를 찾을 수 없습니다."));
+
+        LocalDateTime checkIn = parseToLocalDateTime(placeReserveRegisterDto.getReservationCheckIn());
+        LocalDateTime checkOut = parseToLocalDateTime(placeReserveRegisterDto.getReservationCheckOut());
+
+        // 1. 이용 시간 계산 (Hours)
+        long usageHours = java.time.Duration.between(checkIn, checkOut).toHours();
+        if (usageHours <= 0) {
+            throw new IllegalArgumentException("예약 시간 설정이 올바르지 않습니다.");
+        }
+
+        // 2. 추가 인원 계산 (기본 인원 초과 시)
+        int visitors = placeReserveRegisterDto.getReservationVisitors();
+        int extraPeople = Math.max(0, visitors - place.getDefaultPeople());
+
+        // 3. 최종 금액 계산: (기본요금 + (추가인원 * 추가요금)) * 이용시간
+        int calculatedAmount = (int) ((place.getPrice() + (extraPeople * place.getSurcharge())) * usageHours);
 
         placeReservationRepository.save(PlaceReservation.builder()
-                .place(placeProxy)
+                .place(place)
                 .user(userProxy)
-                .checkIn(parseToLocalDateTime(placeReserveRegisterDto.getReservationCheckIn()))
-                .checkOut(parseToLocalDateTime(placeReserveRegisterDto.getReservationCheckOut()))
+                .checkIn(checkIn)
+                .checkOut(checkOut)
                 .content(placeReserveRegisterDto.getReservationContent())
-                .amount(placeReserveRegisterDto.getReservationAmount())
-                .visitors(placeReserveRegisterDto.getReservationVisitors())
+                .amount(calculatedAmount) // 프론트엔드 값이 아닌 서버에서 계산한 절대적인 금액을 주입
+                .visitors(visitors)
                 .reservationStatus(PlaceReservationStatus.PENDING)
                 .notReviewing(false)
                 .build());

@@ -17,10 +17,10 @@ import java.util.HashMap;
 public class BootpayConfig {
 
     @Value("${bootpay.restApi}")
-    private String restApi;
+    private String REST_API;
 
-    @Value("${bootpay.privateKey}")
-    private String privateKey;
+    @Value("${bootpay.secret}")
+    private String SECRET_KEY;
 
     /*
      * Bootpay 객체를 초기화하고 액세스 토큰을 발급받아 반환합니다.
@@ -28,7 +28,7 @@ public class BootpayConfig {
      */
     @Bean
     public Bootpay bootpay() {
-        Bootpay bootpay = new Bootpay(restApi, privateKey);
+        Bootpay bootpay = new Bootpay(REST_API, SECRET_KEY);
         try {
             HashMap<String, Object> token = bootpay.getAccessToken();
             if (token.get("error_code") != null) {

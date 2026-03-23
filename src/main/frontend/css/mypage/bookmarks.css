@@ -1,0 +1,140 @@
+@import url("../place/place-card.css");
+
+.bookmark-page {
+    padding: 40px 0;
+}
+
+.bookmark-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.bookmark-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1c1c1e;
+}
+
+.bookmark-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 20px;
+}
+
+.bookmark-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 0;
+    color: #8a8a8e;
+    grid-column: 1 / -1;
+    background: #f8f9fa;
+    border-radius: 16px;
+}
+
+.bookmark-empty p {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.place-sort {
+    position: relative;
+}
+
+.place-sort__btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1e;
+}
+
+.place-sort__icon {
+    width: 16px;
+}
+
+.place-sort__list {
+    position: absolute;
+    top: 36px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #eef0f2;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    display: none;
+    z-index: 100;
+    width: 120px;
+}
+
+.place-sort__list--active {
+    display: flex;
+    flex-direction: column;
+}
+
+.place-sort__item {
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 14px;
+    color: #636366;
+    cursor: pointer;
+}
+
+.place-sort__item:hover {
+    background: #f4f5f7;
+}
+
+.place-sort__item--active {
+    color: #3c82fa;
+    font-weight: 700;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 50px;
+}
+
+.pagination-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f4f5f7;
+    color: #636366;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.pagination-btns:hover {
+    background: #eef0f2;
+    color: #1c1c1e;
+}
+
+.pagination-btns.active {
+    background: #1c1c1e;
+    color: #fff;
+}
+
+@media (max-width: 1024px) {
+    .bookmark-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

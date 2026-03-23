@@ -1,183 +1,103 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mypage/layout}"
+      th:with="currentPage='reviews'">
 
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Spotick | 후기관리</title>
-    <link href="/imgs/logo/favicon.png" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <link href="/css/mypage/mypage.css" rel="stylesheet">
-    <link href="/css/mypage/mypage-modal.css" rel="stylesheet">
-    <link href="/css/global-css/post-list-card-item.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/2364e2b536.js"></script>
+    <title layout:fragment="title">Spotick | 후기 관리</title>
+    <th:block layout:fragment="mypage-css">
+        <link rel="stylesheet" th:href="@{/dist/css/mypage/reviews.min.css}">
+    </th:block>
 </head>
 
 <body>
-<div>
-    <div th:replace="~{fragments/chat :: chat}"></div>
-
-    <div class="modal-bg" id="modal">
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
-        <div class="modal-review-form-container" id="reviewFormModal"></div>
+<div layout:fragment="mypage-content">
+    <div class="rv-header">
+        <h2 class="rv-header__title">작성 가능한 후기</h2>
     </div>
 
-    <header th:replace="~{fragments/header-footer :: header}"></header>
-
-    <main class="my-page-main" id="page-body">
-        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
-        <div class="mp-content">
-            <article>
-                <div class="mpc-title not-with-line">
-                    <h2>후기관리</h2>
-                </div>
-                <nav class="mpc-top-nav">
-                    <a class="mpc-top-nav-button active">
-                        작성가능 후기(<span th:text="${notReviewedList.getTotalElements()}"></span>)
-                    </a>
-                    <a class="mpc-top-nav-button" th:href="@{/mypage/reviews/wrote}" type="button">
-                        작성한 후기
-                    </a>
-                </nav>
-                <div class="mpc-review-wrap">
-                    <th:block th:if="${#lists.size(notReviewedList)}">
-                        <th:block th:each="reviewableItem, i :${notReviewedList}">
-                            <div class="OneItemContainer hover mybookmark" th:object="${reviewableItem}">
-                                <div class="OneItemImgContainer">
-                                    <div class="swiper ImageSwiper swiper-initialized swiper-horizontal swiper-pointer-events swiper-backface-hidden">
-                                        <a class="swiper-wrapper ImageLength"
-                                           th:href="@{/place/{placeId}(placeId = ${reviewableItem.id})}">
-                                            <!-- 이미지 한칸 -->
-                                            <th:block th:each="placeFile:${reviewableItem.placeFiles}">
-                                                <div class="swiper-slide swiper-slide-next" th:object="${placeFile}">
-                                                    <img class="ItemImg"
-                                                         th:alt="${reviewableItem.title}"
-                                                         th:src="*{'/file/display?fileName=' + uploadPath + '/t_' + uuid + '_' + fileName}">
-                                                </div>
-                                            </th:block>
-                                            <!-- 이미지 한칸 -->
-                                        </a>
-                                        <div class="NavigationBtnContainer">
-                                            <button class="NavigationBtn RightBtn" type="button">
-                                                <img alt="다음" src="/imgs/round_arrow_right_gray024.7f7e18a3.svg">
-                                            </button>
-                                            <button class="NavigationBtn LeftBtn" type="button">
-                                                <img alt="이전" src="/imgs/round_arrow_left_gray024.707193e8.svg">
-                                            </button>
-                                        </div>
-                                        <div class="ItemImgPagination">
-                                            <p><span class="snapIndex">1</span>/<span class="slideIndex">5</span></p>
-                                        </div>
-                                    </div>
-                                    <button class="ItemBookMarkBtn active" th:data-id="*{id}"
-                                            th:data-status="*{isBookmarkChecked}" type="button">
-                                        <span th:class="${!reviewableItem.isBookmarkChecked?'':'none'}">
-                                            <i class="fa-regular fa-bookmark"></i>
-                                        </span>
-                                        <span th:class="${reviewableItem.isBookmarkChecked?'':'none'}">
-                                            <i class="fa-solid fa-bookmark" style="color: white"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                                <a class="ItemTextContainer" th:href="@{/place/{placeId}(placeId = ${reviewableItem.id})}">
-                                    <div class="ItemHostNameContainer">
-                                        <span class="ItemHostName" th:text="*{placeAddress.address}"></span>
-                                        <div class="ItemCountsContainer">
-                                            <div class="ItemsStarCountContainer">
-                                                <img alt="후기갯수" class="ItemCountImg"
-                                                     src="/imgs/star_filled_paintYellow056.a8eb6e44.svg">
-                                                <span class="ItemCountText"
-                                                      th:text="|*{evalAvg}(*{evalCount})|"></span>
-                                            </div>
-                                            <div class="ItemsLikeCountContainer">
-                                                <img alt="북마크갯수" class="ItemCountImg bookmark"
-                                                     src="/imgs/bookmark_thin.svg">
-                                                <span class="ItemCountText" th:text="*{bookmarkCount}"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="ItemSpaceNameContainer">
-                                        <p class="ItemSpaceName" th:text="*{title}"></p>
-                                    </div>
-                                    <div class="ItemPriceContainer">
-                                    <span class="ItemPrice" style="height: 30px"
-                                          th:text="${#numbers.formatInteger(reviewableItem.price, 3, 'COMMA')} + '원'"></span>
-                                    </div>
-                                </a>
-                                <div class="ItemBtnWrap">
-                                    <button class="BottomButton red reservationDelete"
-                                            th:rid="*{reservationId}"
-                                            type="button">
-                                        <span>삭제하기</span>
-                                    </button>
-                                    <button class="BottomButton blue reservationWrite" th:idx="${i.index}" type="button">
-                                        <span>작성하기</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </th:block>
-                    </th:block>
-                </div>
-                <th:block th:if="${notReviewedList.getTotalElements() == 0}">
-                    <div class="mp-no-list">
-                        <span>작성가능한 후기가 없습니다.</span>
-                    </div>
-                </th:block>
-            </article>
-
-
-            <section class="pagination-container">
-            <span class="pagination-previous" th:if="${pagination.hasPrevBlock()}">
-                <a class="pagination-btns first" th:href="@{/mypage/reviews/reviewable(page=1)}" title="맨 처음">
-                    <i class="fa-solid fa-chevron-left"></i>
-                    <i class="fa-solid fa-chevron-left"></i>
-                </a>
-                <a class="pagination-btns" th:href="@{/mypage/reviews/reviewable(page=${pagination.startPage - 1})}"
-                   title="이전">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </a>
-            </span>
-
-                <span class="pagination-body">
-                <span class="pagination-btns"
-                      th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
-                    <a th:class="${i == pagination.currentPage ? 'active' : ''}"
-                       th:href="@{/mypage/reviews/reviewable(page=${i})}"
-                       th:text="${i}"></a>
-                </span>
-            </span>
-
-                <span class="pagination-next" th:if="${pagination.hasNextBlock()}">
-                <a class="pagination-btns" th:href="@{/mypage/reviews/reviewable(page=${pagination.endPage+1})}"
-                   title="다음">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>
-                <a class="pagination-btns end" th:href="@{/mypage/reviews/reviewable(page=${pagination.lastPage})}"
-                   title="맨 끝">
-                    <i class="fa-solid fa-chevron-right"></i>
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>
-            </span>
-            </section>
-
+    <div class="rv-list">
+        <div class="rv-empty" th:if="${#lists.isEmpty(notReviewedList.content)}" style="text-align: center; padding: 40px 0; color: #8a8a8e; font-weight: 600;">
+            작성 가능한 후기가 없습니다.
         </div>
-    </main>
 
-    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
+        <article class="rv-card" th:each="item : ${notReviewedList.content}">
+            <div class="rv-card__img-box">
+                <img th:if="${not #lists.isEmpty(item.placeFiles)}"
+                     th:src="|/file/display?fileName=${item.placeFiles[0].uploadPath}/t_${item.placeFiles[0].uuid}_${item.placeFiles[0].fileName}|"
+                     th:alt="${item.title}" class="rv-card__img">
+                <div th:unless="${not #lists.isEmpty(item.placeFiles)}" class="rv-card__no-img">No Image</div>
+            </div>
+
+            <div class="rv-card__info">
+                <div class="rv-card__header-top">
+                    <h3 class="rv-card__title" th:text="${item.title}">장소명</h3>
+                    <button type="button" class="rv-card__bookmark-btn ItemBookMarkBtn"
+                            th:data-id="${item.id}"
+                            th:data-status="${item.isBookmarkChecked}">
+                        <i class="fa-regular fa-bookmark off" th:classappend="${item.isBookmarkChecked ? 'none' : ''}"></i>
+                        <i class="fa-solid fa-bookmark on" th:classappend="${item.isBookmarkChecked ? '' : 'none'}"></i>
+                    </button>
+                </div>
+
+                <p class="rv-card__address" th:text="${item.placeAddress.address} + ' ' + ${item.placeAddress.addressDetail}">주소</p>
+
+                <div class="rv-card__stats">
+                    <span class="rv-card__star"><i class="fa-solid fa-star"></i> <span th:text="${item.evalAvg}">0.0</span>(<span th:text="${item.evalCount}">0</span>)</span>
+                    <span class="rv-card__visitors"><i class="fa-solid fa-user-group"></i> 총 <span th:text="${item.visitors}">0</span>명 방문</span>
+                </div>
+
+                <p class="rv-card__date">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span th:text="${#temporals.format(item.checkIn, 'yyyy.MM.dd HH:mm')} + ' ~ ' + ${#temporals.format(item.checkOut, 'yyyy.MM.dd HH:mm')}"></span>
+                </p>
+                <p class="rv-card__price"><strong th:text="${#numbers.formatInteger(item.price, 3, 'COMMA')}">0</strong>원</p>
+            </div>
+
+            <div class="rv-card__actions">
+                <button type="button" class="rv-btn rv-btn--primary action-write"
+                        th:data-id="${item.reservationId}">
+                    후기 작성
+                </button>
+                <button type="button" class="rv-btn rv-btn--danger action-delete"
+                        th:data-id="${item.reservationId}">
+                    작성 안함
+                </button>
+            </div>
+        </article>
+    </div>
+
+    <section id="paginationContainer"></section>
+
+    <div class="rv-modal-overlay" id="reviewModal">
+        <div class="rv-modal">
+            <button class="rv-modal__close" id="reviewModalClose" type="button"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="rv-modal__title">후기 작성</h3>
+
+            <div class="rv-modal__content">
+                <div class="rv-modal__stars" id="starContainer">
+                    <i class="fa-solid fa-star rv-star" data-score="1"></i>
+                    <i class="fa-solid fa-star rv-star" data-score="2"></i>
+                    <i class="fa-solid fa-star rv-star" data-score="3"></i>
+                    <i class="fa-solid fa-star rv-star" data-score="4"></i>
+                    <i class="fa-solid fa-star rv-star" data-score="5"></i>
+                </div>
+                <input type="hidden" id="reviewScore" value="0">
+
+                <div class="rv-modal__textarea-box">
+                    <textarea class="rv-modal__textarea" id="reviewContent" rows="6" placeholder="후기 내용을 작성해주세요 (최대 200자)"></textarea>
+                    <div class="rv-modal__counter"><span id="reviewLength">0</span>/200자</div>
+                </div>
+
+                <button class="rv-btn rv-btn--submit" id="reviewSubmitBtn" type="button">등록하기</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<th:block layout:fragment="mypage-script">
+    <script type="module" th:src="@{/dist/js/mypage/reviews.min.js}"></script>
+</th:block>
 </body>
-<script th:inline="javascript">
-    document.getElementById('reviews').classList.add('active');
-
-    const contents = [[${notReviewedList.content}]];
-</script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/mypage/mypage.js}"></script>
-<script th:src="@{/js/mypage/reviews.js}" type="module"></script>
-
 </html>

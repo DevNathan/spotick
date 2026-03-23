@@ -53,6 +53,7 @@ public class PromotionServiceImpl implements PromotionService {
                 .fileName(fileDto.getFileName())
                 .uuid(fileDto.getUuid())
                 .uploadPath(fileDto.getUploadPath())
+                .status(PostStatus.REGISTRATION_PENDING)
                 .build();
 
         PromotionBoard savedEntity = promotionRepository.save(entity);

@@ -1,213 +1,156 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mypage/layout}">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Spotick | 장소 관리</title>
-    <link href="/imgs/logo/favicon.png" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/mypage/mypage.css" rel="stylesheet">
-    <link href="/css/mypage/mypage-modal.css" rel="stylesheet">
-    <link href="/css/global-css/post-list-card-item.css" rel="stylesheet">
-    <link href="/css/place/register.css" rel="stylesheet"/>
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/2364e2b536.js"></script>
+    <title layout:fragment="title">Spotick | 장소 관리</title>
+    <link rel="stylesheet" th:href="@{/dist/css/mypage/places.min.css}">
 </head>
 
-<body>
-<div>
-    <div th:replace="~{fragments/chat :: chat}"></div>
+<div layout:fragment="mypage-content">
+    <header class="manage-header">
+        <h2 class="manage-title">장소 관리</h2>
+        <div class="place-sort" id="sortTypeBox">
+            <button class="place-sort__btn" type="button">
+                <span class="place-sort__text" th:text="${sort != null ? sort.displayName : '예약 많은 순'}">예약 많은 순</span>
+                <img alt="정렬" class="place-sort__icon" th:src="@{/imgs/arrow_down_gray014.f502da9d.svg}">
+            </button>
+            <div class="place-sort__list">
+                <button class="place-sort__item"
+                        th:each="sortTypeItem : ${T(com.app.spotick.global.util.type.PlaceManagerSortType).values()}"
+                        th:data-sort="${sortTypeItem.name()}"
+                        th:text="${sortTypeItem.displayName}"
+                        th:classappend="${sort != null and sortTypeItem.name() == sort.name()} ? 'place-sort__item--active' : ''"
+                        type="button"></button>
+            </div>
+        </div>
+    </header>
 
-    <div class="modal-bg" id="modal">
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
-    </div>
+    <div class="manage-grid" id="manageGrid">
+        <th:block th:if="${hostPlacesPage.getTotalElements() > 0}">
+            <article class="manage-card" th:each="place : ${hostPlacesPage}" th:data-id="${place.id}">
+                <div class="manage-card__slider-wrap">
+                    <div class="manage-card__slider">
+                        <div class="manage-card__slide" th:each="file : ${place.placeFiles}">
+                            <img class="manage-card__img"
+                                 th:src="@{/file/display(fileName=${file.uploadPath + '/t_' + file.uuid + '_' + file.fileName})}"
+                                 th:alt="${place.title}">
+                        </div>
+                    </div>
+                    <button class="manage-card__nav manage-card__nav--prev"><i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="manage-card__nav manage-card__nav--next"><i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <div class="manage-card__pagination">
+                        <span class="curr-idx">1</span> / <span th:text="${#lists.size(place.placeFiles)}">1</span>
+                    </div>
+                </div>
 
-    <header th:replace="~{fragments/header-footer :: header}"></header>
+                <div class="manage-card__info">
+                    <div class="manage-card__meta">
+                        <span class="manage-card__address" th:text="${place.placeAddress.address}">주소</span>
+                        <div class="manage-card__stats">
+                            <span class="manage-card__stat"><i class="fa-solid fa-star manage-card__stat-icon"></i>
+                                <th:block th:text="${place.evalAvg}"></th:block> (<th:block
+                                        th:text="${place.evalCount}"></th:block>)
+                            </span>
+                            <span class="manage-card__stat"><i class="fa-solid fa-bookmark" style="color: #8a8a8e;"></i> <th:block
+                                    th:text="${place.bookmarkCount}"></th:block></span>
+                        </div>
+                    </div>
 
-    <main class="my-page-main" id="page-body">
-        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
-        <div class="mp-content">
-            <article>
-                <div class="mpc-title">
-                    <h2>장소 관리</h2>
-                    <div class="select-box" id="sortType">
-                        <button class="select-box-btn" type="button">
-                            <span th:text="*{sort.displayName}"></span>
-                            <input id="sortInput" type="hidden">
-                            <img alt="" src="/imgs/arrow_down_gray014.f502da9d.svg">
-                        </button>
-                        <div class="select-box-list">
-                            <button th:class="${sortType.toString() == sort.toString()} ? 'selected' : ''"
-                                    th:each="sortType : ${T(com.app.spotick.util.type.PlaceManagerSortType).values()}"
-                                    th:sortType="${sortType}"
-                                    th:text="${sortType.displayName}" type="button">
-                            </button>
+                    <h3 class="manage-card__title" th:text="${place.title}">장소명</h3>
+
+                    <div class="manage-card__status-row">
+                        <div class="manage-card__price">
+                            <th:block th:text="${#numbers.formatInteger(place.price, 1, 'COMMA')}"></th:block>
+                            원
+                            <span style="font-size: 12px; font-weight: 500; color: #8a8a8e;">/ 시간</span>
+                        </div>
+                        <span class="manage-card__badge"
+                              th:classappend="'manage-card__badge--' + ${place.postStatus.name().toLowerCase()}"
+                              th:text="${place.postStatus.displayName}">상태</span>
+                    </div>
+
+                    <div class="manage-card__actions">
+                        <div class="manage-card__btn-group">
+                            <a th:href="@{/mypage/places/reservations/{placeId}(placeId=${place.id})}"
+                               class="manage-action-btn">
+                                예약 관리 <span class="manage-action-badge" th:if="${place.reservationRequestCount > 0}"
+                                            th:text="${place.reservationRequestCount}"></span>
+                            </a>
+                            <a th:href="@{/mypage/places/inquiries/{placeId}(placeId=${place.id})}"
+                               class="manage-action-btn">
+                                문의 관리 <span class="manage-action-badge" th:if="${place.inquiriesCount > 0}"
+                                            th:text="${place.inquiriesCount}"></span>
+                            </a>
+                        </div>
+
+                        <div class="manage-dropdown-wrap">
+                            <button class="manage-more-btn" type="button"><i class="fa-solid fa-ellipsis"></i></button>
+                            <div class="manage-dropdown">
+                                <button class="manage-dropdown__item action-disable"
+                                        th:if="${place.postStatus.name() == 'APPROVED'}" type="button">장소 대여 중지
+                                </button>
+                                <button class="manage-dropdown__item action-enable"
+                                        th:if="${place.postStatus.name() == 'DISABLED'}" type="button">장소 대여 재개
+                                </button>
+                                <button class="manage-dropdown__item action-edit"
+                                        th:if="${place.postStatus.name() == 'APPROVED' or place.postStatus.name() == 'DISABLED'}"
+                                        type="button">장소 정보 수정
+                                </button>
+                                <button class="manage-dropdown__item action-delete" type="button"
+                                        style="color: #ff3b30;">장소 삭제
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="mpc-cards-wrap">
-                    <th:block th:if="${#lists.size(hostPlacesPage)}">
-                        <th:block th:each="hostPlace:${hostPlacesPage}">
-                            <div class="OneItemContainer hover mybookmark" th:object="${hostPlace}">
-                                <a class="OneItemImgContainer" th:href="@{/place/{placeId}(placeId=*{id})}">
-                                    <div class="swiper ImageSwiper swiper-initialized swiper-horizontal swiper-pointer-events swiper-backface-hidden">
-                                        <div class="swiper-wrapper ImageLength"
-                                             style="transform: translate3d(0px, 0px, 0px);">
-                                            <!-- 이미지 한칸 -->
-                                            <th:block th:each="placeFile:${hostPlace.placeFiles}">
-                                                <div class="swiper-slide swiper-slide-next" th:object="${placeFile}">
-                                                    <img class="ItemImg"
-                                                         th:alt="${hostPlace.title}"
-                                                         th:src="*{'/file/display?fileName=' + uploadPath + '/t_' + uuid + '_' + fileName}">
-                                                </div>
-                                            </th:block>
-                                        </div>
-                                        <div class="NavigationBtnContainer">
-                                            <button class="NavigationBtn RightBtn" type="button">
-                                                <img alt="다음" src="/imgs/round_arrow_right_gray024.7f7e18a3.svg">
-                                            </button>
-                                            <button class="NavigationBtn LeftBtn" type="button">
-                                                <img alt="이전" src="/imgs/round_arrow_left_gray024.707193e8.svg">
-                                            </button>
-                                        </div>
-                                        <div class="ItemImgPagination">
-                                            <p><span class="snapIndex">1</span>/<span class="slideIndex">5</span></p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <div class="ItemTextContainer">
-                                    <div class="ItemHostNameContainer">
-                                        <span class="ItemHostName" th:text="*{placeAddress.address}"></span>
-                                        <div class="ItemCountsContainer">
-                                            <div class="ItemsStarCountContainer">
-                                                <img alt="후기갯수" class="ItemCountImg"
-                                                     src="/imgs/star_filled_paintYellow056.a8eb6e44.svg">
-                                                <span class="ItemCountText" th:text="|*{evalAvg}(*{evalCount})|"></span>
-                                            </div>
-                                            <div class="ItemsLikeCountContainer">
-                                                <img alt="북마크갯수" class="ItemCountImg bookmark"
-                                                     src="/imgs/bookmark_thin.svg">
-                                                <span class="ItemCountText" th:text="*{bookmarkCount}"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="ItemSpaceNameContainer">
-                                        <p class="ItemSpaceName" th:text="*{title}"></p>
-                                    </div>
-                                    <div class="ItemPriceContainer">
-                                    <span class="ItemPrice"
-                                          th:text="${#numbers.formatInteger(hostPlace.price, 3, 'COMMA')} + '원'"></span>
-                                        <div th:id="*{id}" th:text="*{postStatus.displayName}"></div>
-                                    </div>
-                                    <div class="mpcp-actions">
-                                        <div class="mpcpa-btn-con">
-                                            <a th:href="@{/mypage/places/reservations/{placeId}(placeId = *{id})}">
-                                                <button class="mpcpa-btn" type="button">
-                                                    <span>예약 관리</span>
-                                                    <div class="mpcpa-alarm"
-                                                         th:unless="*{reservationRequestCount == 0}">
-                                                        <span th:text="*{reservationRequestCount}"></span>
-                                                    </div>
-                                                </button>
-                                            </a>
-                                            <a th:href="@{/mypage/places/inquiries/{placeId}(placeId = *{id})}">
-                                                <button class="mpcpa-btn" type="button">
-                                                    <span>문의 관리</span>
-                                                    <div class="mpcpa-alarm" th:unless="*{inquiriesCount == 0}">
-                                                        <span th:text="*{inquiriesCount}"></span>
-                                                    </div>
-                                                </button>
-                                            </a>
-                                        </div>
-                                        <div class="mpcpa-modal-btn">
-                                            <button onclick="toggleDropdown(this)" type="button">
-                                                <i class="fa-solid fa-ellipsis"></i>
-                                                <div class="mpc-dropdown" th:data-id="*{id}">
-                                                    <div class="action-item disablePlace"
-                                                         th:if="*{postStatus == postStatus.APPROVED}">
-                                                        <span>장소 대여 중지</span>
-                                                    </div>
-                                                    <div class="action-item enablePlace"
-                                                         th:if="*{postStatus == postStatus.DISABLED}">
-                                                        <span>장소 대여 재개</span>
-                                                    </div>
-                                                    <div class="action-item editPlace"
-                                                         th:if="*{postStatus == postStatus.APPROVED or postStatus == postStatus.DISABLED}">
-                                                        <span>장소 정보 수정</span>
-                                                    </div>
-                                                    <div class="action-item deletePlace">
-                                                        <span>장소 삭제</span>
-                                                    </div>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </th:block>
-                    </th:block>
-                </div>
-
-                <th:block th:if="${hostPlacesPage.getTotalElements() == 0}">
-                    <div class="mp-no-list">
-                        <span>장소 정보가 없습니다.</span>
-                    </div>
-                </th:block>
-
             </article>
+        </th:block>
 
-            <section class="pagination-container">
-                <span class="pagination-previous" th:if="${pagination.hasPrevBlock()}">
-                    <a class="pagination-btns first" th:href="@{/mypage/places(page=1, sort=${sort})}" title="맨 처음">
-                        <i class="fa-solid fa-chevron-left"></i>
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </a>
-                    <a class="pagination-btns" th:href="@{/mypage/places(page=${pagination.startPage - 1}, sort=${sort})}"
-                       title="이전">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </a>
-                </span>
+        <th:block th:if="${hostPlacesPage.getTotalElements() == 0}">
+            <div class="manage-empty">
+                <i class="fa-solid fa-building-circle-xmark" style="font-size: 48px;"></i>
+                <p>등록된 장소 정보가 없습니다.</p>
+            </div>
+        </th:block>
+    </div>
 
-                <span class="pagination-body">
-                <span class="pagination-btns"
-                      th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
-                    <a th:class="${i == pagination.currentPage ? 'active' : ''}"
-                       th:href="@{/mypage/places(page=${i}, sort=${sort})}"
-                       th:text="${i}"></a>
-                </span>
-            </span>
+    <section class="pagination-container" th:if="${hostPlacesPage.getTotalElements() > 0}">
+        <th:block th:if="${pagination.hasPrevBlock()}">
+            <a class="pagination-btns" th:href="@{/mypage/places(page=1, sort=${sort})}" title="맨 처음">
+                <i class="fa-solid fa-angles-left"></i>
+            </a>
+            <a class="pagination-btns" th:href="@{/mypage/places(page=${pagination.startPage - 1}, sort=${sort})}"
+               title="이전">
+                <i class="fa-solid fa-angle-left"></i>
+            </a>
+        </th:block>
 
-                <span class="pagination-next" th:if="${pagination.hasNextBlock()}">
-                <a class="pagination-btns" th:href="@{/mypage/places(page=${pagination.endPage+1}, sort=${sort})}"
-                   title="다음">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>
-                <a class="pagination-btns end" th:href="@{/mypage/places(page=${pagination.lastPage}, sort=${sort})}"
-                   title="맨 끝">
-                    <i class="fa-solid fa-chevron-right"></i>
-                    <i class="fa-solid fa-chevron-right"></i>
-                </a>
-            </span>
-            </section>
+        <th:block th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage)}">
+            <a class="pagination-btns"
+               th:classappend="${i == pagination.currentPage ? 'active' : ''}"
+               th:href="@{/mypage/places(page=${i}, sort=${sort})}"
+               th:text="${i}"></a>
+        </th:block>
 
-        </div>
-    </main>
-
-    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
+        <th:block th:if="${pagination.hasNextBlock()}">
+            <a class="pagination-btns" th:href="@{/mypage/places(page=${pagination.endPage + 1}, sort=${sort})}"
+               title="다음">
+                <i class="fa-solid fa-angle-right"></i>
+            </a>
+            <a class="pagination-btns" th:href="@{/mypage/places(page=${pagination.lastPage}, sort=${sort})}"
+               title="맨 끝">
+                <i class="fa-solid fa-angles-right"></i>
+            </a>
+        </th:block>
+    </section>
 </div>
-</body>
-<script th:inline="javascript">
-    document.getElementById('places').classList.add('active');
 
-    const currentPage = [[${pagination.currentPage}]];
-    const sort = [[${sort}]];
-</script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/mypage/place.js}" type="module"></script>
-
+<th:block layout:fragment="mypage-script">
+    <input type="hidden" id="currentPage" th:value="${pagination.currentPage}">
+    <script th:src="@{/dist/js/mypage/places.min.js}" type="module"></script>
+</th:block>
 </html>

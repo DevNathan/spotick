@@ -30,22 +30,8 @@ import java.io.IOException;
 public class TicketController {
     private final TicketService ticketService;
 
-    /*
-     * 항상 첫번째 페이지는 타임리프를 통해 SSR 방식으로 컨텐츠를 로딩해 온다.
-     * 이렇게 할 시, 검색엔진에 더 잘 노출된다고 한다.
-     * 그러나 이후 방식은 USR 방식으로 컨텐츠를 로드해오기 때문에
-     * 이곳에서는 항상 첫번째 페이지, 전체 카테고리, 인기순, 전체 지역을 조건으로 하여 불러온다.
-     * */
     @GetMapping
-    public String goToList(@AuthenticationPrincipal UserDetailsDto userDetailsDto,
-                           Model model) {
-        Pageable pageable = PageRequest.of(0, 12);
-        Long userId = userDetailsDto == null ? null : userDetailsDto.getId();
-
-        Slice<TicketListDto> ticketList = ticketService.findTicketListPage(pageable, null, null, TicketSortType.POPULARITY, null, userId, null);
-
-        model.addAttribute("ticketList", ticketList);
-
+    public String goToList(Model model) {
         return "ticket/list";
     }
 
@@ -63,7 +49,7 @@ public class TicketController {
         return "ticket/detail";
     }
 
-    ////////////////////////////////////////////////// 티켓 등록 //////////////////////////////////////////////////
+    /// /////////////////////////////////////////////// 티켓 등록 //////////////////////////////////////////////////
     @GetMapping("/register")
     public String goToRegister(@ModelAttribute("ticketRegisterDto") TicketRegisterDto ticketRegisterDto) {
         return "ticket/register";
@@ -91,7 +77,7 @@ public class TicketController {
         return "redirect:/ticket/list";
     }
 
-    ////////////////////////////////////////////////// 티켓 수정 //////////////////////////////////////////////////
+    /// /////////////////////////////////////////////// 티켓 수정 //////////////////////////////////////////////////
     @GetMapping("/edit/{ticketId}")
     public String goToTicketEdit(@PathVariable("ticketId") Long ticketId,
                                  @AuthenticationPrincipal UserDetailsDto userDetailsDto,
@@ -100,7 +86,7 @@ public class TicketController {
         TicketEditDto ticketEditDto = ticketService.findTicketEditById(ticketId, userDetailsDto.getId());
 
         model.addAttribute("ticketEditDto", ticketEditDto);
-        return "/ticket/edit";
+        return "/ticket/register";
     }
 
     @PostMapping("/edit/{ticketId}")

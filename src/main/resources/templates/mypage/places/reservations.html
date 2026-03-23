@@ -1,99 +1,38 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{mypage/layout}"
+      th:with="currentPage='places'">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Spotick | 장소 관리 > 예약</title>
-    <link href="/imgs/logo/favicon.png" rel="icon">
-    <link href="/css/global-css/root.css" rel="stylesheet">
-    <link href="/css/mypage/mypage.css" rel="stylesheet">
-    <link href="/css/mypage/mypage-modal.css" rel="stylesheet">
-    <link href="/css/global-css/post-list-card-item.css" rel="stylesheet">
-    <link href="/css/global-css/calendar.css" rel="stylesheet">
-    <link href="/css/global-css/chat.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/2364e2b536.js"></script>
+    <title layout:fragment="title">Spotick | 장소 예약 관리</title>
+    <th:block layout:fragment="mypage-css">
+        <link rel="stylesheet" th:href="@{/dist/css/mypage/pl-reservations.min.css}">
+    </th:block>
 </head>
-
 <body>
-<div>
-    <div th:replace="~{fragments/chat :: chat}"></div>
+<div layout:fragment="mypage-content">
+    <input type="hidden" id="placeId" th:value="${placeDto.id}">
 
-    <div class="modal-bg" id="modal">
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-dialogue}"></div>
-        <div th:replace="~{fragments/new-global-dialogue-modal :: global-selection}"></div>
-        <div class="modal-place" id="placeModal"></div>
-    </div>
-
-    <header th:replace="~{fragments/header-footer :: header}"></header>
-
-    <main class="my-page-main" id="page-body">
-        <div th:replace="~{fragments/mypage :: mypage-menu}"></div>
-        <div class="mp-content">
-            <article>
-                <div class="mpc-title">
-                    <div class="flex items-center">
-                        <h2>장소 관리</h2>
-                        <i class="fa-solid fa-angle-right"></i>
-                        <h2>예약 요청</h2>
-                    </div>
-                </div>
-                <div class="mpcp-wrap" style="flex-direction: row">
-                    <div class="mpcp-main">
-                        <a th:href="@{/place/{placeId}(placeId = *{id})}" class="mpcp-target" th:object="${placeDto}">
-                            <div style="display: flex; justify-content: space-between;">
-                                <div class="ItemTextContainer" style="max-width: 400px">
-                                    <div class="ItemHostNameContainer">
-                                        <span class="ItemHostName" th:text="*{placeAddress.address}"></span>
-                                        <div class="ItemCountsContainer">
-                                            <div class="ItemsStarCountContainer">
-                                                <img alt="후기갯수" class="ItemCountImg"
-                                                     src="/imgs/star_filled_paintYellow056.a8eb6e44.svg">
-                                                <span class="ItemCountText" th:text="|*{evalAvg}(*{evalCount})|"></span>
-                                            </div>
-                                            <div class="ItemsLikeCountContainer">
-                                                <img alt="북마크갯수" class="ItemCountImg bookmark"
-                                                     src="/imgs/bookmark_thin.svg">
-                                                <span class="ItemCountText" th:text="*{bookmarkCount}"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="ItemSpaceNameContainer">
-                                        <p class="ItemSpaceName" th:text="*{title}"></p>
-                                    </div>
-                                    <div class="ItemPriceContainer">
-                                    <span class="ItemPrice"
-                                          th:text="${#numbers.formatInteger(placeDto.price, 3, 'COMMA')} + '원'"></span>
-                                    </div>
-                                </div>
-                                <div class="mpcre-img-con" style="margin-right: 0;">
-                                    <img th:src="|/file/display?fileName=*{placeFileDto.uploadPath}/t_*{placeFileDto.uuid}_*{placeFileDto.fileName}|" th:alt="*{title}">
-                                </div>
-                            </div>
-                        </a>
-                        <div class="mpcp-list">
-                            <div id="reservationsContainer"></div>
-                            <div class="loading-wrap" id="mpLoadingMark">
-                                <img alt="" src="/imgs/loading.svg">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </article>
+    <div class="pl-res">
+        <div class="pl-res__header">
+            <h2 class="pl-res__title">장소 예약 관리</h2>
         </div>
-    </main>
 
-    <footer th:replace="~{fragments/header-footer :: footer}"></footer>
+        <div class="pl-res__place-info" th:object="${placeDto}">
+            <h3 class="pl-res__place-title" th:text="*{title}">장소 이름</h3>
+        </div>
+
+        <div class="pl-res__list" id="reservationList">
+        </div>
+
+        <div class="pl-res__more-box">
+            <button type="button" class="pl-res__more-btn" id="loadMoreBtn" style="display: none;">더보기</button>
+        </div>
+    </div>
 </div>
+
+<th:block layout:fragment="mypage-script">
+    <script type="module" th:src="@{/dist/js/mypage/pl-reservations.min.js}"></script>
+</th:block>
 </body>
-<script th:inline="javascript">
-    document.getElementById('places').classList.add('active');
-
-    const pId = [[${placeDto.id}]];
-</script>
-<script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-<script th:src="@{/js/global-js/global.js}" type="module"></script>
-<script th:src="@{/js/global-js/chat.js}" type="module"></script>
-<script th:src="@{/js/mypage/place-reservation.js}" type="module"></script>
-
 </html>
