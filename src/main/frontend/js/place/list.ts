@@ -86,6 +86,7 @@ $(() => {
       }
       page++;
     } catch (error) {
+      console.error(error);
       toast.error("데이터를 불러오는 중 오류가 발생했습니다.");
     } finally {
       isLoading = false;
@@ -107,9 +108,9 @@ $(() => {
           .map(
             (file: any) => `
                 <div class="place-card__slide">
-                    <img class="place-card__img" src="/file/display?fileName=${file.uploadPath}/t_${file.uuid}_${file.fileName}" alt="${place.title}">
+                    <img class="place-card__img" src="/file/display?fileName=${file.uploadPath}/${file.uuid}_${file.fileName}" alt="${place.title}">
                 </div>
-            `,
+            `
           )
           .join("");
 

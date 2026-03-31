@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,7 @@ public class PlaceFileServiceImpl implements PlaceFileService {
     private String ROOT_DIR;
 
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public void registerAndSavePlaceFile(List<MultipartFile> placeFiles, Place place) throws IOException {
         for (MultipartFile file : placeFiles) {
             if (file.isEmpty()) continue;
@@ -75,13 +77,20 @@ public class PlaceFileServiceImpl implements PlaceFileService {
 
         // 이미지 파일인 경우 썸네일 생성
         String contentType = Files.probeContentType(targetPath);
-        if (contentType != null && contentType.startsWith("image")) {
+        boolean isImage = contentType != null && contentType.startsWith("image");
+        if (!isImage && extension.toLowerCase().matches("\\.(jpg|jpeg|png|webp|gif)$")) {
+            isImage = true;
+        }
+
+        if (isImage) {
             Path thumbnailPath = uploadDirPath.resolve("t_" + sysName).normalize();
 
-            // try-with-resources로 스트림 누수 완벽 차단
-            try (InputStream in = Files.newInputStream(targetPath);
-                 OutputStream out = Files.newOutputStream(thumbnailPath)) {
-                Thumbnailator.createThumbnail(in, out, 300, 225);
+            try {
+                net.coobird.thumbnailator.Thumbnails.of(targetPath.toFile())
+                        .size(300, 225)
+                        .toFile(thumbnailPath.toFile());
+            } catch (Exception e) {
+                System.err.println("썸네일 처리 실패 (무시됨). 파일명: " + originName + " / 사유: " + e.getMessage());
             }
         }
 
