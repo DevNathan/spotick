@@ -55,8 +55,7 @@
 <a href="https://spring.io/"><img src="https://img.shields.io/badge/3.2.0-Spring-6DB33F?logo=spring&logoColor=6DB33F"/></a>
 <a href="https://www.java.com"><img src="https://img.shields.io/badge/JDK%2017-Java-007396"/></a>
 <a href="https://hibernate.org/"><img src="https://img.shields.io/badge/6.1.5.Final-Hibernate-59666C?logo=hibernate&logoColor=white"/></a>
- <a href="https://www.oracle.com"><img src="https://img.shields.io/badge/11G%20Express-Oracle-F80000?logo=oracle&logoColor=F80000"/></a>
- <a href="https://redis.com/brand-guidelines/"><img src="https://img.shields.io/badge/3.0.504-Redis-DC382D?logo=redis&logoColor=DC382D"/></a>
+<a href="https://redis.com/brand-guidelines/"><img src="https://img.shields.io/badge/3.0.504-Redis-DC382D?logo=redis&logoColor=DC382D"/></a>
 
 
 ## 4. ERD
